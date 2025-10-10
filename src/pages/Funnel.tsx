@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Send } from 'lucide-react';
+import { ChatHeader } from '@/components/ChatHeader';
 
 interface Message {
   id: number;
@@ -110,36 +111,37 @@ const FunnelPage = () => {
   }, [step, userData.name]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
-      <Card className="w-full max-w-md h-[80vh] flex flex-col shadow-2xl">
-        <CardContent className="flex-grow p-4 overflow-y-auto space-y-4">
+    <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-900 p-0 sm:p-4">
+      <Card className="w-full h-full sm:h-[90vh] sm:max-h-[800px] sm:max-w-md flex flex-col shadow-2xl rounded-none sm:rounded-xl">
+        <ChatHeader />
+        <CardContent className="flex-grow p-4 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-800/50">
           {messages.map(msg => (
             <div key={msg.id} className={`flex items-end gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.sender === 'bot' && (
-                <Avatar className="w-8 h-8">
+                <Avatar className="w-8 h-8 self-start">
                   <AvatarImage src="https://i.pravatar.cc/150?u=alessandra" alt="Alessandra" />
                   <AvatarFallback>A</AvatarFallback>
                 </Avatar>
               )}
-              <div className={`max-w-[80%] rounded-xl px-4 py-2 text-sm ${msg.sender === 'user' ? 'bg-green-200 dark:bg-green-800 text-gray-800 dark:text-gray-100 rounded-br-none' : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-none'}`}>
+              <div className={`max-w-[80%] rounded-xl px-4 py-2 text-sm shadow-sm ${msg.sender === 'user' ? 'bg-emerald-200 dark:bg-emerald-800 text-gray-800 dark:text-gray-100 rounded-br-none' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-bl-none'}`}>
                 {msg.content}
               </div>
             </div>
           ))}
           {isTyping && (
             <div className="flex items-end gap-2 justify-start">
-              <Avatar className="w-8 h-8">
+              <Avatar className="w-8 h-8 self-start">
                 <AvatarImage src="https://i.pravatar.cc/150?u=alessandra" alt="Alessandra" />
                 <AvatarFallback>A</AvatarFallback>
               </Avatar>
-              <div className="max-w-[80%] rounded-xl px-4 py-2 bg-white dark:bg-gray-800 rounded-bl-none">
+              <div className="max-w-[80%] rounded-xl px-4 py-2 bg-white dark:bg-gray-700 rounded-bl-none shadow-sm">
                 <TypingIndicator />
               </div>
             </div>
           )}
           <div ref={messagesEndRef} />
         </CardContent>
-        <CardFooter className="p-4 border-t">
+        <CardFooter className="p-4 border-t bg-white dark:bg-gray-900">
           {showInput && (
             <form onSubmit={handleSubmit} className="flex w-full items-center space-x-2">
               <Input
@@ -148,6 +150,7 @@ const FunnelPage = () => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 autoFocus
+                className="bg-gray-100 dark:bg-gray-800"
               />
               <Button type="submit" size="icon">
                 <Send className="h-4 w-4" />
