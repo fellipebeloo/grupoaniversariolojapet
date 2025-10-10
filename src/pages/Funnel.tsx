@@ -128,9 +128,9 @@ const FunnelPage = () => {
         {isTyping && (
           <div className="flex items-end gap-2 justify-start">
             <img
-              src="https://i.pravatar.cc/150?u=alessandra"
+              src="/alessandra.jpg"
               alt="Alessandra"
-              className="w-8 h-8 rounded-full"
+              className="w-8 h-8 rounded-full object-cover"
             />
             <div className="max-w-[80%] rounded-xl px-4 py-2 bg-white dark:bg-gray-700 rounded-bl-none shadow-sm">
               <TypingIndicator />

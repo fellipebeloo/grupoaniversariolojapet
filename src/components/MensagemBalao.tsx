@@ -29,9 +29,9 @@ export function MensagemBalao({
       {/* Avatar do remetente (não-usuário) */}
       {!isUser && (
         <img
-          src={`https://i.pravatar.cc/150?u=alessandra`}
+          src="/alessandra.jpg"
           alt={remetente}
-          className="w-8 h-8 rounded-full self-end mr-2"
+          className="w-8 h-8 rounded-full self-end mr-2 object-cover"
         />
       )}
 
