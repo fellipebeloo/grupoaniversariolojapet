@@ -128,7 +128,7 @@ const FunnelPage = () => {
   }, [step, userData.name]);
 
   return (
-    <div className="h-screen flex flex-col bg-[#0f1418] w-full">
+    <div className="h-dvh flex flex-col bg-[#0f1418] w-full">
       <ChatHeader />
       
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
