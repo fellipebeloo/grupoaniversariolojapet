@@ -14,12 +14,12 @@ export const ChatInput = ({ onSubmit, inputValue, onInputChange, placeholder, in
       <div className="flex items-center gap-3">
         {/* Lado Esquerdo - Clips e Emoji */}
         <div className="flex gap-2">
-          <button type="button" className="text-gray-500 hover:text-gray-700 p-2">
+          <button type="button" className="text-gray-400 hover:text-gray-200 p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
           </button>
-          <button type="button" className="text-gray-500 hover:text-gray-700 p-2">
+          <button type="button" className="text-gray-400 hover:text-gray-200 p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -34,13 +34,13 @@ export const ChatInput = ({ onSubmit, inputValue, onInputChange, placeholder, in
             value={inputValue}
             onChange={onInputChange}
             autoFocus
-            className="w-full bg-[#f5f6f6] dark:bg-gray-800 rounded-full px-4 py-2.5 focus:outline-none border border-gray-100 dark:border-gray-700"
+            className="w-full bg-[#2a3942] rounded-full px-4 py-2.5 focus:outline-none text-white placeholder-gray-400"
           />
         </div>
 
         {/* Lado Direito - Microfone e Enviar */}
         <div className="flex gap-2">
-          <button type="button" className="text-gray-500 hover:text-gray-700 p-2">
+          <button type="button" className="text-gray-400 hover:text-gray-200 p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>

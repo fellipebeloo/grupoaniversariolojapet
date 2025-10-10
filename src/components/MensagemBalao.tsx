@@ -37,10 +37,10 @@ export function MensagemBalao({
 
       {/* Balão da mensagem */}
       <div 
-        className={`max-w-[70%] rounded-2xl shadow-sm p-3 border ${
+        className={`max-w-[70%] rounded-xl shadow-sm p-3 ${
           isUser 
-            ? 'bg-[#134e37] text-white border-transparent' 
-            : 'bg-[#252626] text-gray-100 border-gray-700'
+            ? 'bg-[#005c4b] text-white' 
+            : 'bg-[#202c33] text-gray-100'
         }`}
       >
         {/* Nome do remetente (não-usuário) */}
@@ -62,7 +62,7 @@ export function MensagemBalao({
         </div>
         
         {/* Reações e horário */}
-        <div className="flex items-center justify-between mt-1">
+        <div className="flex items-center justify-end mt-1">
           <div className="flex -space-x-1">
             {reacoes?.map((reacao, index) => (
               <div 
@@ -74,7 +74,7 @@ export function MensagemBalao({
               </div>
             ))}
           </div>
-          <p className={`text-xs ${isUser ? 'text-white/80' : 'text-gray-400'}`}>
+          <p className="text-xs text-gray-400 ml-2">
             {horario}
           </p>
         </div>

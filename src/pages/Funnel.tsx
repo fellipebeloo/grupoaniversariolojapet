@@ -118,7 +118,7 @@ const FunnelPage = () => {
   }, [step, userData.name]);
 
   return (
-    <div className="h-screen flex flex-col bg-[#f5f6f6] dark:bg-gray-950 w-full">
+    <div className="h-screen flex flex-col bg-[#0f1418] w-full">
       <ChatHeader />
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -132,7 +132,7 @@ const FunnelPage = () => {
               alt="Alessandra"
               className="w-8 h-8 rounded-full object-cover"
             />
-            <div className="max-w-[80%] rounded-xl px-4 py-2 bg-white dark:bg-gray-700 rounded-bl-none shadow-sm">
+            <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
               <TypingIndicator />
             </div>
           </div>
@@ -140,7 +140,7 @@ const FunnelPage = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 bg-white border-t border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+      <div className="p-4 bg-[#202c33] border-t border-gray-700">
         {showInput && (
           <ChatInput
             onSubmit={handleSubmit}
@@ -153,7 +153,12 @@ const FunnelPage = () => {
         {showOptions.length > 0 && (
           <div className="w-full grid grid-cols-1 gap-2">
             {showOptions.map((option, index) => (
-              <Button key={index} variant="outline" className="w-full justify-start p-4 h-auto text-left" onClick={() => handleNextStep(option)}>
+              <Button 
+                key={index} 
+                variant="default" 
+                className="w-full justify-start p-4 h-auto text-left bg-[#2a3942] text-gray-200 hover:bg-[#3a4a55]" 
+                onClick={() => handleNextStep(option)}
+              >
                 {option}
               </Button>
             ))}
