@@ -49,7 +49,7 @@ export function MensagemBalao({
         {/* Conteúdo da mensagem */}
         {tipo === 'imagem' && conteudo && (
           <img
-            src={conteudo}
+            src={typeof texto === 'string' ? texto : 'image'}
             alt={typeof texto === 'string' ? texto : 'image'}
             className="rounded-lg mb-2 w-full"
           />
@@ -77,15 +77,6 @@ export function MensagemBalao({
           </p>
         </div>
       </div>
-
-      {/* Avatar do usuário */}
-      {isUser && (
-        <img
-          src="https://i.pravatar.cc/150?img=30"
-          alt="You"
-          className="w-8 h-8 rounded-full self-end ml-2"
-        />
-      )}
     </div>
   );
 }
