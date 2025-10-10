@@ -30,12 +30,17 @@ const FunnelPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [showInput, setShowInput] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages, isTyping]);
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 150;
+      if (isScrolledToBottom) {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [messages, isTyping]);
 
   const addMessage = (sender: 'bot' | 'user', content: React.ReactNode, options?: string[]) => {
     const newMessage: Message = {
@@ -126,7 +131,7 @@ const FunnelPage = () => {
     <div className="h-screen flex flex-col bg-[#0f1418] w-full">
       <ChatHeader />
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map(msg => (
           <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
         ))}
