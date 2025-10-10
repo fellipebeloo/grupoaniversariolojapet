@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from "@/components/ui/button";
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
@@ -12,6 +11,7 @@ interface Message {
   horario: string;
   remetente: string;
   tipo: 'texto' | 'imagem' | 'audio';
+  options?: string[];
 }
 
 const TypingIndicator = () => (
@@ -29,7 +29,6 @@ const FunnelPage = () => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showInput, setShowInput] = useState(true);
-  const [showOptions, setShowOptions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -38,22 +37,33 @@ const FunnelPage = () => {
 
   useEffect(scrollToBottom, [messages, isTyping]);
 
-  const addMessage = (sender: 'bot' | 'user', content: React.ReactNode) => {
+  const addMessage = (sender: 'bot' | 'user', content: React.ReactNode, options?: string[]) => {
     const newMessage: Message = {
       id: (messages.length + 1).toString(),
       remetente: sender === 'bot' ? 'Alessandra' : 'user',
       texto: content,
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       tipo: 'texto',
+      options,
     };
     setMessages(prev => [...prev, newMessage]);
   };
 
   const handleNextStep = (userResponse: string) => {
-    addMessage('user', userResponse);
+    setMessages(prevMessages => {
+      const updatedMessages = prevMessages.map(msg => ({ ...msg, options: undefined }));
+      const userMessage: Message = {
+        id: (prevMessages.length + 1).toString(),
+        remetente: 'user',
+        texto: userResponse,
+        horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        tipo: 'texto',
+      };
+      return [...updatedMessages, userMessage];
+    });
+
     setInputValue('');
     setShowInput(false);
-    setShowOptions([]);
     setIsTyping(true);
 
     setTimeout(() => {
@@ -91,24 +101,19 @@ const FunnelPage = () => {
           setShowInput(true);
           break;
         case 3:
-          addMessage('bot', `Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?`);
-          setShowOptions(['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
+          addMessage('bot', `Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?`, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
           break;
         case 4:
-          addMessage('bot', 'Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?');
-          setShowOptions(['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
+          addMessage('bot', 'Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
           break;
         case 5:
-          addMessage('bot', `Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`);
-          setShowOptions(['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
+          addMessage('bot', `Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
           break;
         case 6:
-          addMessage('bot', 'E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?');
-          setShowOptions(['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
+          addMessage('bot', 'E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
           break;
         case 7:
-          addMessage('bot', <>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>);
-          setShowOptions(['👉 Quero entender por que meu corpo trava']);
+          addMessage('bot', <>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
           break;
         default:
           break;
@@ -123,7 +128,7 @@ const FunnelPage = () => {
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map(msg => (
-          <MensagemBalao key={msg.id} {...msg} />
+          <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
         ))}
         {isTyping && (
           <div className="flex items-end gap-2 justify-start">
@@ -149,20 +154,6 @@ const FunnelPage = () => {
             inputType={step === 2 ? 'tel' : 'text'}
             placeholder={step === 1 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
           />
-        )}
-        {showOptions.length > 0 && (
-          <div className="w-full grid grid-cols-1 gap-2">
-            {showOptions.map((option, index) => (
-              <Button 
-                key={index} 
-                variant="default" 
-                className="w-full justify-start p-4 h-auto text-left bg-[#2a3942] text-gray-200 hover:bg-[#3a4a55]" 
-                onClick={() => handleNextStep(option)}
-              >
-                {option}
-              </Button>
-            ))}
-          </div>
         )}
       </div>
     </div>
