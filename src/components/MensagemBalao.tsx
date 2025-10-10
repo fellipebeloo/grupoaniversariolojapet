@@ -62,7 +62,7 @@ export function MensagemBalao({
           <span className="text-sm mr-2">{texto}</span>
           
           {/* Horário e status */}
-          <span className="flex-shrink-0 self-end ml-auto pl-2">
+          <span className="flex-shrink-0 ml-auto pl-2">
             <span className="flex items-center whitespace-nowrap">
               <div className="flex -space-x-1 mr-2">
                 {reacoes?.map((reacao, index) => (
