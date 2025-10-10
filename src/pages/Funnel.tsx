@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface Message {
-  id: number;
-  sender: 'bot' | 'user';
-  content: React.ReactNode;
+  id: string;
+  texto: React.ReactNode;
+  horario: string;
+  remetente: string;
+  tipo: 'texto' | 'imagem' | 'audio';
 }
 
 const TypingIndicator = () => (
@@ -38,7 +39,14 @@ const FunnelPage = () => {
   useEffect(scrollToBottom, [messages, isTyping]);
 
   const addMessage = (sender: 'bot' | 'user', content: React.ReactNode) => {
-    setMessages(prev => [...prev, { id: prev.length + 1, sender, content }]);
+    const newMessage: Message = {
+      id: (messages.length + 1).toString(),
+      remetente: sender === 'bot' ? 'Alessandra' : 'user',
+      texto: content,
+      horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      tipo: 'texto',
+    };
+    setMessages(prev => [...prev, newMessage]);
   };
 
   const handleNextStep = (userResponse: string) => {
@@ -115,14 +123,15 @@ const FunnelPage = () => {
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map(msg => (
-          <MensagemBalao key={msg.id} message={msg} />
+          <MensagemBalao key={msg.id} {...msg} />
         ))}
         {isTyping && (
           <div className="flex items-end gap-2 justify-start">
-            <Avatar className="w-8 h-8 self-start">
-              <AvatarImage src="https://i.pravatar.cc/150?u=alessandra" alt="Alessandra" />
-              <AvatarFallback>A</AvatarFallback>
-            </Avatar>
+            <img
+              src="https://i.pravatar.cc/150?u=alessandra"
+              alt="Alessandra"
+              className="w-8 h-8 rounded-full"
+            />
             <div className="max-w-[80%] rounded-xl px-4 py-2 bg-white dark:bg-gray-700 rounded-bl-none shadow-sm">
               <TypingIndicator />
             </div>
