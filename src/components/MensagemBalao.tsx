@@ -1,4 +1,5 @@
 import React from 'react';
+import { CheckCheck } from 'lucide-react';
 
 interface MensagemBalaoProps {
   id: string;
@@ -57,26 +58,32 @@ export function MensagemBalao({
           />
         )}
         
-        <div className="text-sm">
-          {texto}
-        </div>
-        
-        {/* Reações e horário */}
-        <div className="flex items-center justify-end mt-1">
-          <div className="flex -space-x-1">
-            {reacoes?.map((reacao, index) => (
-              <div 
-                key={index} 
-                className="bg-white dark:bg-gray-700 rounded-full px-2 py-0.5 text-xs border dark:border-gray-600 shadow-sm flex items-center gap-1"
-              >
-                <span>{reacao.emoji}</span>
-                <span className="text-gray-600 dark:text-gray-300">{reacao.quantidade}</span>
-              </div>
-            ))}
+        <div className="flex flex-col">
+          {/* Texto da mensagem */}
+          <div className="text-sm">
+            {texto}
           </div>
-          <p className="text-xs text-gray-400 ml-2">
-            {horario}
-          </p>
+          
+          {/* Horário e status */}
+          <div className="flex items-center self-end mt-1">
+            <div className="flex -space-x-1 mr-2">
+              {reacoes?.map((reacao, index) => (
+                <div 
+                  key={index} 
+                  className="bg-white dark:bg-gray-700 rounded-full px-2 py-0.5 text-xs border dark:border-gray-600 shadow-sm flex items-center gap-1"
+                >
+                  <span>{reacao.emoji}</span>
+                  <span className="text-gray-600 dark:text-gray-300">{reacao.quantidade}</span>
+                </div>
+              ))}
+            </div>
+            <p className={`text-xs ${isUser ? 'text-gray-300/80' : 'text-gray-400'}`}>
+              {horario}
+            </p>
+            {isUser && (
+              <CheckCheck size={16} className="ml-1 text-blue-400" />
+            )}
+          </div>
         </div>
       </div>
     </div>
