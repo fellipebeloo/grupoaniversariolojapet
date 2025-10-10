@@ -37,13 +37,15 @@ export function MensagemBalao({
 
       {/* Balão da mensagem */}
       <div 
-        className={`max-w-[70%] ${
-          isUser ? 'bg-[#5b96f7] text-white' : 'bg-white dark:bg-gray-800'
-        } rounded-2xl shadow-sm p-3 border border-gray-100 dark:border-gray-700`}
+        className={`max-w-[70%] rounded-2xl shadow-sm p-3 border ${
+          isUser 
+            ? 'bg-[#134e37] text-white border-transparent' 
+            : 'bg-[#252626] text-gray-100 border-gray-700'
+        }`}
       >
         {/* Nome do remetente (não-usuário) */}
         {!isUser && (
-          <p className="text-sm font-semibold text-[#5b96f7] mb-1">{remetente}</p>
+          <p className="text-sm font-semibold text-green-400 mb-1">{remetente}</p>
         )}
         
         {/* Conteúdo da mensagem */}
@@ -55,7 +57,7 @@ export function MensagemBalao({
           />
         )}
         
-        <div className={`text-sm ${isUser ? 'text-white' : 'text-gray-800 dark:text-gray-100'}`}>
+        <div className="text-sm">
           {texto}
         </div>
         
@@ -72,7 +74,7 @@ export function MensagemBalao({
               </div>
             ))}
           </div>
-          <p className={`text-xs ${isUser ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
+          <p className={`text-xs ${isUser ? 'text-white/80' : 'text-gray-400'}`}>
             {horario}
           </p>
         </div>
