@@ -139,10 +139,10 @@ const FunnelPage = () => {
     e.preventDefault();
     if (inputValue.trim() === '') return;
 
-    if (step === 1) {
+    if (step === 0) {
       setUserData(prev => ({ ...prev, name: inputValue }));
     }
-    if (step === 2) {
+    if (step === 1) {
       setUserData(prev => ({ ...prev, whatsapp: inputValue }));
     }
     handleNextStep(inputValue);
@@ -155,37 +155,38 @@ const FunnelPage = () => {
           setIsTyping(true);
           setTimeout(() => {
             setIsTyping(false);
-            addMessage('bot', <AudioMessage />);
-            setTimeout(() => {
-              setStep(1);
-            }, 2000);
-          }, 1000);
-          break;
-        case 1:
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
             addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
             setShowInput(true);
           }, 1000);
           break;
-        case 2:
+        case 1:
           addMessage('bot', `Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
           setShowInput(true);
           break;
-        case 3:
-          addMessage('bot', `Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?`, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
+        case 2:
+          setIsTyping(true);
+          setTimeout(() => {
+            setIsTyping(false);
+            addMessage('bot', <AudioMessage />);
+            setTimeout(() => {
+              setIsTyping(true);
+              setTimeout(() => {
+                setIsTyping(false);
+                addMessage('bot', `Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?`, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
+              }, 1500);
+            }, 2000);
+          }, 1000);
           break;
-        case 4:
+        case 3:
           addMessage('bot', 'Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
           break;
-        case 5:
+        case 4:
           addMessage('bot', `Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
           break;
-        case 6:
+        case 5:
           addMessage('bot', 'E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
           break;
-        case 7:
+        case 6:
           addMessage('bot', <>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
           break;
         default:
@@ -233,8 +234,8 @@ const FunnelPage = () => {
             onSubmit={handleSubmit}
             inputValue={inputValue}
             onInputChange={(e) => setInputValue(e.target.value)}
-            inputType={step === 2 ? 'tel' : 'text'}
-            placeholder={step === 1 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
+            inputType={step === 1 ? 'tel' : 'text'}
+            placeholder={step === 0 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
           />
         )}
       </div>
