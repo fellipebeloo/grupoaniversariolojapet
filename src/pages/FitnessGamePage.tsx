@@ -76,15 +76,18 @@ const FitnessGamePage = () => {
   const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
   const currentVoiceAudioRef = useRef<HTMLAudioElement | null>(null);
   const introAudioRef = useRef<HTMLAudioElement | null>(null);
+  const yawnAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     alarmAudioRef.current = new Audio('/alarm.mp3');
     alarmAudioRef.current.loop = true;
     introAudioRef.current = new Audio('/intro-consciencia.mp3');
+    yawnAudioRef.current = new Audio('/yaaaam.mp3');
 
     return () => {
       alarmAudioRef.current?.pause();
       introAudioRef.current?.pause();
+      yawnAudioRef.current?.pause();
       if (currentVoiceAudioRef.current) {
         currentVoiceAudioRef.current.pause();
         currentVoiceAudioRef.current = null;
@@ -98,7 +101,6 @@ const FitnessGamePage = () => {
         navigator.vibrate([200, 100, 200]);
       }
       alarmAudioRef.current?.play().catch(error => console.log("Alarm audio blocked by browser"));
-      introAudioRef.current?.play().catch(error => console.log("Intro audio blocked by browser"));
     }
   }, [gameState, currentQuestionIndex, showAlarm]);
 
@@ -107,6 +109,18 @@ const FitnessGamePage = () => {
     alarmAudioRef.current?.pause();
     if (alarmAudioRef.current) {
       alarmAudioRef.current.currentTime = 0;
+    }
+
+    const yawnSound = yawnAudioRef.current;
+    const introSound = introAudioRef.current;
+
+    if (yawnSound) {
+      yawnSound.play().catch(error => console.log("Yawn audio blocked:", error));
+      yawnSound.onended = () => {
+        if (introSound) {
+          introSound.play().catch(error => console.log("Intro audio blocked:", error));
+        }
+      };
     }
   };
 
@@ -121,6 +135,10 @@ const FitnessGamePage = () => {
     if (introAudioRef.current) {
       introAudioRef.current.pause();
       introAudioRef.current.currentTime = 0;
+    }
+    if (yawnAudioRef.current) {
+      yawnAudioRef.current.pause();
+      yawnAudioRef.current.currentTime = 0;
     }
 
     if (currentVoiceAudioRef.current) {
