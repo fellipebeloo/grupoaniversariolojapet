@@ -212,26 +212,25 @@ const FitnessGamePage = () => {
               {currentQuestion.options.map((option, index) => {
                 const isButtonDisabled = feedback !== null || (currentQuestionIndex === 0 && showAlarm);
                 return (
-                  <div
+                  <button
                     key={index}
                     onClick={() => {
-                      if (currentQuestionIndex === 0 && showAlarm) {
-                        showError("Desative o alarme primeiro");
+                      if (isButtonDisabled) {
+                        if (currentQuestionIndex === 0 && showAlarm) {
+                          showError("Desative o alarme primeiro");
+                        }
+                        return;
                       }
+                      handleOptionClick(index);
                     }}
+                    className={`w-full text-left p-4 rounded-lg border-2 transition-all
+                      ${selectedOption === index 
+                        ? (option.correct ? 'bg-green-500/30 border-green-400' : 'bg-red-500/30 border-red-400') 
+                        : 'bg-purple-800/50 border-purple-600'}
+                      ${isButtonDisabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-purple-700/50'}`}
                   >
-                    <button
-                      onClick={() => handleOptionClick(index)}
-                      disabled={isButtonDisabled}
-                      className={`w-full text-left p-4 rounded-lg border-2 transition-all
-                        ${selectedOption === index 
-                          ? (option.correct ? 'bg-green-500/30 border-green-400' : 'bg-red-500/30 border-red-400') 
-                          : 'bg-purple-800/50 border-purple-600'}
-                        ${isButtonDisabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-purple-700/50'}`}
-                    >
-                      {option.text}
-                    </button>
-                  </div>
+                    {option.text}
+                  </button>
                 );
               })}
             </div>
