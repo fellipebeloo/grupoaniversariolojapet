@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Hammer from 'hammerjs';
+import { Mic } from 'lucide-react';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
@@ -24,12 +25,19 @@ const TypingIndicator = () => (
   </div>
 );
 
+const AudioRecordingIndicator = () => (
+  <div className="flex items-center gap-2 text-green-400">
+    <Mic size={18} className="animate-pulse" />
+    <span className="text-sm">gravando áudio...</span>
+  </div>
+);
+
 const FunnelPage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [step, setStep] = useState(0);
   const [userData, setUserData] = useState({ name: '', whatsapp: '' });
   const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [typingIndicator, setTypingIndicator] = useState<'text' | 'audio' | null>(null);
   const [showInput, setShowInput] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -46,7 +54,7 @@ const FunnelPage = () => {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  }, [messages, typingIndicator]);
 
   useEffect(() => {
     const element = scrollContainerRef.current;
@@ -127,10 +135,10 @@ const FunnelPage = () => {
 
     setInputValue('');
     setShowInput(false);
-    setIsTyping(true);
+    setTypingIndicator('text');
 
     setTimeout(() => {
-      setIsTyping(false);
+      setTypingIndicator(null);
       setStep(prev => prev + 1);
     }, 1500);
   };
@@ -152,9 +160,9 @@ const FunnelPage = () => {
     const runConversation = () => {
       switch (step) {
         case 0:
-          setIsTyping(true);
+          setTypingIndicator('text');
           setTimeout(() => {
-            setIsTyping(false);
+            setTypingIndicator(null);
             addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
             setShowInput(true);
           }, 1000);
@@ -164,14 +172,14 @@ const FunnelPage = () => {
           setShowInput(true);
           break;
         case 2:
-          setIsTyping(true);
+          setTypingIndicator('audio');
           setTimeout(() => {
-            setIsTyping(false);
+            setTypingIndicator(null);
             addMessage('bot', <AudioMessage />);
             setTimeout(() => {
-              setIsTyping(true);
+              setTypingIndicator('text');
               setTimeout(() => {
-                setIsTyping(false);
+                setTypingIndicator(null);
                 addMessage('bot', `Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?`, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
               }, 1500);
             }, 2000);
@@ -212,7 +220,7 @@ const FunnelPage = () => {
           {messages.map(msg => (
             <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
           ))}
-          {isTyping && (
+          {typingIndicator && (
             <div className="flex items-end gap-2 justify-start">
               <img
                 src="/alessandra.jpg"
@@ -220,7 +228,7 @@ const FunnelPage = () => {
                 className="w-8 h-8 rounded-full object-cover"
               />
               <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
-                <TypingIndicator />
+                {typingIndicator === 'text' ? <TypingIndicator /> : <AudioRecordingIndicator />}
               </div>
             </div>
           )}
