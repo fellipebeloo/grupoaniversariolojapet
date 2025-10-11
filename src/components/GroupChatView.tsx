@@ -1,0 +1,21 @@
+import { GroupChatHeader } from './GroupChatHeader';
+import { GrupoWhatsApp } from './GrupoWhatsApp';
+import { StaticChatInput } from './StaticChatInput';
+
+interface GroupChatViewProps {
+  onBack: () => void;
+}
+
+export const GroupChatView = ({ onBack }: GroupChatViewProps) => {
+  return (
+    <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
+      <GroupChatHeader onBack={onBack} />
+      <div className="overflow-y-auto p-4 space-y-4">
+        <GrupoWhatsApp />
+      </div>
+      <div className="p-4 bg-[#202c33] border-t border-gray-700">
+        <StaticChatInput />
+      </div>
+    </div>
+  );
+};

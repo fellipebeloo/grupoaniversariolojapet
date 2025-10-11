@@ -7,8 +7,8 @@ import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
 import { AudioMessage } from '@/components/AudioMessage';
-import { GrupoWhatsApp } from '@/components/GrupoWhatsApp';
 import { ImageMessage } from '@/components/ImageMessage';
+import { GroupChatView } from '@/components/GroupChatView';
 
 interface Message {
   id: string;
@@ -45,6 +45,7 @@ const FunnelPage = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [pullTranslateY, setPullTranslateY] = useState(0);
   const [isPanning, setIsPanning] = useState(false);
+  const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
 
   useEffect(() => {
     const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -108,7 +109,7 @@ const FunnelPage = () => {
     return () => {
       mc.destroy();
     };
-  }, []);
+  }, [activeView]);
 
   const addMessage = (
     sender: 'bot' | 'user',
@@ -171,6 +172,11 @@ const FunnelPage = () => {
       setUserData(prev => ({ ...prev, whatsapp: inputValue }));
     }
     handleNextStep(inputValue);
+  };
+
+  const handleBackFromGroup = () => {
+    setActiveView('chat');
+    setStep(9);
   };
 
   useEffect(() => {
@@ -251,18 +257,19 @@ const FunnelPage = () => {
             setTypingIndicator('text');
             await new Promise(res => setTimeout(res, 1800));
             setTypingIndicator(null);
-            addMessage('bot', <>Esse grupo mudou o jogo pra muita gente…<br/>Dá uma olhada no que elas tão falando lá 👇</>);
-
-            await new Promise(res => setTimeout(res, 1200));
-            addMessage('bot', <GrupoWhatsApp />, undefined, 'custom-component');
-
-            await new Promise(res => setTimeout(res, 2000));
-            setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 2000));
-            setTypingIndicator(null);
-            addMessage('bot', 'Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
+            addMessage('bot', <>Esse grupo mudou o jogo pra muita gente…<br/>Dá uma olhada no que elas tão falando lá 👇</>, ['Ver o que estão falando']);
           };
           showMessages();
+          break;
+        case 8:
+          setActiveView('group');
+          break;
+        case 9:
+          setTypingIndicator('text');
+          setTimeout(() => {
+            setTypingIndicator(null);
+            addMessage('bot', 'Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
+          }, 1000);
           break;
         default:
           break;
@@ -272,52 +279,59 @@ const FunnelPage = () => {
   }, [step, userData.name]);
 
   return (
-    <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
-      <ChatHeader />
-      
-      <div className="relative overflow-hidden">
-        <div 
-          ref={scrollContainerRef} 
-          className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform h-full"
-          style={{
-            transform: `translateY(${pullTranslateY}px)`,
-            transition: isPanning ? 'none' : 'transform 0.3s ease-out',
-          }}
-        >
-          {messages.map(msg => {
-            if (msg.tipo === 'custom-component') {
-              return <React.Fragment key={msg.id}>{msg.texto}</React.Fragment>;
-            }
-            return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;
-          })}
-          {typingIndicator && (
-            <div className="flex items-end gap-2 justify-start">
-              <img
-                src="/alessandra.jpg"
-                alt="Alessandra"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
-                {typingIndicator === 'text' ? <TypingIndicator /> : <AudioRecordingIndicator />}
-              </div>
+    <>
+      {activeView === 'chat' && (
+        <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
+          <ChatHeader />
+          
+          <div className="relative overflow-hidden">
+            <div 
+              ref={scrollContainerRef} 
+              className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform h-full"
+              style={{
+                transform: `translateY(${pullTranslateY}px)`,
+                transition: isPanning ? 'none' : 'transform 0.3s ease-out',
+              }}
+            >
+              {messages.map(msg => {
+                if (msg.tipo === 'custom-component') {
+                  return <React.Fragment key={msg.id}>{msg.texto}</React.Fragment>;
+                }
+                return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;
+              })}
+              {typingIndicator && (
+                <div className="flex items-end gap-2 justify-start">
+                  <img
+                    src="/alessandra.jpg"
+                    alt="Alessandra"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
+                    {typingIndicator === 'text' ? <TypingIndicator /> : <AudioRecordingIndicator />}
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
+          </div>
 
-      <div className="p-4 bg-[#202c33] border-t border-gray-700">
-        {showInput && (
-          <ChatInput
-            onSubmit={handleSubmit}
-            inputValue={inputValue}
-            onInputChange={(e) => setInputValue(e.target.value)}
-            inputType={step === 1 ? 'tel' : 'text'}
-            placeholder={step === 0 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
-          />
-        )}
-      </div>
-    </div>
+          <div className="p-4 bg-[#202c33] border-t border-gray-700">
+            {showInput && (
+              <ChatInput
+                onSubmit={handleSubmit}
+                inputValue={inputValue}
+                onInputChange={(e) => setInputValue(e.target.value)}
+                inputType={step === 1 ? 'tel' : 'text'}
+                placeholder={step === 0 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
+              />
+            )}
+          </div>
+        </div>
+      )}
+      {activeView === 'group' && (
+        <GroupChatView onBack={handleBackFromGroup} />
+      )}
+    </>
   );
 };
 

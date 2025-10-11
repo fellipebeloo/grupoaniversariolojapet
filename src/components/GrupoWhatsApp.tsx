@@ -16,16 +16,10 @@ const GroupMessage = ({ sender, text, color }: { sender: string, text: string, c
 
 export const GrupoWhatsApp = () => {
   return (
-    <div className="bg-transparent p-3 rounded-lg w-full max-w-md mx-auto my-2">
-      <div className="text-center mb-4 p-2 bg-black/20 rounded-lg">
-        <h3 className="font-bold text-white">Mulheres que venceram a pochete teimosa 💬</h3>
-        <p className="text-xs text-gray-400">Alessandra, Vanessa R., Jéssica L., Tati M., e mais 50</p>
-      </div>
-      <div className="space-y-3 flex flex-col">
-        {groupMessages.map((msg, index) => (
-          <GroupMessage key={index} sender={msg.sender} text={msg.text} color={msg.color} />
-        ))}
-      </div>
+    <div className="space-y-3 flex flex-col">
+      {groupMessages.map((msg, index) => (
+        <GroupMessage key={index} sender={msg.sender} text={msg.text} color={msg.color} />
+      ))}
     </div>
   );
 };
