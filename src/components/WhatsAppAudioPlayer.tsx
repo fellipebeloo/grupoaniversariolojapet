@@ -100,7 +100,7 @@ export const WhatsAppAudioPlayer = ({
     };
   }, [audioSrc]);
 
-  const playerBgColor = isMine ? 'bg-[#056162]' : 'bg-[#262d31]';
+  const playerBgColor = isMine ? 'bg-[#005c4b]' : 'bg-[#202c33]'; // Ajustado para as cores das bolhas de mensagem
   const featuredColor = 'text-[#00e5c0]'; // Using text color for icons/progress
   const textColor = 'text-[#c5c6c8]';
 
@@ -179,7 +179,7 @@ export const WhatsAppAudioPlayer = ({
               "absolute bottom-0 right-0 translate-x-1/2", // Mic sempre no canto inferior direito do avatar
               featuredColor,
             )}
-            style={{ textShadow: `-1px -1px 0 ${isMine ? '#056162' : '#262d31'}, 1px -1px 0 ${isMine ? '#056162' : '#262d31'}, -1px 1px 0 ${isMine ? '#056162' : '#262d31'}, 1px 1px 0 ${isMine ? '#056162' : '#262d31'}` }}
+            style={{ textShadow: `-1px -1px 0 ${isMine ? '#005c4b' : '#202c33'}, 1px -1px 0 ${isMine ? '#005c4b' : '#202c33'}, -1px 1px 0 ${isMine ? '#005c4b' : '#202c33'}, 1px 1px 0 ${isMine ? '#005c4b' : '#202c33'}` }}
           />
         </div>
       </div>
