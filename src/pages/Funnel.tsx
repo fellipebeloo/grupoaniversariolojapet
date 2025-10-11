@@ -195,56 +195,60 @@ const FunnelPage = () => {
   }, [step, userData.name]);
 
   return (
-    <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
-      <ChatHeader />
-      
-      <div className="relative overflow-hidden">
-        <div 
-          className="absolute top-0 left-0 right-0 flex justify-center items-center pt-2 text-gray-500 transition-opacity duration-300 pointer-events-none z-10"
-          style={{ opacity: topPull }}
-        >
-          <ArrowUp size={18} className="mr-2" />
-          <span>Início da conversa</span>
-        </div>
-
-        <div ref={scrollContainerRef} className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform h-full">
-          {messages.map(msg => (
-            <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
-          ))}
-          {isTyping && (
-            <div className="flex items-end gap-2 justify-start">
-              <img
-                src="/alessandra.jpg"
-                alt="Alessandra"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
-                <TypingIndicator />
-              </div>
+    <div className="h-dvh bg-gray-800 flex justify-center items-center">
+      <div className="w-full max-w-md h-full md:h-[calc(100vh-4rem)] md:max-h-[800px] rounded-none md:rounded-xl overflow-hidden shadow-2xl">
+        <div className="h-full grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
+          <ChatHeader />
+          
+          <div className="relative overflow-hidden">
+            <div 
+              className="absolute top-0 left-0 right-0 flex justify-center items-center pt-2 text-gray-500 transition-opacity duration-300 pointer-events-none z-10"
+              style={{ opacity: topPull }}
+            >
+              <ArrowUp size={18} className="mr-2" />
+              <span>Início da conversa</span>
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
 
-        <div 
-          className="absolute bottom-0 left-0 right-0 flex justify-center items-center pb-2 text-gray-500 transition-opacity duration-300 pointer-events-none z-10"
-          style={{ opacity: bottomPull }}
-        >
-          <ArrowDown size={18} className="mr-2" />
-          <span>Fim da conversa</span>
-        </div>
-      </div>
+            <div ref={scrollContainerRef} className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform h-full">
+              {messages.map(msg => (
+                <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
+              ))}
+              {isTyping && (
+                <div className="flex items-end gap-2 justify-start">
+                  <img
+                    src="/alessandra.jpg"
+                    alt="Alessandra"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
+                    <TypingIndicator />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-      <div className="p-4 bg-[#202c33] border-t border-gray-700">
-        {showInput && (
-          <ChatInput
-            onSubmit={handleSubmit}
-            inputValue={inputValue}
-            onInputChange={(e) => setInputValue(e.target.value)}
-            inputType={step === 2 ? 'tel' : 'text'}
-            placeholder={step === 1 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
-          />
-        )}
+            <div 
+              className="absolute bottom-0 left-0 right-0 flex justify-center items-center pb-2 text-gray-500 transition-opacity duration-300 pointer-events-none z-10"
+              style={{ opacity: bottomPull }}
+            >
+              <ArrowDown size={18} className="mr-2" />
+              <span>Fim da conversa</span>
+            </div>
+          </div>
+
+          <div className="p-4 bg-[#202c33] border-t border-gray-700">
+            {showInput && (
+              <ChatInput
+                onSubmit={handleSubmit}
+                inputValue={inputValue}
+                onInputChange={(e) => setInputValue(e.target.value)}
+                inputType={step === 2 ? 'tel' : 'text'}
+                placeholder={step === 1 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
