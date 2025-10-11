@@ -10,7 +10,8 @@ import { AudioMessage } from '@/components/AudioMessage';
 import { GroupChatView } from '@/components/GroupChatView';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
-import { FitnessGame } from '@/components/FitnessGame';
+import { GameStartMessage } from '@/components/GameStartMessage';
+import { useSearchParams } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -37,9 +38,28 @@ const AudioRecordingIndicator = () => (
 );
 
 const FunnelPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   const [messages, setMessages] = useState<Message[]>([]);
-  const [step, setStep] = useState(0);
-  const [userData, setUserData] = useState({ name: '', whatsapp: '' });
+  
+  const [userData, setUserData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('funnelUserData');
+      return saved ? JSON.parse(saved) : { name: '', whatsapp: '' };
+    } catch (error) {
+      return { name: '', whatsapp: '' };
+    }
+  });
+  
+  const [step, setStep] = useState(() => {
+    const stepFromParam = searchParams.get('step');
+    if (stepFromParam) {
+      return parseInt(stepFromParam, 10);
+    }
+    const savedStep = localStorage.getItem('funnelStep');
+    return savedStep ? parseInt(savedStep, 10) : 0;
+  });
+
   const [inputValue, setInputValue] = useState('');
   const [typingIndicator, setTypingIndicator] = useState<'text' | 'audio' | null>(null);
   const [showInput, setShowInput] = useState(false);
@@ -48,6 +68,27 @@ const FunnelPage = () => {
   const [pullTranslateY, setPullTranslateY] = useState(0);
   const [isPanning, setIsPanning] = useState(false);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
+
+  useEffect(() => {
+    localStorage.setItem('funnelUserData', JSON.stringify(userData));
+  }, [userData]);
+
+  useEffect(() => {
+    localStorage.setItem('funnelStep', step.toString());
+  }, [step]);
+
+  useEffect(() => {
+    const stepFromParam = searchParams.get('step');
+    if (stepFromParam) {
+      const numericStep = parseInt(stepFromParam, 10);
+      if (step !== numericStep) {
+        setMessages([]); // Clear messages to rebuild conversation
+        setStep(numericStep);
+      }
+      searchParams.delete('step');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams, step]);
 
   useEffect(() => {
     const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -183,16 +224,16 @@ const FunnelPage = () => {
 
   useEffect(() => {
     const runConversation = () => {
+      if (messages.length > 0) return;
+
       switch (step) {
         case 0:
-          if (messages.length === 0) {
-            setTypingIndicator('text');
-            setTimeout(() => {
-              setTypingIndicator(null);
-              addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
-              setShowInput(true);
-            }, 1000);
-          }
+          setTypingIndicator('text');
+          setTimeout(() => {
+            setTypingIndicator(null);
+            addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
+            setShowInput(true);
+          }, 1000);
           break;
         case 1:
           addMessage('bot', `Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
@@ -318,11 +359,11 @@ const FunnelPage = () => {
           showProblemMessages();
           break;
         case 11:
-          const showGame = async () => {
+          const showGamePrompt = async () => {
             setTypingIndicator('text');
             await new Promise(res => setTimeout(res, 1500));
             setTypingIndicator(null);
-            addMessage('bot', `${userData.name}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
+            addMessage('bot', `${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
 
             await new Promise(res => setTimeout(res, 1200));
             setTypingIndicator('text');
@@ -333,22 +374,33 @@ const FunnelPage = () => {
             await new Promise(res => setTimeout(res, 800));
             addMessage(
               'bot',
-              <FitnessGame
-                userName={userData.name}
-                onGameComplete={() => handleNextStep("Me mostra o método H.I.T.S.")}
-              />,
+              <GameStartMessage userName={userData.name || 'Guerreira'} />,
               undefined,
               'custom-component'
             );
           };
-          showGame();
+          showGamePrompt();
           break;
         case 12:
-            setTypingIndicator('text');
-            setTimeout(() => {
-              setTypingIndicator(null);
-              addMessage('bot', 'Ótimo! Preparada para conhecer o método H.I.T.S.?');
-            }, 1000);
+            const showPostGameMessage = async () => {
+                setTypingIndicator('text');
+                await new Promise(res => setTimeout(res, 1500));
+                setTypingIndicator(null);
+                addMessage('bot', `Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
+
+                await new Promise(res => setTimeout(res, 1200));
+                setTypingIndicator('text');
+                await new Promise(res => setTimeout(res, 1500));
+                setTypingIndicator(null);
+                addMessage('bot', 'Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
+
+                await new Promise(res => setTimeout(res, 1200));
+                setTypingIndicator('text');
+                await new Promise(res => setTimeout(res, 1500));
+                setTypingIndicator(null);
+                addMessage('bot', 'Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
+            };
+            showPostGameMessage();
             break;
         default:
           break;

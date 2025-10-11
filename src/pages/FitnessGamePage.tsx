@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Gamepad2 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const questions = [
   {
@@ -50,12 +51,11 @@ const questions = [
   }
 ];
 
-interface FitnessGameProps {
-  userName: string;
-  onGameComplete: () => void;
-}
+const FitnessGamePage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const userName = location.state?.userName || 'Guerreira';
 
-export const FitnessGame = ({ userName, onGameComplete }: FitnessGameProps) => {
   const [gameState, setGameState] = useState<'intro' | 'playing' | 'result'>('intro');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export const FitnessGame = ({ userName, onGameComplete }: FitnessGameProps) => {
     setGameState('playing');
   };
 
-  const handleOptionClick = (isCorrect: boolean, index: number) => {
+  const handleOptionClick = (index: number) => {
     setSelectedOption(index);
     setFeedback(questions[currentQuestionIndex].feedback);
 
@@ -80,25 +80,25 @@ export const FitnessGame = ({ userName, onGameComplete }: FitnessGameProps) => {
     }, 2500);
   };
 
+  const handleGameComplete = () => {
+    navigate('/funil?step=12');
+  };
+
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="flex items-end gap-2 justify-start">
-      <img
-        src="/alessandra.jpg"
-        alt="Alessandra"
-        className="w-8 h-8 rounded-full object-cover"
-      />
-      <div className="max-w-[85%] w-full rounded-lg bg-[#202c33] text-gray-100 shadow-sm flex flex-col overflow-hidden p-3">
-        <div className="text-center font-bold text-lg mb-2 text-green-400 flex items-center justify-center gap-2">
-          <Gamepad2 size={24} />
+    <div className="min-h-screen bg-[#0f1418] text-white flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md mx-auto bg-[#202c33] rounded-lg shadow-lg p-6">
+        <div className="text-center font-bold text-2xl mb-2 text-green-400 flex items-center justify-center gap-2">
+          <Gamepad2 size={28} />
           Jogo da Vida Fitness
         </div>
-        <p className="text-center text-sm text-gray-400 mb-4">Suas Decisões Estão Travando Seu Corpo?</p>
+        <p className="text-center text-gray-400 mb-6">Suas Decisões Estão Travando Seu Corpo?</p>
 
         {gameState === 'intro' && (
           <div className="text-center p-4">
-            <Button onClick={handleStart} className="bg-green-600 hover:bg-green-700 text-white font-bold">
+            <p className="mb-4">Olá, {userName}! Bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?</p>
+            <Button onClick={handleStart} className="bg-green-600 hover:bg-green-700 text-white font-bold text-lg px-8 py-6">
               Começar o Jogo 🔥
             </Button>
           </div>
@@ -106,14 +106,14 @@ export const FitnessGame = ({ userName, onGameComplete }: FitnessGameProps) => {
 
         {gameState === 'playing' && (
           <div>
-            <p className="text-center font-semibold whitespace-pre-wrap mb-4">{currentQuestion.question}</p>
-            <div className="space-y-2">
+            <p className="text-center font-semibold whitespace-pre-wrap mb-4 text-lg">{currentQuestion.question}</p>
+            <div className="space-y-3">
               {currentQuestion.options.map((option, index) => (
                 <button
                   key={index}
-                  onClick={() => handleOptionClick(option.correct, index)}
+                  onClick={() => handleOptionClick(index)}
                   disabled={feedback !== null}
-                  className={`w-full text-left p-3 rounded-lg border-2 transition-all text-sm
+                  className={`w-full text-left p-4 rounded-lg border-2 transition-all
                     ${selectedOption === index ? (option.correct ? 'bg-green-500/20 border-green-500' : 'bg-red-500/20 border-red-500') : 'bg-gray-700/50 border-gray-600 hover:bg-gray-600/50'}
                     ${feedback !== null ? 'cursor-not-allowed' : ''}`}
                 >
@@ -122,7 +122,7 @@ export const FitnessGame = ({ userName, onGameComplete }: FitnessGameProps) => {
               ))}
             </div>
             {feedback && (
-              <div className="mt-4 p-3 bg-black/20 rounded-lg text-center text-sm text-amber-300 italic">
+              <div className="mt-4 p-3 bg-black/20 rounded-lg text-center text-amber-300 italic">
                 {feedback}
               </div>
             )}
@@ -131,12 +131,12 @@ export const FitnessGame = ({ userName, onGameComplete }: FitnessGameProps) => {
 
         {gameState === 'result' && (
           <div className="text-center p-4 space-y-4">
-            <p className="font-semibold">{userName}, suas respostas mostraram o seguinte:</p>
-            <p className="p-3 bg-red-900/50 border border-red-500/50 rounded-lg text-red-300 font-bold">
+            <p className="font-semibold text-lg">{userName}, suas respostas mostraram o seguinte:</p>
+            <p className="p-4 bg-red-900/50 border border-red-500/50 rounded-lg text-red-300 font-bold">
               “Você tá repetindo o mesmo ciclo que trava o corpo de milhares de mulheres. Você tá dentro do Efeito Pochete Teimosa.”
             </p>
-            <p>Mas calma… Agora que você sabe disso, eu posso te mostrar como destravar esse ciclo e fazer seu corpo responder rápido — do jeito certo.</p>
-            <Button onClick={onGameComplete} className="bg-blue-600 hover:bg-blue-700 text-white font-bold w-full">
+            <p className="text-gray-300">Mas calma… Agora que você sabe disso, eu posso te mostrar como destravar esse ciclo e fazer seu corpo responder rápido — do jeito certo.</p>
+            <Button onClick={handleGameComplete} className="bg-blue-600 hover:bg-blue-700 text-white font-bold w-full text-lg px-8 py-6">
               Me mostra o método H.I.T.S.
             </Button>
           </div>
@@ -145,3 +145,5 @@ export const FitnessGame = ({ userName, onGameComplete }: FitnessGameProps) => {
     </div>
   );
 };
+
+export default FitnessGamePage;
