@@ -123,24 +123,27 @@ const FitnessGamePage = () => {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="min-h-screen bg-[#0f1418] text-white flex flex-col items-center justify-center p-4 relative">
+    <div 
+      className="min-h-screen text-white flex flex-col items-center justify-center p-4 relative bg-cover bg-center"
+      style={{ backgroundImage: `url('/game-background.jpg')` }}
+    >
       {gameState === 'playing' && currentQuestionIndex === 0 && showAlarm && (
         <div className="absolute top-8 left-0 right-0 px-4">
           <AlarmNotification onDismiss={handleDismissAlarm} />
         </div>
       )}
 
-      <div className="w-full max-w-md mx-auto bg-[#202c33] rounded-lg shadow-lg p-6">
-        <div className="text-center font-bold text-2xl mb-2 text-green-400 flex items-center justify-center gap-2">
+      <div className="w-full max-w-md mx-auto bg-purple-900/70 backdrop-blur-sm rounded-lg shadow-lg p-6 border border-purple-700">
+        <div className="text-center font-bold text-2xl mb-2 text-yellow-300 flex items-center justify-center gap-2">
           <Gamepad2 size={28} />
           Jogo da Vida Fitness
         </div>
-        <p className="text-center text-gray-400 mb-6">Suas Decisões Estão Travando Seu Corpo?</p>
+        <p className="text-center text-purple-200 mb-6">Suas Decisões Estão Travando Seu Corpo?</p>
 
         {gameState === 'intro' && (
           <div className="text-center p-4">
-            <p className="mb-4">Olá, {userName}! Bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?</p>
-            <Button onClick={handleStart} className="bg-green-600 hover:bg-green-700 text-white font-bold text-lg px-8 py-6">
+            <p className="mb-4 text-purple-100">Olá, {userName}! Bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?</p>
+            <Button onClick={handleStart} className="bg-yellow-500 hover:bg-yellow-600 text-purple-900 font-bold text-lg px-8 py-6">
               Começar o Jogo 🔥
             </Button>
           </div>
@@ -148,7 +151,7 @@ const FitnessGamePage = () => {
 
         {gameState === 'playing' && (
           <div>
-            <p className="text-center font-semibold whitespace-pre-wrap mb-4 text-lg">{currentQuestion.question}</p>
+            <p className="text-center font-semibold whitespace-pre-wrap mb-4 text-lg text-purple-100">{currentQuestion.question}</p>
             <div className="space-y-3">
               {currentQuestion.options.map((option, index) => (
                 <button
@@ -156,7 +159,9 @@ const FitnessGamePage = () => {
                   onClick={() => handleOptionClick(index)}
                   disabled={feedback !== null}
                   className={`w-full text-left p-4 rounded-lg border-2 transition-all
-                    ${selectedOption === index ? (option.correct ? 'bg-green-500/20 border-green-500' : 'bg-red-500/20 border-red-500') : 'bg-gray-700/50 border-gray-600 hover:bg-gray-600/50'}
+                    ${selectedOption === index 
+                      ? (option.correct ? 'bg-green-500/30 border-green-400' : 'bg-red-500/30 border-red-400') 
+                      : 'bg-purple-800/50 border-purple-600 hover:bg-purple-700/50'}
                     ${feedback !== null ? 'cursor-not-allowed' : ''}`}
                 >
                   {option.text}
@@ -164,7 +169,7 @@ const FitnessGamePage = () => {
               ))}
             </div>
             {feedback && (
-              <div className="mt-4 p-3 bg-black/20 rounded-lg text-center text-amber-300 italic">
+              <div className="mt-4 p-3 bg-purple-950/50 rounded-lg text-center text-yellow-300 italic border border-purple-700">
                 {feedback}
               </div>
             )}
@@ -173,12 +178,12 @@ const FitnessGamePage = () => {
 
         {gameState === 'result' && (
           <div className="text-center p-4 space-y-4">
-            <p className="font-semibold text-lg">{userName}, suas respostas mostraram o seguinte:</p>
+            <p className="font-semibold text-lg text-purple-100">{userName}, suas respostas mostraram o seguinte:</p>
             <p className="p-4 bg-red-900/50 border border-red-500/50 rounded-lg text-red-300 font-bold">
               “Você tá repetindo o mesmo ciclo que trava o corpo de milhares de mulheres. Você tá dentro do Efeito Pochete Teimosa.”
             </p>
-            <p className="text-gray-300">Mas calma… Agora que você sabe disso, eu posso te mostrar como destravar esse ciclo e fazer seu corpo responder rápido — do jeito certo.</p>
-            <Button onClick={handleGameComplete} className="bg-blue-600 hover:bg-blue-700 text-white font-bold w-full text-lg px-8 py-6">
+            <p className="text-purple-200">Mas calma… Agora que você sabe disso, eu posso te mostrar como destravar esse ciclo e fazer seu corpo responder rápido — do jeito certo.</p>
+            <Button onClick={handleGameComplete} className="bg-yellow-500 hover:bg-yellow-600 text-purple-900 font-bold w-full text-lg px-8 py-6">
               Me mostra o método H.I.T.S.
             </Button>
           </div>
