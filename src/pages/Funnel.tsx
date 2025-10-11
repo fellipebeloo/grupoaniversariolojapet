@@ -7,8 +7,8 @@ import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
 import { AudioMessage } from '@/components/AudioMessage';
-import { ImageMessage } from '@/components/ImageMessage';
 import { GroupChatView } from '@/components/GroupChatView';
+import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 
 interface Message {
   id: string;
@@ -251,18 +251,14 @@ const FunnelPage = () => {
             addMessage('bot', 'Olha só:');
 
             await new Promise(res => setTimeout(res, 800));
-            addMessage('bot', <ImageMessage src="/whatsapp-group-invite.png" alt="Convite para grupo de WhatsApp" horario={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
-
-            await new Promise(res => setTimeout(res, 1500));
-            setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 1800));
-            setTypingIndicator(null);
-            addMessage('bot', <>Esse grupo mudou o jogo pra muita gente…<br/>Dá uma olhada no que elas tão falando lá 👇</>, ['Ver o que estão falando']);
+            addMessage(
+              'bot', 
+              <GroupInviteMessage onViewClick={() => setActiveView('group')} />, 
+              undefined, 
+              'custom-component'
+            );
           };
           showMessages();
-          break;
-        case 8:
-          setActiveView('group');
           break;
         case 9:
           setTypingIndicator('text');
