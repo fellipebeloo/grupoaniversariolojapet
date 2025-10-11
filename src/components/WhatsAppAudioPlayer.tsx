@@ -102,9 +102,9 @@ export const WhatsAppAudioPlayer = ({
 
   return (
     <div className={cn(
-      "flex min-w-[240px] max-w-full rounded-md p-1 shadow-sm user-select-none font-sans", // Removido w-[336px]
+      "flex min-w-[240px] max-w-[80%] rounded-md p-1 shadow-sm user-select-none font-sans", // Alterado max-w-full para max-w-[80%]
       playerBgColor,
-      isMine ? 'flex-row-reverse ml-auto' : 'flex-row' // Adicionado ml-auto para alinhar à direita quando isMine
+      isMine ? 'flex-row-reverse ml-auto' : 'flex-row'
     )}>
       <div className="flex-1 flex items-center">
         <button
