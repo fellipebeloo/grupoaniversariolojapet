@@ -18,7 +18,7 @@ export const GroupInviteMessage = ({ onViewClick }: GroupInviteMessageProps) => 
             <MessageSquare size={28} className="text-white" />
           </div>
           <div>
-            <p className="font-semibold">Mulheres que venceram a pochete teimosa 💬</p>
+            <p className="font-semibold">#12 - Guerrilheiras do H.I.T.S. Fitness</p>
             <p className="text-sm text-gray-400">Convite de conversa em grupo</p>
           </div>
         </div>

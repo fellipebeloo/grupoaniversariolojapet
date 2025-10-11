@@ -16,7 +16,7 @@ export const GroupChatHeader = ({ onBack }: GroupChatHeaderProps) => {
         <AvatarFallback>G</AvatarFallback>
       </Avatar>
       <div>
-        <p className="font-semibold text-white">Mulheres que venceram a pochete teimosa 💬</p>
+        <p className="font-semibold text-white">#12 - Guerrilheiras do H.I.T.S. Fitness</p>
         <p className="text-sm text-gray-400 truncate">Alessandra, Vanessa R., Jéssica L., Tati M., e mais 50</p>
       </div>
     </header>
