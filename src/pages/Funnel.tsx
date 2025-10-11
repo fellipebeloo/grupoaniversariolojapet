@@ -33,6 +33,16 @@ const FunnelPage = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Prevent the body from scrolling when the chat is open
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+
+  useEffect(() => {
     const container = scrollContainerRef.current;
     if (container) {
       const isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 150;
