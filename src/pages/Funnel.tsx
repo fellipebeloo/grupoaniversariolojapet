@@ -198,7 +198,18 @@ const FunnelPage = () => {
           addMessage('bot', 'E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
           break;
         case 6:
-          addMessage('bot', <>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
+          setTypingIndicator('audio');
+          setTimeout(() => {
+            setTypingIndicator(null);
+            addMessage('bot', <AudioMessage />);
+            setTimeout(() => {
+              setTypingIndicator('text');
+              setTimeout(() => {
+                setTypingIndicator(null);
+                addMessage('bot', <>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
+              }, 1500);
+            }, 2000);
+          }, 1000);
           break;
         default:
           break;
