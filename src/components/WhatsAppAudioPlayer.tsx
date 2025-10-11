@@ -126,7 +126,7 @@ export const WhatsAppAudioPlayer = ({
           )}
         </button>
 
-        <div className="flex-1 flex flex-col relative pb-0.5">
+        <div className="flex-1 flex flex-col relative"> {/* Removed pb-0.5 here */}
           <div className="flex-1 flex items-center relative">
             <div
               className="absolute bg-[#00e5c0] h-[0.24rem] rounded-full"
