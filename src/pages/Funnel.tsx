@@ -7,13 +7,15 @@ import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
 import { AudioMessage } from '@/components/AudioMessage';
+import { GrupoWhatsApp } from '@/components/GrupoWhatsApp';
+import { ImageMessage } from '@/components/ImageMessage';
 
 interface Message {
   id: string;
   texto: React.ReactNode;
   horario: string;
   remetente: string;
-  tipo: 'texto' | 'imagem' | 'audio';
+  tipo: 'texto' | 'imagem' | 'audio' | 'custom-component';
   options?: string[];
 }
 
@@ -108,13 +110,18 @@ const FunnelPage = () => {
     };
   }, []);
 
-  const addMessage = (sender: 'bot' | 'user', content: React.ReactNode, options?: string[]) => {
+  const addMessage = (
+    sender: 'bot' | 'user',
+    content: React.ReactNode,
+    options?: string[],
+    type: Message['tipo'] = 'texto'
+  ) => {
     const newMessage: Message = {
       id: (messages.length + 1).toString(),
       remetente: sender === 'bot' ? 'Alessandra' : 'user',
       texto: content,
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      tipo: 'texto',
+      tipo: type,
       options,
     };
     setMessages(prev => [...prev, newMessage]);
@@ -218,12 +225,51 @@ const FunnelPage = () => {
             }, 2000);
           }, 1000);
           break;
+        case 7:
+          const showMessages = async () => {
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', <>{userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...</>);
+
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', 'Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
+
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', 'Olha só:');
+
+            await new Promise(res => setTimeout(res, 800));
+            addMessage('bot', <ImageMessage src="/whatsapp-group-invite.png" alt="Convite para grupo de WhatsApp" horario={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
+
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1800));
+            setTypingIndicator(null);
+            addMessage('bot', <>Esse grupo mudou o jogo pra muita gente…<br/>Dá uma olhada no que elas tão falando lá 👇</>);
+
+            await new Promise(res => setTimeout(res, 1200));
+            addMessage('bot', <GrupoWhatsApp />, undefined, 'custom-component');
+
+            await new Promise(res => setTimeout(res, 2000));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 2000));
+            setTypingIndicator(null);
+            addMessage('bot', 'Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
+          };
+          showMessages();
+          break;
         default:
           break;
       }
     };
     runConversation();
-  }, [step]);
+  }, [step, userData.name]);
 
   return (
     <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
@@ -238,9 +284,12 @@ const FunnelPage = () => {
             transition: isPanning ? 'none' : 'transform 0.3s ease-out',
           }}
         >
-          {messages.map(msg => (
-            <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
-          ))}
+          {messages.map(msg => {
+            if (msg.tipo === 'custom-component') {
+              return <React.Fragment key={msg.id}>{msg.texto}</React.Fragment>;
+            }
+            return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;
+          })}
           {typingIndicator && (
             <div className="flex items-end gap-2 justify-start">
               <img
