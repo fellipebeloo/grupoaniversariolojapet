@@ -11,6 +11,7 @@ import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
 import { GameStartMessage } from '@/components/GameStartMessage';
 import { useSearchParams } from 'react-router-dom';
+import { AlessandraAudios } from '@/constants/audioPaths'; // Importar os caminhos dos áudios
 
 interface Message {
   id: string;
@@ -181,7 +182,7 @@ const FunnelPage = () => {
         case 2:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <AudioMessage />);
+            addMessage('bot', <AudioMessage audioSrc={AlessandraAudios.introConsciencia} />, undefined, 'custom-component');
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
@@ -203,7 +204,7 @@ const FunnelPage = () => {
         case 6:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <AudioMessage />);
+            addMessage('bot', <AudioMessage audioSrc={AlessandraAudios.consciencia} />, undefined, 'custom-component');
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {

@@ -1,5 +1,6 @@
 export const AlessandraAudios = {
   introConsciencia: '/intro-consciencia.mp3',
+  consciencia: '/consciencia.mp3', // Adicionado o áudio geral de consciência
   consciencia1: '/consciencia1.mp3',
   consciencia2: '/consciencia2.mp3',
   consciencia3: '/consciencia3.mp3',
@@ -8,7 +9,7 @@ export const AlessandraAudios = {
   correct1: '/correct1.mp3',
   correct2: '/correct2.mp3',
   correct3: '/correct3.mp3',
-  correct4: '/correct4..mp3', // Mantendo o nome do arquivo como está no public/
+  correct4: '/correct4..mp3',
   correct5: '/correct5.mp3',
   yawn: '/yaaaam.mp3',
   alarm: '/alarm.mp3',
