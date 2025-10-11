@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Gamepad2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -63,14 +63,39 @@ const FitnessGamePage = () => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showAlarm, setShowAlarm] = useState(true);
 
+  const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
+  const voiceAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    alarmAudioRef.current = new Audio('/alarm.mp3');
+    alarmAudioRef.current.loop = true;
+    voiceAudioRef.current = new Audio('/consciencia.mp3');
+
+    return () => {
+      alarmAudioRef.current?.pause();
+      voiceAudioRef.current?.pause();
+    };
+  }, []);
+
   useEffect(() => {
     if (gameState === 'playing' && currentQuestionIndex === 0 && showAlarm) {
       if ('vibrate' in navigator) {
-        // Vibra por 200ms, pausa por 100ms, e vibra por 200ms
         navigator.vibrate([200, 100, 200]);
       }
+      alarmAudioRef.current?.play().catch(error => console.log("Alarm audio blocked by browser"));
     }
   }, [gameState, currentQuestionIndex, showAlarm]);
+
+  const handleDismissAlarm = () => {
+    setShowAlarm(false);
+    alarmAudioRef.current?.pause();
+    if (alarmAudioRef.current) {
+      alarmAudioRef.current.currentTime = 0;
+    }
+    setTimeout(() => {
+      voiceAudioRef.current?.play().catch(error => console.log("Voice audio blocked by browser"));
+    }, 500);
+  };
 
   const handleStart = () => {
     setGameState('playing');
@@ -101,7 +126,7 @@ const FitnessGamePage = () => {
     <div className="min-h-screen bg-[#0f1418] text-white flex flex-col items-center justify-center p-4 relative">
       {gameState === 'playing' && currentQuestionIndex === 0 && showAlarm && (
         <div className="absolute top-8 left-0 right-0 px-4">
-          <AlarmNotification onDismiss={() => setShowAlarm(false)} />
+          <AlarmNotification onDismiss={handleDismissAlarm} />
         </div>
       )}
 
