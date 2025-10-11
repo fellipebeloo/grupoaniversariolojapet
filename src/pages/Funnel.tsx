@@ -10,6 +10,7 @@ import { AudioMessage } from '@/components/AudioMessage';
 import { GroupChatView } from '@/components/GroupChatView';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
+import { FitnessGame } from '@/components/FitnessGame';
 
 interface Message {
   id: string;
@@ -316,6 +317,39 @@ const FunnelPage = () => {
           };
           showProblemMessages();
           break;
+        case 11:
+          const showGame = async () => {
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', `${userData.name}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
+
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', 'Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
+
+            await new Promise(res => setTimeout(res, 800));
+            addMessage(
+              'bot',
+              <FitnessGame
+                userName={userData.name}
+                onGameComplete={() => handleNextStep("Me mostra o método H.I.T.S.")}
+              />,
+              undefined,
+              'custom-component'
+            );
+          };
+          showGame();
+          break;
+        case 12:
+            setTypingIndicator('text');
+            setTimeout(() => {
+              setTypingIndicator(null);
+              addMessage('bot', 'Ótimo! Preparada para conhecer o método H.I.T.S.?');
+            }, 1000);
+            break;
         default:
           break;
       }
