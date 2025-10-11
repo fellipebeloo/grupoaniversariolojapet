@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import Hammer = require('hammerjs');
+import Hammer from 'hammerjs';
 import { CheckCheck, CornerUpLeft } from 'lucide-react';
 
 interface MensagemBalaoProps {
@@ -101,7 +101,7 @@ export function MensagemBalao({
                 <span className="text-sm mr-2">{texto}</span>
                 
                 <div className="flex-shrink-0 ml-auto pl-2 self-end">
-                  <span className="flex items-center whitespace-nowrap">
+                  <span className="flex items-center whitespace-rap">
                     <p className={`text-xs ${isUser ? 'text-gray-300/80' : 'text-gray-400'}`}>
                       {horario}
                     </p>
