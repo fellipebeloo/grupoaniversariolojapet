@@ -5,6 +5,7 @@ import Hammer from 'hammerjs';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
+import { AudioMessage } from '@/components/AudioMessage';
 
 interface Message {
   id: string;
@@ -29,7 +30,7 @@ const FunnelPage = () => {
   const [userData, setUserData] = useState({ name: '', whatsapp: '' });
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [showInput, setShowInput] = useState(true);
+  const [showInput, setShowInput] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [pullTranslateY, setPullTranslateY] = useState(0);
@@ -154,8 +155,18 @@ const FunnelPage = () => {
           setIsTyping(true);
           setTimeout(() => {
             setIsTyping(false);
+            addMessage('bot', <AudioMessage />);
+            setTimeout(() => {
+              setStep(1);
+            }, 2000);
+          }, 1000);
+          break;
+        case 1:
+          setIsTyping(true);
+          setTimeout(() => {
+            setIsTyping(false);
             addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
-            setStep(1);
+            setShowInput(true);
           }, 1000);
           break;
         case 2:
