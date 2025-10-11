@@ -44,13 +44,7 @@ const FunnelPage = () => {
   }, []);
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      const isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 150;
-      if (isScrolledToBottom) {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
   useEffect(() => {
