@@ -1,6 +1,5 @@
 export const AlessandraAudios = {
   introConsciencia: '/intro-consciencia.mp3',
-  // consciencia: '/consciencia.mp3', // Removido o áudio geral de consciência
   consciencia1: '/consciencia1.mp3',
   consciencia2: '/consciencia2.mp3',
   consciencia3: '/consciencia3.mp3',
@@ -13,4 +12,6 @@ export const AlessandraAudios = {
   correct5: '/correct5.mp3',
   yawn: '/yaaaam.mp3',
   alarm: '/alarm.mp3',
+  alessandraChatAudio1: '/alessandra-chat-audio1.mp3', // Novo áudio para o chat
+  alessandraChatAudio2: '/alessandra-chat-audio2.mp3', // Novo áudio para o chat
 };
