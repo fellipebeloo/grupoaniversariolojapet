@@ -102,9 +102,9 @@ export const WhatsAppAudioPlayer = ({
 
   return (
     <div className={cn(
-      "flex min-w-[240px] max-w-[80%] rounded-md p-1 shadow-sm user-select-none font-sans", // Alterado max-w-full para max-w-[80%]
+      "flex min-w-[240px] max-w-[80%] rounded-md p-1 shadow-sm user-select-none font-sans",
       playerBgColor,
-      isMine ? 'flex-row-reverse ml-auto' : 'flex-row'
+      isMine ? 'flex-row ml-auto' : 'flex-row' // Avatar sempre à esquerda dos controles, bolha alinha à direita se isMine
     )}>
       <div className="flex-1 flex items-center">
         <button
@@ -160,8 +160,7 @@ export const WhatsAppAudioPlayer = ({
       </div>
 
       <div className={cn(
-        "relative w-14 h-14",
-        isMine ? 'ml-0' : 'ml-4'
+        "relative w-14 h-14 ml-4" // Avatar sempre com ml-4
       )}>
         <img
           src={senderAvatar}
@@ -171,10 +170,8 @@ export const WhatsAppAudioPlayer = ({
         <Mic
           size={26}
           className={cn(
-            "absolute bottom-0",
+            "absolute bottom-0 right-0 translate-x-1/2", // Mic sempre no canto inferior direito do avatar
             featuredColor,
-            isMine ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2',
-            // Removidas as classes de sombra redundantes, confiando na prop style
           )}
           style={{ textShadow: `-1px -1px 0 ${isMine ? '#056162' : '#262d31'}, 1px -1px 0 ${isMine ? '#056162' : '#262d31'}, -1px 1px 0 ${isMine ? '#056162' : '#262d31'}, 1px 1px 0 ${isMine ? '#056162' : '#262d31'}` }}
         />
