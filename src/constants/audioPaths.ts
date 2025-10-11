@@ -1,6 +1,6 @@
 export const AlessandraAudios = {
   introConsciencia: '/intro-consciencia.mp3',
-  consciencia: '/consciencia.mp3', // Adicionado o áudio geral de consciência
+  // consciencia: '/consciencia.mp3', // Removido o áudio geral de consciência
   consciencia1: '/consciencia1.mp3',
   consciencia2: '/consciencia2.mp3',
   consciencia3: '/consciencia3.mp3',

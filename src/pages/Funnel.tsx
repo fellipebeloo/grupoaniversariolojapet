@@ -204,7 +204,7 @@ const FunnelPage = () => {
         case 6:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <AudioMessage audioSrc={AlessandraAudios.consciencia} />, undefined, 'custom-component');
+            addMessage('bot', <AudioMessage audioSrc={AlessandraAudios.consciencia1} />, undefined, 'custom-component'); {/* Alterado para consciencia1 */}
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
