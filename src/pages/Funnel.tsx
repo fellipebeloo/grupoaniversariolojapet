@@ -160,12 +160,15 @@ const FunnelPage = () => {
     const runConversation = () => {
       switch (step) {
         case 0:
-          setTypingIndicator('text');
-          setTimeout(() => {
-            setTypingIndicator(null);
-            addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
-            setShowInput(true);
-          }, 1000);
+          // Only run this if there are no messages yet to prevent repetition
+          if (messages.length === 0) {
+            setTypingIndicator('text');
+            setTimeout(() => {
+              setTypingIndicator(null);
+              addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
+              setShowInput(true);
+            }, 1000);
+          }
           break;
         case 1:
           addMessage('bot', `Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
@@ -202,7 +205,7 @@ const FunnelPage = () => {
       }
     };
     runConversation();
-  }, [step, userData.name]);
+  }, [step]);
 
   return (
     <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
