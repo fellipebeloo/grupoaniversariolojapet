@@ -7,7 +7,7 @@ interface MensagemBalaoProps {
   texto: React.ReactNode;
   horario: string;
   remetente: string;
-  tipo: 'texto' | 'imagem' | 'audio' | 'custom-component'; // Tipo 'audio' adicionado
+  tipo: 'texto' | 'imagem' | 'audio' | 'custom-component';
   conteudo?: string;
   reacoes?: Array<{
     emoji: string;
@@ -21,7 +21,7 @@ export function MensagemBalao({
   texto,
   horario,
   remetente,
-  tipo, // Adicionado tipo às props
+  tipo,
   options,
   onOptionClick
 }: MensagemBalaoProps) {
@@ -61,8 +61,8 @@ export function MensagemBalao({
     };
   }, [isUser, texto]);
 
-  // Se o tipo for 'audio', renderiza o WhatsAppAudioPlayer diretamente
-  if (tipo === 'audio') {
+  // Se o tipo for 'audio' ou 'custom-component', renderiza o conteúdo diretamente com o avatar
+  if (tipo === 'audio' || tipo === 'custom-component') {
     return (
       <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
         {!isUser && (
@@ -72,12 +72,12 @@ export function MensagemBalao({
             className="w-8 h-8 rounded-full object-cover"
           />
         )}
-        {texto} {/* Renderiza o WhatsAppAudioPlayer diretamente */}
+        {texto} {/* Renderiza o WhatsAppAudioPlayer ou o componente customizado diretamente */}
       </div>
     );
   }
 
-  // Para outros tipos de mensagem (texto, imagem, custom-component), renderiza a bolha padrão
+  // Para outros tipos de mensagem (texto, imagem), renderiza a bolha padrão
   return (
     <div className="relative">
       <div

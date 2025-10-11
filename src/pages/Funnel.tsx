@@ -377,13 +377,9 @@ const FunnelPage = () => {
             <div 
               className="overflow-y-auto overscroll-y-contain p-4 space-y-4 h-full"
             >
-              {messages.map(msg => {
-                // Renderiza o componente diretamente se for 'audio' ou 'custom-component'
-                if (msg.tipo === 'audio' || msg.tipo === 'custom-component') {
-                  return <React.Fragment key={msg.id}>{msg.texto}</React.Fragment>;
-                }
-                return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;
-              })}
+              {messages.map(msg => (
+                <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
+              ))}
               {typingIndicator && (
                 <div className="flex items-end gap-2 justify-start">
                   <img
