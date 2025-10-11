@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import Hammer from 'hammerjs';
+import Hammer = require('hammerjs');
 import { CheckCheck, CornerUpLeft } from 'lucide-react';
 
 interface MensagemBalaoProps {
@@ -125,7 +125,7 @@ export function MensagemBalao({
                   </button>
                 ))}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
