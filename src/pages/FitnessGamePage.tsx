@@ -14,9 +14,7 @@ const questions = [
     ],
     feedback: "Pular café ou comer errado já manda seu corpo pro modo ‘sobrevivência’… e a barriga trava.",
     audio: '/consciencia1.mp3',
-    correctAudio: '/correct1.mp3', // Placeholder para áudio de resposta correta
-    introAudioYawmm: '/yawmm.mp3', // Novo áudio de introdução
-    introAudioConscienciaStart: '/consciencia-start.mp3' // Novo áudio de introdução
+    correctAudio: '/correct1.mp3' // Placeholder para áudio de resposta correta
   },
   {
     question: "PERGUNTA 2: E O EXERCÍCIO HOJE?\nQual treino você fez?",
@@ -74,71 +72,31 @@ const FitnessGamePage = () => {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showAlarm, setShowAlarm] = useState(true);
-  const [introAudiosPlayedForQ1, setIntroAudiosPlayedForQ1] = useState(false);
-  const [optionsDisabled, setOptionsDisabled] = useState(false); // Novo estado para desabilitar opções
 
   const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
-  const currentVoiceAudioRef = useRef<HTMLAudioElement | null>(null);
-  const yawmmAudioRef = useRef<HTMLAudioElement | null>(null);
-  const conscienciaStartAudioRef = useRef<HTMLAudioElement | null>(null);
+  const currentVoiceAudioRef = useRef<HTMLAudioElement | null>(null); // Ref para o áudio da voz da consciência
 
   useEffect(() => {
     alarmAudioRef.current = new Audio('/alarm.mp3');
     alarmAudioRef.current.loop = true;
 
-    // Inicializa os áudios de introdução para a primeira pergunta
-    if (questions[0].introAudioYawmm) {
-      yawmmAudioRef.current = new Audio(questions[0].introAudioYawmm);
-    }
-    if (questions[0].introAudioConscienciaStart) {
-      conscienciaStartAudioRef.current = new Audio(questions[0].introAudioConscienciaStart);
-    }
-
     return () => {
       alarmAudioRef.current?.pause();
-      if (alarmAudioRef.current) alarmAudioRef.current.currentTime = 0;
       if (currentVoiceAudioRef.current) {
         currentVoiceAudioRef.current.pause();
         currentVoiceAudioRef.current = null;
       }
-      yawmmAudioRef.current?.pause();
-      if (yawmmAudioRef.current) yawmmAudioRef.current.currentTime = 0;
-      conscienciaStartAudioRef.current?.pause();
-      if (conscienciaStartAudioRef.current) conscienciaStartAudioRef.current.currentTime = 0;
     };
   }, []);
 
   useEffect(() => {
-    if (gameState === 'playing' && currentQuestionIndex === 0) {
-      if (showAlarm) {
-        if ('vibrate' in navigator) {
-          navigator.vibrate([200, 100, 200]);
-        }
-        alarmAudioRef.current?.play().catch(error => console.log("Alarm audio blocked by browser"));
-      } else if (!introAudiosPlayedForQ1) { // Se o alarme foi dispensado e os áudios de intro não tocaram
-        setOptionsDisabled(true); // Desabilita as opções
-        const playIntroSequence = async () => {
-          if (yawmmAudioRef.current) {
-            await yawmmAudioRef.current.play().catch(error => console.log("Yawmm audio blocked:", error));
-            await new Promise(resolve => {
-              if (yawmmAudioRef.current) yawmmAudioRef.current.onended = resolve;
-              else resolve(null);
-            });
-          }
-          if (conscienciaStartAudioRef.current) {
-            await conscienciaStartAudioRef.current.play().catch(error => console.log("Consciencia start audio blocked:", error));
-            await new Promise(resolve => {
-              if (conscienciaStartAudioRef.current) conscienciaStartAudioRef.current.onended = resolve;
-              else resolve(null);
-            });
-          }
-          setIntroAudiosPlayedForQ1(true);
-          setOptionsDisabled(false); // Habilita as opções após os áudios
-        };
-        playIntroSequence();
+    if (gameState === 'playing' && currentQuestionIndex === 0 && showAlarm) {
+      if ('vibrate' in navigator) {
+        navigator.vibrate([200, 100, 200]);
       }
+      alarmAudioRef.current?.play().catch(error => console.log("Alarm audio blocked by browser"));
     }
-  }, [gameState, currentQuestionIndex, showAlarm, introAudiosPlayedForQ1]);
+  }, [gameState, currentQuestionIndex, showAlarm]);
 
   const handleDismissAlarm = () => {
     setShowAlarm(false);
@@ -146,19 +104,17 @@ const FitnessGamePage = () => {
     if (alarmAudioRef.current) {
       alarmAudioRef.current.currentTime = 0;
     }
-    // O useEffect acima agora cuidará da reprodução dos áudios de introdução
   };
 
   const handleStart = () => {
     setGameState('playing');
-    setIntroAudiosPlayedForQ1(false); // Reseta para permitir que os áudios de intro toquem novamente se o jogo for reiniciado
-    setShowAlarm(true); // Reseta a visibilidade do alarme
   };
 
   const handleOptionClick = (index: number) => {
     setSelectedOption(index);
     setFeedback(questions[currentQuestionIndex].feedback);
 
+    // Parar qualquer áudio de voz anterior
     if (currentVoiceAudioRef.current) {
       currentVoiceAudioRef.current.pause();
       currentVoiceAudioRef.current.currentTime = 0;
@@ -230,12 +186,12 @@ const FitnessGamePage = () => {
                 <button
                   key={index}
                   onClick={() => handleOptionClick(index)}
-                  disabled={feedback !== null || (currentQuestionIndex === 0 && optionsDisabled)} {/* Desabilita opções na Q1 enquanto intro audios tocam */}
+                  disabled={feedback !== null}
                   className={`w-full text-left p-4 rounded-lg border-2 transition-all
                     ${selectedOption === index 
                       ? (option.correct ? 'bg-green-500/30 border-green-400' : 'bg-red-500/30 border-red-400') 
                       : 'bg-purple-800/50 border-purple-600 hover:bg-purple-700/50'}
-                    ${feedback !== null || (currentQuestionIndex === 0 && optionsDisabled) ? 'cursor-not-allowed' : ''}`}
+                    ${feedback !== null ? 'cursor-not-allowed' : ''}`}
                 >
                   {option.text}
                 </button>
