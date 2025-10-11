@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import Hammer from 'hammerjs';
 import { Mic } from 'lucide-react';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
@@ -64,9 +63,6 @@ const FunnelPage = () => {
   const [typingIndicator, setTypingIndicator] = useState<'text' | 'audio' | null>(null);
   const [showInput, setShowInput] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [pullTranslateY, setPullTranslateY] = useState(0);
-  const [isPanning, setIsPanning] = useState(false);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
 
   useEffect(() => {
@@ -101,58 +97,6 @@ const FunnelPage = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingIndicator]);
-
-  useEffect(() => {
-    const element = scrollContainerRef.current;
-    if (!element) return;
-
-    const mc = new Hammer(element);
-    mc.get('pan').set({ direction: Hammer.DIRECTION_VERTICAL, threshold: 5 });
-
-    let panBoundary = false;
-
-    mc.on('panstart', (ev) => {
-      const isAtTop = element.scrollTop < 5;
-      const isAtBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 5;
-
-      if ((isAtTop && ev.direction === Hammer.DIRECTION_DOWN) || (isAtBottom && ev.direction === Hammer.DIRECTION_UP)) {
-        panBoundary = true;
-        setIsPanning(true);
-      } else {
-        panBoundary = false;
-      }
-    });
-
-    mc.on('pan', (ev) => {
-      if (!panBoundary) return;
-      
-      ev.srcEvent.preventDefault();
-
-      const isAtTop = element.scrollTop < 5;
-      const isAtBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 5;
-      
-      let translation = 0;
-      if (isAtTop && ev.deltaY > 0) {
-        translation = Math.pow(ev.deltaY, 0.8);
-      } else if (isAtBottom && ev.deltaY < 0) {
-        translation = -Math.pow(Math.abs(ev.deltaY), 0.8);
-      }
-      
-      setPullTranslateY(translation);
-    });
-
-    mc.on('panend pancancel', () => {
-      if (panBoundary) {
-        panBoundary = false;
-        setIsPanning(false);
-        setPullTranslateY(0);
-      }
-    });
-
-    return () => {
-      mc.destroy();
-    };
-  }, [activeView]);
 
   const addMessage = (
     sender: 'bot' | 'user',
@@ -415,14 +359,9 @@ const FunnelPage = () => {
         <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
           <ChatHeader />
           
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden h-full">
             <div 
-              ref={scrollContainerRef} 
-              className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform h-full"
-              style={{
-                transform: `translateY(${pullTranslateY}px)`,
-                transition: isPanning ? 'none' : 'transform 0.3s ease-out',
-              }}
+              className="overflow-y-auto overscroll-y-contain p-4 space-y-4 h-full"
             >
               {messages.map(msg => {
                 if (msg.tipo === 'custom-component') {
