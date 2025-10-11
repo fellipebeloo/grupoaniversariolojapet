@@ -138,10 +138,10 @@ const FunnelPage = () => {
   }, [step, userData.name]);
 
   return (
-    <div className="h-dvh flex flex-col bg-[#0f1418] w-full">
+    <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
       <ChatHeader />
       
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-scroll overscroll-y-contain p-4 space-y-4">
+      <div ref={scrollContainerRef} className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform">
         {messages.map(msg => (
           <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
         ))}
@@ -160,7 +160,7 @@ const FunnelPage = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 bg-[#202c33] border-t border-gray-700 flex-shrink-0">
+      <div className="p-4 bg-[#202c33] border-t border-gray-700">
         {showInput && (
           <ChatInput
             onSubmit={handleSubmit}
