@@ -55,8 +55,7 @@ const FunnelPage = () => {
     if (stepFromParam) {
       return parseInt(stepFromParam, 10);
     }
-    const savedStep = localStorage.getItem('funnelStep');
-    return savedStep ? parseInt(savedStep, 10) : 0;
+    return 0;
   });
 
   const [inputValue, setInputValue] = useState('');
@@ -68,10 +67,6 @@ const FunnelPage = () => {
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
   }, [userData]);
-
-  useEffect(() => {
-    localStorage.setItem('funnelStep', step.toString());
-  }, [step]);
 
   useEffect(() => {
     const stepFromParam = searchParams.get('step');
