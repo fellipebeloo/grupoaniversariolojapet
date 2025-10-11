@@ -14,7 +14,7 @@ const questions = [
     ],
     feedback: "Pular café ou comer errado já manda seu corpo pro modo ‘sobrevivência’… e a barriga trava.",
     audio: '/consciencia1.mp3',
-    correctAudio: '/correct1.mp3' // Placeholder para áudio de resposta correta
+    correctAudio: '/correct1.mp3'
   },
   {
     question: "PERGUNTA 2: E O EXERCÍCIO HOJE?\nQual treino você fez?",
@@ -25,7 +25,7 @@ const questions = [
     ],
     feedback: "Não é o tempo. É o tipo de estímulo. Treino errado = corpo travado.",
     audio: '/consciencia2.mp3',
-    correctAudio: '/correct2.mp3' // Placeholder para áudio de resposta correta
+    correctAudio: '/correct2.mp3'
   },
   {
     question: "PERGUNTA 3: NO TRABALHO OU CASA…\nComo foi sua energia durante o dia?",
@@ -36,7 +36,7 @@ const questions = [
     ],
     feedback: "Corpo travado drena sua energia. Quando você destrava, até sua disposição muda.",
     audio: '/consciencia3.mp3',
-    correctAudio: '/correct3.mp3' // Placeholder para áudio de resposta correta
+    correctAudio: '/correct3.mp3'
   },
   {
     question: "PERGUNTA 4: FINAL DO DIA…\nO que rolou no fim da noite?",
@@ -47,7 +47,7 @@ const questions = [
     ],
     feedback: "O final do dia define se você vai secar ou estocar gordura. Cuidado.",
     audio: '/consciencia4.mp3',
-    correctAudio: '/correct4.mp3' // Placeholder para áudio de resposta correta
+    correctAudio: '/correct4.mp3'
   },
   {
     question: "PERGUNTA 5: E SUA AUTOIMAGEM HOJE?\nQuando se olhou no espelho…",
@@ -58,7 +58,7 @@ const questions = [
     ],
     feedback: "Sua mente e corpo andam juntos. Se você não vê progresso, perde força. Bora virar esse jogo.",
     audio: '/consciencia5.mp3',
-    correctAudio: '/correct5.mp3' // Placeholder para áudio de resposta correta
+    correctAudio: '/correct5.mp3'
   }
 ];
 
@@ -74,7 +74,7 @@ const FitnessGamePage = () => {
   const [showAlarm, setShowAlarm] = useState(true);
 
   const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
-  const currentVoiceAudioRef = useRef<HTMLAudioElement | null>(null); // Ref para o áudio da voz da consciência
+  const currentVoiceAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     alarmAudioRef.current = new Audio('/alarm.mp3');
@@ -98,43 +98,11 @@ const FitnessGamePage = () => {
     }
   }, [gameState, currentQuestionIndex, showAlarm]);
 
-  // New useEffect to play question audio when question changes
-  useEffect(() => {
-    // Play audio for questions after the first one, or if alarm is already dismissed for the first one
-    // The first question's audio is handled by handleDismissAlarm
-    if (gameState === 'playing' && currentQuestionIndex < questions.length) {
-      // Stop any previously playing voice audio (e.g., from previous question or feedback)
-      if (currentVoiceAudioRef.current) {
-        currentVoiceAudioRef.current.pause();
-        currentVoiceAudioRef.current.currentTime = 0;
-      }
-
-      // Play the "voice of conscience" audio for the current question,
-      // but only if it's not the first question or if the alarm has been dismissed.
-      if (currentQuestionIndex > 0 || !showAlarm) {
-        const questionAudioPath = questions[currentQuestionIndex].audio;
-        if (questionAudioPath) {
-          currentVoiceAudioRef.current = new Audio(questionAudioPath);
-          currentVoiceAudioRef.current.play().catch(error => console.log("Question audio blocked by browser:", error));
-        }
-      }
-    }
-  }, [currentQuestionIndex, gameState, showAlarm]);
-
-
   const handleDismissAlarm = () => {
     setShowAlarm(false);
     alarmAudioRef.current?.pause();
     if (alarmAudioRef.current) {
       alarmAudioRef.current.currentTime = 0;
-    }
-    // After dismissing the alarm, play the first question's audio
-    if (gameState === 'playing' && currentQuestionIndex === 0) {
-      const questionAudioPath = questions[0].audio;
-      if (questionAudioPath) {
-        currentVoiceAudioRef.current = new Audio(questionAudioPath);
-        currentVoiceAudioRef.current.play().catch(error => console.log("Initial question audio blocked by browser:", error));
-      }
     }
   };
 
@@ -146,7 +114,6 @@ const FitnessGamePage = () => {
     setSelectedOption(index);
     setFeedback(questions[currentQuestionIndex].feedback);
 
-    // Parar qualquer áudio de voz anterior (seja o da pergunta ou de feedback anterior)
     if (currentVoiceAudioRef.current) {
       currentVoiceAudioRef.current.pause();
       currentVoiceAudioRef.current.currentTime = 0;
