@@ -8,10 +8,10 @@ export const AlarmNotification = ({ onDismiss }: AlarmNotificationProps) => {
   return (
     <div className="bg-black rounded-full p-2 flex items-center justify-between w-full animate-fade-in-down shadow-lg">
       <div className="flex items-center gap-3">
-        <AlarmClock size={24} className="text-orange-400 ml-2 animate-shake" />
+        <AlarmClock size={32} className="text-orange-400 ml-2 animate-shake" />
         <div className="text-orange-400">
           <span className="font-semibold">Alarme</span>
-          <span className="ml-3 text-sm">7:45 AM</span>
+          <span className="ml-3 text-sm">7:00 AM</span>
         </div>
       </div>
       <div className="flex items-center gap-2 mr-1">
