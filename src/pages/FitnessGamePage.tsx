@@ -92,9 +92,6 @@ const FitnessGamePage = () => {
     if (alarmAudioRef.current) {
       alarmAudioRef.current.currentTime = 0;
     }
-    setTimeout(() => {
-      voiceAudioRef.current?.play().catch(error => console.log("Voice audio blocked by browser"));
-    }, 500);
   };
 
   const handleStart = () => {
@@ -104,6 +101,8 @@ const FitnessGamePage = () => {
   const handleOptionClick = (index: number) => {
     setSelectedOption(index);
     setFeedback(questions[currentQuestionIndex].feedback);
+
+    voiceAudioRef.current?.play().catch(error => console.log("Voice audio blocked by browser"));
 
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
