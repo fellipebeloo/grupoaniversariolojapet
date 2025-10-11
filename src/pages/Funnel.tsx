@@ -219,7 +219,7 @@ const FunnelPage = () => {
             setTypingIndicator('text');
             await new Promise(res => setTimeout(res, 1500));
             setTypingIndicator(null);
-            addMessage('bot', `${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
+            addMessage('bot', <>{userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...</>);
 
             await new Promise(res => setTimeout(res, 1200));
             setTypingIndicator('text');
@@ -361,20 +361,6 @@ const FunnelPage = () => {
             >
               {messages.map(msg => {
                 if (msg.tipo === 'custom-component') {
-                  // Renderiza o avatar para mensagens do bot que são custom-components
-                  if (msg.remetente === 'Alessandra' && React.isValidElement(msg.texto) && msg.texto.type === WhatsAppAudioPlayer) {
-                    return (
-                      <div key={msg.id} className="flex items-end gap-2 justify-start">
-                        <img
-                          src="/alessandra.jpg"
-                          alt="Alessandra"
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                        {msg.texto}
-                      </div>
-                    );
-                  }
-                  // Para outros custom-components, renderiza diretamente (eles já devem ter seu próprio layout)
                   return <React.Fragment key={msg.id}>{msg.texto}</React.Fragment>;
                 }
                 return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;
