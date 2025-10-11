@@ -89,7 +89,13 @@ const FitnessGamePage = () => {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="min-h-screen bg-[#0f1418] text-white flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0f1418] text-white flex flex-col items-center justify-center p-4 relative">
+      {gameState === 'playing' && currentQuestionIndex === 0 && showAlarm && (
+        <div className="absolute top-8 left-0 right-0 px-4">
+          <AlarmNotification onDismiss={() => setShowAlarm(false)} />
+        </div>
+      )}
+
       <div className="w-full max-w-md mx-auto bg-[#202c33] rounded-lg shadow-lg p-6">
         <div className="text-center font-bold text-2xl mb-2 text-green-400 flex items-center justify-center gap-2">
           <Gamepad2 size={28} />
@@ -108,9 +114,6 @@ const FitnessGamePage = () => {
 
         {gameState === 'playing' && (
           <div>
-            {currentQuestionIndex === 0 && showAlarm && (
-              <AlarmNotification onDismiss={() => setShowAlarm(false)} />
-            )}
             <p className="text-center font-semibold whitespace-pre-wrap mb-4 text-lg">{currentQuestion.question}</p>
             <div className="space-y-3">
               {currentQuestion.options.map((option, index) => (

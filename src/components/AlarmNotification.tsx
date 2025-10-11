@@ -6,7 +6,7 @@ interface AlarmNotificationProps {
 
 export const AlarmNotification = ({ onDismiss }: AlarmNotificationProps) => {
   return (
-    <div className="bg-black rounded-full p-2 flex items-center justify-between w-full max-w-sm mx-auto mb-6 animate-fade-in-down">
+    <div className="bg-black rounded-full p-2 flex items-center justify-between w-full max-w-sm mx-auto animate-fade-in-down">
       <div className="flex items-center gap-3">
         <AlarmClock size={24} className="text-orange-400 ml-2" />
         <div className="text-orange-400">
