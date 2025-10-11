@@ -182,7 +182,16 @@ const FunnelPage = () => {
         case 2:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio1} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
+            addMessage('bot',
+              <WhatsAppAudioPlayer
+                audioSrc={AlessandraAudios.alessandraChatAudio1}
+                messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                transcription={AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name)}
+                senderName="Alessandra"
+              />,
+              undefined,
+              'audio' // Usando o novo tipo 'audio'
+            );
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
@@ -204,7 +213,16 @@ const FunnelPage = () => {
         case 6:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio2} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
+            addMessage('bot',
+              <WhatsAppAudioPlayer
+                audioSrc={AlessandraAudios.alessandraChatAudio2}
+                messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                transcription={AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name)}
+                senderName="Alessandra"
+              />,
+              undefined,
+              'audio' // Usando o novo tipo 'audio'
+            );
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
@@ -219,7 +237,7 @@ const FunnelPage = () => {
             setTypingIndicator('text');
             await new Promise(res => setTimeout(res, 1500));
             setTypingIndicator(null);
-            addMessage('bot', <>{userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...</>);
+            addMessage('bot', `${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
 
             await new Promise(res => setTimeout(res, 1200));
             setTypingIndicator('text');
@@ -360,7 +378,8 @@ const FunnelPage = () => {
               className="overflow-y-auto overscroll-y-contain p-4 space-y-4 h-full"
             >
               {messages.map(msg => {
-                if (msg.tipo === 'custom-component') {
+                // Renderiza o componente diretamente se for 'audio' ou 'custom-component'
+                if (msg.tipo === 'audio' || msg.tipo === 'custom-component') {
                   return <React.Fragment key={msg.id}>{msg.texto}</React.Fragment>;
                 }
                 return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;

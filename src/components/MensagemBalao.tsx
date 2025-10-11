@@ -7,7 +7,7 @@ interface MensagemBalaoProps {
   texto: React.ReactNode;
   horario: string;
   remetente: string;
-  tipo: 'texto' | 'imagem' | 'audio';
+  tipo: 'texto' | 'imagem' | 'audio' | 'custom-component'; // Tipo 'audio' adicionado
   conteudo?: string;
   reacoes?: Array<{
     emoji: string;
@@ -21,6 +21,7 @@ export function MensagemBalao({
   texto,
   horario,
   remetente,
+  tipo, // Adicionado tipo às props
   options,
   onOptionClick
 }: MensagemBalaoProps) {
@@ -60,6 +61,23 @@ export function MensagemBalao({
     };
   }, [isUser, texto]);
 
+  // Se o tipo for 'audio', renderiza o WhatsAppAudioPlayer diretamente
+  if (tipo === 'audio') {
+    return (
+      <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
+        {!isUser && (
+          <img
+            src="/alessandra.jpg"
+            alt={remetente}
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        )}
+        {texto} {/* Renderiza o WhatsAppAudioPlayer diretamente */}
+      </div>
+    );
+  }
+
+  // Para outros tipos de mensagem (texto, imagem, custom-component), renderiza a bolha padrão
   return (
     <div className="relative">
       <div
@@ -85,10 +103,10 @@ export function MensagemBalao({
             />
           )}
 
-          <div 
+          <div
             className={`max-w-[70%] rounded-xl shadow-sm flex flex-col ${
-              isUser 
-                ? 'bg-[#005c4b] text-white' 
+              isUser
+                ? 'bg-[#005c4b] text-white'
                 : 'bg-[#202c33] text-gray-100'
             }`}
           >
@@ -96,10 +114,10 @@ export function MensagemBalao({
               {!isUser && (
                 <p className="text-sm font-semibold text-green-400 mb-1">{remetente}</p>
               )}
-              
+
               <div className="flex flex-wrap items-baseline">
                 <div className="text-sm mr-2">{texto}</div>
-                
+
                 <div className="flex-shrink-0 ml-auto pl-2 self-end">
                   <span className="flex items-center whitespace-rap">
                     <p className={`text-xs ${isUser ? 'text-gray-300/80' : 'text-gray-400'}`}>
