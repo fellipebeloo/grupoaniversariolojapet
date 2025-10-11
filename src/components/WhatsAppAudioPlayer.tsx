@@ -25,13 +25,6 @@ export const WhatsAppAudioPlayer = ({
   const [duration, setDuration] = useState(0);
   const [percentPlayed, setPercentPlayed] = useState(0);
 
-  // Define colors based on the WhatsApp audio player style
-  const playerBgColor = isMine ? 'bg-[#056162]' : 'bg-[#262d31]';
-  const progressDotColor = 'text-blue-400'; // Blue for the progress dot and mic icon
-  const playPauseIconColor = 'text-gray-400'; // Gray for play/pause icons
-  const waveformBarColor = 'bg-gray-500'; // Gray for the waveform bars
-  const messageTimeColor = 'text-gray-400'; // Gray for the message time
-
   const formatTimeToDisplay = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -103,8 +96,9 @@ export const WhatsAppAudioPlayer = ({
     };
   }, [audioSrc]);
 
-  // Generate a static waveform pattern for visual representation
-  const waveformHeights = Array.from({ length: 40 }).map(() => Math.random() * (18 - 6) + 6); // Heights between 6px and 18px
+  const playerBgColor = isMine ? 'bg-[#056162]' : 'bg-[#262d31]';
+  const featuredColor = 'text-[#00e5c0]'; // Using text color for icons/progress
+  const textColor = 'text-[#c5c6c8]';
 
   return (
     <div className={cn(
@@ -124,30 +118,20 @@ export const WhatsAppAudioPlayer = ({
           )}
         >
           {isLoading ? (
-            <Loader2 size={38} className={cn("animate-spin", playPauseIconColor)} />
+            <Loader2 size={38} className={cn("animate-spin", textColor)} />
           ) : isPlaying ? (
-            <Pause size={38} className={cn(playPauseIconColor, 'opacity-80')} />
+            <Pause size={38} className={cn(textColor, 'opacity-80')} />
           ) : (
-            <Play size={38} className={cn(playPauseIconColor, 'opacity-80')} />
+            <Play size={38} className={cn(textColor, 'opacity-80')} />
           )}
         </button>
 
         <div className="flex-1 flex flex-col relative pb-0.5">
-          <div className="flex-1 flex items-center relative h-8"> {/* Increased height for waveform */}
-            {/* Waveform bars */}
-            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 pointer-events-none">
-              {waveformHeights.map((height, i) => (
-                <div
-                  key={i}
-                  className="w-0.5 rounded-full"
-                  style={{
-                    height: `${height}px`,
-                    backgroundColor: i / waveformHeights.length * 100 < percentPlayed ? 'rgb(156 163 175)' : 'rgba(156, 163, 175, 0.4)', // gray-400 for played, gray-400/40 for unplayed
-                    transform: `translateY(${height / 2}px)` // Center the bars vertically
-                  }}
-                ></div>
-              ))}
-            </div>
+          <div className="flex-1 flex items-center relative">
+            <div
+              className="absolute bg-[#00e5c0] h-[0.24rem] rounded-full"
+              style={{ width: `${percentPlayed}%` }}
+            ></div>
             <input
               ref={sliderRef}
               dir="ltr"
@@ -157,20 +141,19 @@ export const WhatsAppAudioPlayer = ({
               value={percentPlayed}
               onChange={handleSliderChange}
               className={cn(
-                "flex-1 appearance-none bg-transparent border-0 outline-none w-full relative z-10", // z-10 to be above waveform
-                "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:-mt-[0.2rem]",
-                "[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-blue-400 [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:-mt-[0.2rem]",
-                // Make the track transparent as the waveform will be the visual track
-                "[&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-[0.24rem] [&::-webkit-slider-runnable-track]:rounded-full",
-                "[&::-moz-range-track]:bg-transparent [&::-moz-range-track]:h-[0.24rem] [&::-moz-range-track]:rounded-full"
+                "flex-1 appearance-none bg-transparent border-0 outline-none w-full relative",
+                "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-[#00e5c0] [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:-mt-[0.2rem]",
+                "[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[#00e5c0] [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:-mt-[0.2rem]",
+                "[&::-webkit-slider-runnable-track]:bg-white/20 [&::-webkit-slider-runnable-track]:h-[0.24rem] [&::-webkit-slider-runnable-track]:rounded-full",
+                "[&::-moz-range-track]:bg-white/20 [&::-moz-range-track]:h-[0.24rem] [&::-moz-range-track]:rounded-full"
               )}
             />
           </div>
-          <div className={cn("flex items-center justify-between text-xs", messageTimeColor)}>
+          <div className={cn("flex items-center justify-between text-xs", textColor)}>
             <div className="current-time">{formatTimeToDisplay(currentTime)}</div>
             <div className="flex items-center">
               <div className="time">{formatTimeToDisplay(duration)}</div>
-              {isMine && <CheckCheck size={16} className={cn("ml-1", progressDotColor)} />} {/* Checkmark should also be blue */}
+              {isMine && <CheckCheck size={16} className={cn("ml-1", featuredColor)} />}
             </div>
           </div>
         </div>
@@ -189,7 +172,7 @@ export const WhatsAppAudioPlayer = ({
           size={26}
           className={cn(
             "absolute bottom-0",
-            progressDotColor, // Mic icon is blue
+            featuredColor,
             isMine ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2',
             "drop-shadow-[0_0_0_#262d31] shadow-[#262d31] text-shadow-sm" // Simulate text-shadow for background color
           )}
