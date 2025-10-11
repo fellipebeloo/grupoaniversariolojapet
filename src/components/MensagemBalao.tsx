@@ -1,13 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Hammer from 'hammerjs';
-import { CheckCheck, CornerUpLeft } from 'lucide-react';
+import { CheckCheck, CornerUpLeft, Mic } from 'lucide-react'; // Adicionado Mic
 
 interface MensagemBalaoProps {
   id: string;
   texto: React.ReactNode;
   horario: string;
   remetente: string;
-  tipo: 'texto' | 'imagem' | 'audio';
+  tipo: 'texto' | 'imagem' | 'audio' | 'custom-component';
   conteudo?: string;
   reacoes?: Array<{
     emoji: string;
@@ -22,6 +22,7 @@ export function MensagemBalao({
   horario,
   remetente,
   options,
+  tipo,
   onOptionClick
 }: MensagemBalaoProps) {
   const isUser = remetente === 'user';
@@ -60,6 +61,37 @@ export function MensagemBalao({
     };
   }, [isUser, texto]);
 
+  const renderMessageContent = () => {
+    if (tipo === 'audio' || tipo === 'custom-component') {
+      // Para áudio e componentes personalizados, renderize-os diretamente.
+      // Eles são esperados para lidar com seu próprio preenchimento/fundo.
+      return texto;
+    }
+    // Para mensagens de texto, envolva na estrutura padrão da bolha de texto
+    return (
+      <div className="p-2 px-3"> {/* Este padding é para mensagens de texto */}
+        {!isUser && (
+          <p className="text-sm font-semibold text-green-400 mb-1">{remetente}</p>
+        )}
+        
+        <div className="flex flex-wrap items-baseline">
+          <div className="text-sm mr-2">{texto}</div>
+          
+          <div className="flex-shrink-0 ml-auto pl-2 self-end">
+            <span className="flex items-center whitespace-nowrap">
+              <p className={`text-xs ${isUser ? 'text-gray-300/80' : 'text-gray-400'}`}>
+                {horario}
+              </p>
+              {isUser && (
+                <CheckCheck size={16} className="ml-1 text-blue-400" />
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="relative">
       <div
@@ -85,33 +117,18 @@ export function MensagemBalao({
             />
           )}
 
+          {/* O container da bolha de mensagem */}
           <div 
             className={`max-w-[70%] rounded-xl shadow-sm flex flex-col ${
               isUser 
                 ? 'bg-[#005c4b] text-white' 
                 : 'bg-[#202c33] text-gray-100'
+            } ${
+              (tipo === 'audio' || tipo === 'custom-component') ? 'p-0' : '' // Remove padding para componentes personalizados
             }`}
           >
-            <div className="p-2 px-3">
-              {!isUser && (
-                <p className="text-sm font-semibold text-green-400 mb-1">{remetente}</p>
-              )}
-              
-              <div className="flex flex-wrap items-baseline">
-                <div className="text-sm mr-2">{texto}</div>
-                
-                <div className="flex-shrink-0 ml-auto pl-2 self-end">
-                  <span className="flex items-center whitespace-rap">
-                    <p className={`text-xs ${isUser ? 'text-gray-300/80' : 'text-gray-400'}`}>
-                      {horario}
-                    </p>
-                    {isUser && (
-                      <CheckCheck size={16} className="ml-1 text-blue-400" />
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Renderiza o conteúdo específico da mensagem */}
+            {renderMessageContent()}
 
             {options && options.length > 0 && onOptionClick && (
               <div className="border-t border-white/10">

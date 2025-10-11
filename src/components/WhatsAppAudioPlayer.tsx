@@ -1,20 +1,18 @@
 "use client";
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Play, Pause, Loader2, CheckCheck, Mic } from 'lucide-react';
+import { Play, Pause, Loader2, CheckCheck } from 'lucide-react'; // Mic icon removed
 import { cn } from '@/lib/utils';
 
 interface WhatsAppAudioPlayerProps {
   audioSrc: string;
   isMine?: boolean; // true for user's message, false for bot's
-  senderAvatar?: string;
   messageTime: string;
 }
 
 export const WhatsAppAudioPlayer = ({
   audioSrc,
   isMine = false,
-  senderAvatar = '/alessandra.jpg', // Default to Alessandra's avatar
   messageTime,
 }: WhatsAppAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -54,10 +52,9 @@ export const WhatsAppAudioPlayer = ({
     const onLoadedData = () => {
       setDuration(audio.duration);
       setIsLoading(false);
-      // Auto-play on load, but catch potential browser restrictions
       audio.play().catch(error => {
         console.log("Audio auto-play blocked:", error);
-        setIsPlaying(false); // Ensure play button shows if auto-play fails
+        setIsPlaying(false);
       });
     };
 
@@ -69,7 +66,7 @@ export const WhatsAppAudioPlayer = ({
     };
     const onEnded = () => {
       setIsPlaying(false);
-      audio.currentTime = 0; // Reset to start
+      audio.currentTime = 0;
       setCurrentTime(0);
       setPercentPlayed(0);
     };
@@ -97,14 +94,14 @@ export const WhatsAppAudioPlayer = ({
   }, [audioSrc]);
 
   const playerBgColor = isMine ? 'bg-[#056162]' : 'bg-[#262d31]';
-  const featuredColor = 'text-[#00e5c0]'; // Using text color for icons/progress
+  const featuredColor = 'text-[#00e5c0]';
   const textColor = 'text-[#c5c6c8]';
 
   return (
     <div className={cn(
       "flex min-w-[240px] max-w-[80%] rounded-md p-1 shadow-sm user-select-none font-sans",
       playerBgColor,
-      isMine ? 'flex-row ml-auto' : 'flex-row ml-2' // Adicionado ml-2 para espaçamento à esquerda quando não é 'isMine'
+      // Classes de alinhamento removidas, MensagemBalao vai lidar com isso
     )}>
       <div className="flex-1 flex items-center">
         <button
@@ -112,8 +109,7 @@ export const WhatsAppAudioPlayer = ({
           onClick={handlePlayButton}
           disabled={isLoading}
           className={cn(
-            "appearance-none cursor-pointer bg-none border-0 p-0",
-            isMine ? 'px-2' : 'pr-2 pl-1',
+            "appearance-none cursor-pointer bg-none border-0 p-0 pl-1 pr-2", // Ajustado o padding do botão
             isLoading ? 'pointer-events-none' : ''
           )}
         >
@@ -157,24 +153,6 @@ export const WhatsAppAudioPlayer = ({
             </div>
           </div>
         </div>
-      </div>
-
-      <div className={cn(
-        "relative w-14 h-14 ml-4" // Avatar sempre com ml-4
-      )}>
-        <img
-          src={senderAvatar}
-          alt="Avatar"
-          className="w-14 h-14 rounded-full object-cover bg-white/5"
-        />
-        <Mic
-          size={26}
-          className={cn(
-            "absolute bottom-0 right-0 translate-x-1/2", // Mic sempre no canto inferior direito do avatar
-            featuredColor,
-          )}
-          style={{ textShadow: `-1px -1px 0 ${isMine ? '#056162' : '#262d31'}, 1px -1px 0 ${isMine ? '#056162' : '#262d31'}, -1px 1px 0 ${isMine ? '#056162' : '#262d31'}, 1px 1px 0 ${isMine ? '#056162' : '#262d31'}` }}
-        />
       </div>
     </div>
   );

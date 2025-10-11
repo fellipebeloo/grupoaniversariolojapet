@@ -5,13 +5,13 @@ import { Mic } from 'lucide-react';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
-import { WhatsAppAudioPlayer } from '@/components/WhatsAppAudioPlayer'; // Importar o novo componente
+import { WhatsAppAudioPlayer } from '@/components/WhatsAppAudioPlayer';
 import { GroupChatView } from '@/components/GroupChatView';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
 import { GameStartMessage } from '@/components/GameStartMessage';
 import { useSearchParams } from 'react-router-dom';
-import { AlessandraAudios } from '@/constants/audioPaths'; // Importar os caminhos dos áudios
+import { AlessandraAudios } from '@/constants/audioPaths';
 
 interface Message {
   id: string;
@@ -182,7 +182,7 @@ const FunnelPage = () => {
         case 2:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio1} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
+            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio1} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} isMine={false} />, undefined, 'audio');
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
@@ -204,7 +204,7 @@ const FunnelPage = () => {
         case 6:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio2} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
+            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio2} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} isMine={false} />, undefined, 'audio');
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
@@ -360,9 +360,7 @@ const FunnelPage = () => {
               className="overflow-y-auto overscroll-y-contain p-4 space-y-4 h-full"
             >
               {messages.map(msg => {
-                if (msg.tipo === 'custom-component') {
-                  return <React.Fragment key={msg.id}>{msg.texto}</React.Fragment>;
-                }
+                // Removido o bloco if para custom-component, MensagemBalao agora lida com todos os tipos
                 return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;
               })}
               {typingIndicator && (
