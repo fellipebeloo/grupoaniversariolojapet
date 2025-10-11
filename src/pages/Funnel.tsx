@@ -135,10 +135,20 @@ const FunnelPage = () => {
 
     setInputValue('');
     setShowInput(false);
-    setTypingIndicator('text');
+
+    const nextStep = step + 1;
+    const audioSteps = [2, 6];
+
+    if (audioSteps.includes(nextStep)) {
+      setTypingIndicator('audio');
+    } else {
+      setTypingIndicator('text');
+    }
 
     setTimeout(() => {
-      setTypingIndicator(null);
+      if (!audioSteps.includes(nextStep)) {
+        setTypingIndicator(null);
+      }
       setStep(prev => prev + 1);
     }, 1500);
   };
@@ -160,7 +170,6 @@ const FunnelPage = () => {
     const runConversation = () => {
       switch (step) {
         case 0:
-          // Only run this if there are no messages yet to prevent repetition
           if (messages.length === 0) {
             setTypingIndicator('text');
             setTimeout(() => {
@@ -175,7 +184,6 @@ const FunnelPage = () => {
           setShowInput(true);
           break;
         case 2:
-          setTypingIndicator('audio');
           setTimeout(() => {
             setTypingIndicator(null);
             addMessage('bot', <AudioMessage />);
@@ -198,7 +206,6 @@ const FunnelPage = () => {
           addMessage('bot', 'E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
           break;
         case 6:
-          setTypingIndicator('audio');
           setTimeout(() => {
             setTypingIndicator(null);
             addMessage('bot', <AudioMessage />);
