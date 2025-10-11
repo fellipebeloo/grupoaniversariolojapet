@@ -1,20 +1,18 @@
 "use client";
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Play, Pause, Loader2, CheckCheck, Mic } from 'lucide-react';
+import { Play, Pause, Loader2, CheckCheck } from 'lucide-react'; // Mic icon removed as avatar is external
 import { cn } from '@/lib/utils';
 
 interface WhatsAppAudioPlayerProps {
   audioSrc: string;
   isMine?: boolean; // true for user's message, false for bot's
-  senderAvatar?: string;
-  messageTime: string;
+  messageTime: string; // This prop is not used in the component itself, but might be useful for parent
 }
 
 export const WhatsAppAudioPlayer = ({
   audioSrc,
   isMine = false,
-  senderAvatar = '/alessandra.jpg', // Default to Alessandra's avatar
   messageTime,
 }: WhatsAppAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -104,7 +102,7 @@ export const WhatsAppAudioPlayer = ({
     <div className={cn(
       "flex min-w-[240px] max-w-[80%] rounded-md p-1 shadow-sm user-select-none font-sans",
       playerBgColor,
-      isMine ? 'flex-row ml-auto' : 'flex-row ml-2' // Adicionado ml-2 para espaçamento à esquerda quando não é 'isMine'
+      isMine ? 'ml-auto' : '' // Alinha à direita se for 'isMine', caso contrário, sem margem automática para alinhamento à esquerda
     )}>
       <div className="flex-1 flex items-center">
         <button
@@ -157,24 +155,6 @@ export const WhatsAppAudioPlayer = ({
             </div>
           </div>
         </div>
-      </div>
-
-      <div className={cn(
-        "relative w-14 h-14 ml-4" // Avatar sempre com ml-4
-      )}>
-        <img
-          src={senderAvatar}
-          alt="Avatar"
-          className="w-14 h-14 rounded-full object-cover bg-white/5"
-        />
-        <Mic
-          size={26}
-          className={cn(
-            "absolute bottom-0 right-0 translate-x-1/2", // Mic sempre no canto inferior direito do avatar
-            featuredColor,
-          )}
-          style={{ textShadow: `-1px -1px 0 ${isMine ? '#056162' : '#262d31'}, 1px -1px 0 ${isMine ? '#056162' : '#262d31'}, -1px 1px 0 ${isMine ? '#056162' : '#262d31'}, 1px 1px 0 ${isMine ? '#056162' : '#262d31'}` }}
-        />
       </div>
     </div>
   );
