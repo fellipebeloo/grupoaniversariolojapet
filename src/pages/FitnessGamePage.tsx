@@ -109,15 +109,20 @@ const FitnessGamePage = () => {
     setSelectedOption(index);
     setFeedback(questions[currentQuestionIndex].feedback);
 
-    // Parar qualquer áudio de voz anterior e reproduzir o novo
+    // Parar qualquer áudio de voz anterior
     if (currentVoiceAudioRef.current) {
       currentVoiceAudioRef.current.pause();
       currentVoiceAudioRef.current.currentTime = 0;
     }
-    const audioPath = questions[currentQuestionIndex].audio;
-    if (audioPath) {
-      currentVoiceAudioRef.current = new Audio(audioPath);
-      currentVoiceAudioRef.current.play().catch(error => console.log("Voice audio blocked by browser:", error));
+
+    // Reproduzir o áudio apenas se a opção selecionada for incorreta
+    const isCorrect = questions[currentQuestionIndex].options[index].correct;
+    if (!isCorrect) {
+      const audioPath = questions[currentQuestionIndex].audio;
+      if (audioPath) {
+        currentVoiceAudioRef.current = new Audio(audioPath);
+        currentVoiceAudioRef.current.play().catch(error => console.log("Voice audio blocked by browser:", error));
+      }
     }
 
     setTimeout(() => {
