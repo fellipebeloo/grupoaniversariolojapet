@@ -104,7 +104,7 @@ export const WhatsAppAudioPlayer = ({
     <div className={cn(
       "flex min-w-[240px] max-w-[80%] rounded-md p-1 shadow-sm user-select-none font-sans",
       playerBgColor,
-      isMine ? 'flex-row ml-auto' : 'flex-row' // Avatar sempre à esquerda dos controles, bolha alinha à direita se isMine
+      isMine ? 'flex-row ml-auto' : 'flex-row ml-2' // Adicionado ml-2 para espaçamento à esquerda quando não é 'isMine'
     )}>
       <div className="flex-1 flex items-center">
         <button
