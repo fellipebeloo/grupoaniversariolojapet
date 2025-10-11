@@ -12,7 +12,8 @@ const questions = [
       { text: "Acordei tarde e pulei o café", correct: false },
       { text: "Comi ovo, frutas e bebi água antes de tudo", correct: true },
     ],
-    feedback: "Pular café ou comer errado já manda seu corpo pro modo ‘sobrevivência’… e a barriga trava."
+    feedback: "Pular café ou comer errado já manda seu corpo pro modo ‘sobrevivência’… e a barriga trava.",
+    audio: '/consciencia1.mp3'
   },
   {
     question: "PERGUNTA 2: E O EXERCÍCIO HOJE?\nQual treino você fez?",
@@ -21,7 +22,8 @@ const questions = [
       { text: "Caminhei 10 minutos até o mercado", correct: false },
       { text: "Fiz um treino rápido, intenso e com sequência certa", correct: true },
     ],
-    feedback: "Não é o tempo. É o tipo de estímulo. Treino errado = corpo travado."
+    feedback: "Não é o tempo. É o tipo de estímulo. Treino errado = corpo travado.",
+    audio: '/consciencia2.mp3'
   },
   {
     question: "PERGUNTA 3: NO TRABALHO OU CASA…\nComo foi sua energia durante o dia?",
@@ -30,7 +32,8 @@ const questions = [
       { text: "Ok, mas fui me arrastando até a noite", correct: false },
       { text: "Tive picos de disposição depois de treinar", correct: true },
     ],
-    feedback: "Corpo travado drena sua energia. Quando você destrava, até sua disposição muda."
+    feedback: "Corpo travado drena sua energia. Quando você destrava, até sua disposição muda.",
+    audio: '/consciencia3.mp3'
   },
   {
     question: "PERGUNTA 4: FINAL DO DIA…\nO que rolou no fim da noite?",
@@ -39,7 +42,8 @@ const questions = [
       { text: "Fiquei sem fome e pulei a janta", correct: false },
       { text: "Fiz uma refeição leve com proteínas e água", correct: true },
     ],
-    feedback: "O final do dia define se você vai secar ou estocar gordura. Cuidado."
+    feedback: "O final do dia define se você vai secar ou estocar gordura. Cuidado.",
+    audio: '/consciencia4.mp3'
   },
   {
     question: "PERGUNTA 5: E SUA AUTOIMAGEM HOJE?\nQuando se olhou no espelho…",
@@ -48,7 +52,8 @@ const questions = [
       { text: "Me senti pesada e triste", correct: false },
       { text: "Notei melhoras e fiquei animada", correct: true },
     ],
-    feedback: "Sua mente e corpo andam juntos. Se você não vê progresso, perde força. Bora virar esse jogo."
+    feedback: "Sua mente e corpo andam juntos. Se você não vê progresso, perde força. Bora virar esse jogo.",
+    audio: '/consciencia5.mp3'
   }
 ];
 
@@ -64,16 +69,18 @@ const FitnessGamePage = () => {
   const [showAlarm, setShowAlarm] = useState(true);
 
   const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
-  const voiceAudioRef = useRef<HTMLAudioElement | null>(null);
+  const currentVoiceAudioRef = useRef<HTMLAudioElement | null>(null); // Ref para o áudio da voz da consciência
 
   useEffect(() => {
     alarmAudioRef.current = new Audio('/alarm.mp3');
     alarmAudioRef.current.loop = true;
-    voiceAudioRef.current = new Audio('/consciencia.mp3');
 
     return () => {
       alarmAudioRef.current?.pause();
-      voiceAudioRef.current?.pause();
+      if (currentVoiceAudioRef.current) {
+        currentVoiceAudioRef.current.pause();
+        currentVoiceAudioRef.current = null;
+      }
     };
   }, []);
 
@@ -102,7 +109,16 @@ const FitnessGamePage = () => {
     setSelectedOption(index);
     setFeedback(questions[currentQuestionIndex].feedback);
 
-    voiceAudioRef.current?.play().catch(error => console.log("Voice audio blocked by browser"));
+    // Parar qualquer áudio de voz anterior e reproduzir o novo
+    if (currentVoiceAudioRef.current) {
+      currentVoiceAudioRef.current.pause();
+      currentVoiceAudioRef.current.currentTime = 0;
+    }
+    const audioPath = questions[currentQuestionIndex].audio;
+    if (audioPath) {
+      currentVoiceAudioRef.current = new Audio(audioPath);
+      currentVoiceAudioRef.current.play().catch(error => console.log("Voice audio blocked by browser:", error));
+    }
 
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
