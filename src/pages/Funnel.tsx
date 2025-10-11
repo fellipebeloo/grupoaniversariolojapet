@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import Hammer from 'hammerjs';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -31,12 +33,12 @@ const FunnelPage = () => {
   const [showInput, setShowInput] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [topPull, setTopPull] = useState(0);
+  const [bottomPull, setBottomPull] = useState(0);
 
   useEffect(() => {
-    // Prevent the body from scrolling when the chat is open
     const originalStyle = window.getComputedStyle(document.body).overflow;
     document.body.style.overflow = 'hidden';
-
     return () => {
       document.body.style.overflow = originalStyle;
     };
@@ -51,6 +53,61 @@ const FunnelPage = () => {
       }
     }
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    const element = scrollContainerRef.current;
+    if (!element) return;
+
+    const mc = new Hammer(element);
+    mc.get('pan').set({ direction: Hammer.DIRECTION_VERTICAL, threshold: 5 });
+
+    let isPanningBoundary = false;
+
+    mc.on('panstart', (ev) => {
+      const isAtTop = element.scrollTop < 5;
+      const isAtBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 5;
+
+      if ((isAtTop && ev.direction === Hammer.DIRECTION_DOWN) || (isAtBottom && ev.direction === Hammer.DIRECTION_UP)) {
+        isPanningBoundary = true;
+      } else {
+        isPanningBoundary = false;
+      }
+    });
+
+    mc.on('pan', (ev) => {
+      if (!isPanningBoundary) return;
+      
+      ev.srcEvent.preventDefault();
+
+      const isAtTop = element.scrollTop < 5;
+      const isAtBottom = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 5;
+      
+      if (isAtTop && ev.deltaY > 0) {
+        const pullStrength = Math.min(ev.deltaY / 100, 1);
+        setTopPull(pullStrength);
+        setBottomPull(0);
+      } else if (isAtBottom && ev.deltaY < 0) {
+        const pullStrength = Math.min(Math.abs(ev.deltaY) / 100, 1);
+        setBottomPull(pullStrength);
+        setTopPull(0);
+      } else {
+        setTopPull(0);
+        setBottomPull(0);
+      }
+    });
+
+    mc.on('panend pancancel', () => {
+      if (isPanningBoundary) {
+        isPanningBoundary = false;
+        setTopPull(0);
+        setBottomPull(0);
+      }
+    });
+
+    return () => {
+      mc.destroy();
+    };
+  }, []);
 
   const addMessage = (sender: 'bot' | 'user', content: React.ReactNode, options?: string[]) => {
     const newMessage: Message = {
@@ -141,23 +198,41 @@ const FunnelPage = () => {
     <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
       <ChatHeader />
       
-      <div ref={scrollContainerRef} className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform">
-        {messages.map(msg => (
-          <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
-        ))}
-        {isTyping && (
-          <div className="flex items-end gap-2 justify-start">
-            <img
-              src="/alessandra.jpg"
-              alt="Alessandra"
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
-              <TypingIndicator />
+      <div className="relative overflow-hidden">
+        <div 
+          className="absolute top-0 left-0 right-0 flex justify-center items-center pt-2 text-gray-500 transition-opacity duration-300 pointer-events-none z-10"
+          style={{ opacity: topPull }}
+        >
+          <ArrowUp size={18} className="mr-2" />
+          <span>Início da conversa</span>
+        </div>
+
+        <div ref={scrollContainerRef} className="overflow-y-auto overscroll-y-contain p-4 space-y-4 will-change-transform h-full">
+          {messages.map(msg => (
+            <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
+          ))}
+          {isTyping && (
+            <div className="flex items-end gap-2 justify-start">
+              <img
+                src="/alessandra.jpg"
+                alt="Alessandra"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
+                <TypingIndicator />
+              </div>
             </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div 
+          className="absolute bottom-0 left-0 right-0 flex justify-center items-center pb-2 text-gray-500 transition-opacity duration-300 pointer-events-none z-10"
+          style={{ opacity: bottomPull }}
+        >
+          <ArrowDown size={18} className="mr-2" />
+          <span>Fim da conversa</span>
+        </div>
       </div>
 
       <div className="p-4 bg-[#202c33] border-t border-gray-700">
