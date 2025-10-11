@@ -208,20 +208,23 @@ const FitnessGamePage = () => {
           <div>
             <p className="text-center font-semibold whitespace-pre-wrap mb-4 text-lg text-purple-100">{currentQuestion.question}</p>
             <div className="space-y-3">
-              {currentQuestion.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleOptionClick(index)}
-                  disabled={feedback !== null}
-                  className={`w-full text-left p-4 rounded-lg border-2 transition-all
-                    ${selectedOption === index 
-                      ? (option.correct ? 'bg-green-500/30 border-green-400' : 'bg-red-500/30 border-red-400') 
-                      : 'bg-purple-800/50 border-purple-600 hover:bg-purple-700/50'}
-                    ${feedback !== null ? 'cursor-not-allowed' : ''}`}
-                >
-                  {option.text}
-                </button>
-              ))}
+              {currentQuestion.options.map((option, index) => {
+                const isButtonDisabled = feedback !== null || (currentQuestionIndex === 0 && showAlarm);
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleOptionClick(index)}
+                    disabled={isButtonDisabled}
+                    className={`w-full text-left p-4 rounded-lg border-2 transition-all
+                      ${selectedOption === index 
+                        ? (option.correct ? 'bg-green-500/30 border-green-400' : 'bg-red-500/30 border-red-400') 
+                        : 'bg-purple-800/50 border-purple-600'}
+                      ${isButtonDisabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-purple-700/50'}`}
+                  >
+                    {option.text}
+                  </button>
+                );
+              })}
             </div>
             {feedback && (
               <div className="mt-4 p-3 bg-purple-950/50 rounded-lg text-center text-yellow-300 italic border border-purple-700">
