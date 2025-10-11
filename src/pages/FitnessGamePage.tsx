@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Gamepad2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -62,6 +62,15 @@ const FitnessGamePage = () => {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showAlarm, setShowAlarm] = useState(true);
+
+  useEffect(() => {
+    if (gameState === 'playing' && currentQuestionIndex === 0 && showAlarm) {
+      if ('vibrate' in navigator) {
+        // Vibra por 200ms, pausa por 100ms, e vibra por 200ms
+        navigator.vibrate([200, 100, 200]);
+      }
+    }
+  }, [gameState, currentQuestionIndex, showAlarm]);
 
   const handleStart = () => {
     setGameState('playing');
