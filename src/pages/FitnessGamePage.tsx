@@ -47,7 +47,7 @@ const questions = [
     ],
     feedback: "O final do dia define se você vai secar ou estocar gordura. Cuidado.",
     audio: '/consciencia4.mp3',
-    correctAudio: '/correct4.mp3'
+    correctAudio: '/correct4..mp3'
   },
   {
     question: "PERGUNTA 5: E SUA AUTOIMAGEM HOJE?\nQuando se olhou no espelho…",
@@ -75,13 +75,19 @@ const FitnessGamePage = () => {
 
   const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
   const currentVoiceAudioRef = useRef<HTMLAudioElement | null>(null);
+  const yawnAudioRef = useRef<HTMLAudioElement | null>(null);
+  const introAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     alarmAudioRef.current = new Audio('/alarm.mp3');
     alarmAudioRef.current.loop = true;
+    yawnAudioRef.current = new Audio('/yaaaam.mp3');
+    introAudioRef.current = new Audio('/intro-consciencia.mp3');
 
     return () => {
       alarmAudioRef.current?.pause();
+      yawnAudioRef.current?.pause();
+      introAudioRef.current?.pause();
       if (currentVoiceAudioRef.current) {
         currentVoiceAudioRef.current.pause();
         currentVoiceAudioRef.current = null;
@@ -103,6 +109,18 @@ const FitnessGamePage = () => {
     alarmAudioRef.current?.pause();
     if (alarmAudioRef.current) {
       alarmAudioRef.current.currentTime = 0;
+    }
+
+    const yawnSound = yawnAudioRef.current;
+    const introSound = introAudioRef.current;
+
+    if (yawnSound) {
+      yawnSound.play().catch(error => console.log("Yawn audio blocked:", error));
+      yawnSound.onended = () => {
+        if (introSound) {
+          introSound.play().catch(error => console.log("Intro audio blocked:", error));
+        }
+      };
     }
   };
 
