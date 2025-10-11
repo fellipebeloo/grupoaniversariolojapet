@@ -160,7 +160,7 @@ const FunnelPage = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 bg-[#202c33] border-t border-gray-700">
+      <div className="p-4 bg-[#202c33] border-t border-gray-700 flex-shrink-0">
         {showInput && (
           <ChatInput
             onSubmit={handleSubmit}
