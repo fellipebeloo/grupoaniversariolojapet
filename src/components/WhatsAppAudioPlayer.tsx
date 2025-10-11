@@ -108,7 +108,6 @@ export const WhatsAppAudioPlayer = ({
     <div className={cn( // Este é o container principal da bolha de mensagem de áudio
       "flex flex-col min-w-[240px] max-w-[70%] rounded-xl shadow-sm user-select-none font-sans",
       playerBgColor,
-      // Removed: isMine ? 'ml-auto' : 'ml-2'
     )}>
       {!isMine && ( // Renderiza o nome do remetente se não for minha mensagem
         <p className="text-sm font-semibold text-green-400 pt-2 px-3 mb-1">{senderName}</p>
@@ -151,7 +150,7 @@ export const WhatsAppAudioPlayer = ({
                 "flex-1 appearance-none bg-transparent border-0 outline-none w-full relative",
                 "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-[#00e5c0] [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:-mt-[0.336rem]",
                 "[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[#00e5c0] [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:-mt-[0.336rem]",
-                "[&::-webkit-slider-runnable-track]:bg-white/20 [&::-webkit-slider-runnable-track]:h-[0.24rem] [&::-::-webkit-slider-runnable-track]:rounded-full",
+                "[&::-webkit-slider-runnable-track]:bg-white/20 [&::-webkit-slider-runnable-track]:h-[0.24rem] [&::-webkit-slider-runnable-track]:rounded-full",
                 "[&::-moz-range-track]:bg-white/20 [&::-moz-range-track]:h-[0.24rem] [&::-moz-range-track]:rounded-full"
               )}
             />
@@ -176,7 +175,7 @@ export const WhatsAppAudioPlayer = ({
           <Mic
             size={26}
             className={cn(
-              "absolute bottom-0 right-0 translate-x-1/2", // Mic sempre no canto inferior direito do avatar
+              "absolute bottom-0 left-0 -translate-x-1/2", // Mic agora no canto inferior esquerdo do avatar
               featuredColor,
             )}
             style={{ textShadow: `-1px -1px 0 ${isMine ? '#005c4b' : '#202c33'}, 1px -1px 0 ${isMine ? '#005c4b' : '#202c33'}, -1px 1px 0 ${isMine ? '#005c4b' : '#202c33'}, 1px 1px 0 ${isMine ? '#005c4b' : '#202c33'}` }}
