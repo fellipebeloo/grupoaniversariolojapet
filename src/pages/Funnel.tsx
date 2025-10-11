@@ -5,7 +5,7 @@ import { Mic } from 'lucide-react';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
-import { AudioMessage } from '@/components/AudioMessage';
+import { WhatsAppAudioPlayer } from '@/components/WhatsAppAudioPlayer'; // Importar o novo componente
 import { GroupChatView } from '@/components/GroupChatView';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
@@ -182,7 +182,7 @@ const FunnelPage = () => {
         case 2:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <AudioMessage audioSrc={AlessandraAudios.alessandraChatAudio1} />, undefined, 'custom-component');
+            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio1} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
@@ -204,7 +204,7 @@ const FunnelPage = () => {
         case 6:
           setTimeout(() => {
             setTypingIndicator(null);
-            addMessage('bot', <AudioMessage audioSrc={AlessandraAudios.alessandraChatAudio2} />, undefined, 'custom-component');
+            addMessage('bot', <WhatsAppAudioPlayer audioSrc={AlessandraAudios.alessandraChatAudio2} messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />, undefined, 'custom-component');
             setTimeout(() => {
               setTypingIndicator('text');
               setTimeout(() => {
