@@ -5,7 +5,7 @@ import Hammer from 'hammerjs';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
-import { AudioMessage } from '@/components/AudioMessage';
+import { AudioPlayer } from '@/components/AudioPlayer';
 
 interface Message {
   id: string;
@@ -167,7 +167,7 @@ const FunnelPage = () => {
           setIsTyping(true);
           setTimeout(() => {
             setIsTyping(false);
-            addMessage('bot', <AudioMessage />);
+            addMessage('bot', <AudioPlayer src="/alessandra-audio.ogg" />);
             setTimeout(() => {
               setIsTyping(true);
               setTimeout(() => {
