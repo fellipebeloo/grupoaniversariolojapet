@@ -98,43 +98,11 @@ const FitnessGamePage = () => {
     }
   }, [gameState, currentQuestionIndex, showAlarm]);
 
-  // New useEffect to play question audio when question changes
-  useEffect(() => {
-    // Play audio for questions after the first one, or if alarm is already dismissed for the first one
-    // The first question's audio is handled by handleDismissAlarm
-    if (gameState === 'playing' && currentQuestionIndex < questions.length) {
-      // Stop any previously playing voice audio (e.g., from previous question or feedback)
-      if (currentVoiceAudioRef.current) {
-        currentVoiceAudioRef.current.pause();
-        currentVoiceAudioRef.current.currentTime = 0;
-      }
-
-      // Play the "voice of conscience" audio for the current question,
-      // but only if it's not the first question or if the alarm has been dismissed.
-      if (currentQuestionIndex > 0 || !showAlarm) {
-        const questionAudioPath = questions[currentQuestionIndex].audio;
-        if (questionAudioPath) {
-          currentVoiceAudioRef.current = new Audio(questionAudioPath);
-          currentVoiceAudioRef.current.play().catch(error => console.log("Question audio blocked by browser:", error));
-        }
-      }
-    }
-  }, [currentQuestionIndex, gameState, showAlarm]);
-
-
   const handleDismissAlarm = () => {
     setShowAlarm(false);
     alarmAudioRef.current?.pause();
     if (alarmAudioRef.current) {
       alarmAudioRef.current.currentTime = 0;
-    }
-    // After dismissing the alarm, play the first question's audio
-    if (gameState === 'playing' && currentQuestionIndex === 0) {
-      const questionAudioPath = questions[0].audio;
-      if (questionAudioPath) {
-        currentVoiceAudioRef.current = new Audio(questionAudioPath);
-        currentVoiceAudioRef.current.play().catch(error => console.log("Initial question audio blocked by browser:", error));
-      }
     }
   };
 
@@ -146,7 +114,7 @@ const FitnessGamePage = () => {
     setSelectedOption(index);
     setFeedback(questions[currentQuestionIndex].feedback);
 
-    // Parar qualquer áudio de voz anterior (seja o da pergunta ou de feedback anterior)
+    // Parar qualquer áudio de voz anterior
     if (currentVoiceAudioRef.current) {
       currentVoiceAudioRef.current.pause();
       currentVoiceAudioRef.current.currentTime = 0;
