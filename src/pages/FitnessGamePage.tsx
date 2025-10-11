@@ -13,7 +13,8 @@ const questions = [
       { text: "Comi ovo, frutas e bebi água antes de tudo", correct: true },
     ],
     feedback: "Pular café ou comer errado já manda seu corpo pro modo ‘sobrevivência’… e a barriga trava.",
-    audio: '/consciencia1.mp3'
+    audio: '/consciencia1.mp3',
+    correctAudio: '/correct1.mp3' // Placeholder para áudio de resposta correta
   },
   {
     question: "PERGUNTA 2: E O EXERCÍCIO HOJE?\nQual treino você fez?",
@@ -23,7 +24,8 @@ const questions = [
       { text: "Fiz um treino rápido, intenso e com sequência certa", correct: true },
     ],
     feedback: "Não é o tempo. É o tipo de estímulo. Treino errado = corpo travado.",
-    audio: '/consciencia2.mp3'
+    audio: '/consciencia2.mp3',
+    correctAudio: '/correct2.mp3' // Placeholder para áudio de resposta correta
   },
   {
     question: "PERGUNTA 3: NO TRABALHO OU CASA…\nComo foi sua energia durante o dia?",
@@ -33,7 +35,8 @@ const questions = [
       { text: "Tive picos de disposição depois de treinar", correct: true },
     ],
     feedback: "Corpo travado drena sua energia. Quando você destrava, até sua disposição muda.",
-    audio: '/consciencia3.mp3'
+    audio: '/consciencia3.mp3',
+    correctAudio: '/correct3.mp3' // Placeholder para áudio de resposta correta
   },
   {
     question: "PERGUNTA 4: FINAL DO DIA…\nO que rolou no fim da noite?",
@@ -43,7 +46,8 @@ const questions = [
       { text: "Fiz uma refeição leve com proteínas e água", correct: true },
     ],
     feedback: "O final do dia define se você vai secar ou estocar gordura. Cuidado.",
-    audio: '/consciencia4.mp3'
+    audio: '/consciencia4.mp3',
+    correctAudio: '/correct4.mp3' // Placeholder para áudio de resposta correta
   },
   {
     question: "PERGUNTA 5: E SUA AUTOIMAGEM HOJE?\nQuando se olhou no espelho…",
@@ -53,7 +57,8 @@ const questions = [
       { text: "Notei melhoras e fiquei animada", correct: true },
     ],
     feedback: "Sua mente e corpo andam juntos. Se você não vê progresso, perde força. Bora virar esse jogo.",
-    audio: '/consciencia5.mp3'
+    audio: '/consciencia5.mp3',
+    correctAudio: '/correct5.mp3' // Placeholder para áudio de resposta correta
   }
 ];
 
@@ -115,14 +120,18 @@ const FitnessGamePage = () => {
       currentVoiceAudioRef.current.currentTime = 0;
     }
 
-    // Reproduzir o áudio apenas se a opção selecionada for incorreta
     const isCorrect = questions[currentQuestionIndex].options[index].correct;
-    if (!isCorrect) {
-      const audioPath = questions[currentQuestionIndex].audio;
-      if (audioPath) {
-        currentVoiceAudioRef.current = new Audio(audioPath);
-        currentVoiceAudioRef.current.play().catch(error => console.log("Voice audio blocked by browser:", error));
-      }
+    let audioPathToPlay: string | undefined;
+
+    if (isCorrect) {
+      audioPathToPlay = questions[currentQuestionIndex].correctAudio;
+    } else {
+      audioPathToPlay = questions[currentQuestionIndex].audio;
+    }
+    
+    if (audioPathToPlay) {
+      currentVoiceAudioRef.current = new Audio(audioPathToPlay);
+      currentVoiceAudioRef.current.play().catch(error => console.log("Voice audio blocked by browser:", error));
     }
 
     setTimeout(() => {
