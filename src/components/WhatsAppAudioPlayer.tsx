@@ -106,7 +106,7 @@ export const WhatsAppAudioPlayer = ({
 
   return (
     <div className={cn( // Este é o container principal da bolha de mensagem de áudio
-      "flex flex-col min-w-[240px] max-w-[70%] rounded-md shadow-sm user-select-none font-sans",
+      "flex flex-col min-w-[240px] max-w-[70%] rounded-xl shadow-sm user-select-none font-sans", // Alterado de rounded-md para rounded-xl
       playerBgColor,
       isMine ? 'ml-auto' : 'ml-2' // Alinha a bolha inteira
     )}>
