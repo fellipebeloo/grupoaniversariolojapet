@@ -9,6 +9,7 @@ import { ChatInput } from '@/components/ChatInput';
 import { AudioMessage } from '@/components/AudioMessage';
 import { GroupChatView } from '@/components/GroupChatView';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
+import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
 
 interface Message {
   id: string;
@@ -266,6 +267,54 @@ const FunnelPage = () => {
             setTypingIndicator(null);
             addMessage('bot', 'Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
           }, 1000);
+          break;
+        case 10:
+          const showProblemMessages = async () => {
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', `${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
+
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', 'Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
+
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', <>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
+
+            await new Promise(res => setTimeout(res, 800));
+            addMessage('bot', <PocheteTeimosaEffect />, undefined, 'custom-component');
+
+            await new Promise(res => setTimeout(res, 2000));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', <>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>);
+            
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', <>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
+
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', 'O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
+
+            await new Promise(res => setTimeout(res, 1200));
+            setTypingIndicator('text');
+            await new Promise(res => setTimeout(res, 1500));
+            setTypingIndicator(null);
+            addMessage('bot', 'Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
+          };
+          showProblemMessages();
           break;
         default:
           break;
