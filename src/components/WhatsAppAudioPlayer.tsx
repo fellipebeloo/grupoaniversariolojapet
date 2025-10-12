@@ -11,6 +11,7 @@ interface WhatsAppAudioPlayerProps {
   messageTime: string;
   transcription?: string; // Nova prop para a transcrição
   senderName: string; // Nova prop para o nome do remetente
+  onAudioEnded?: () => void; // Nova prop para callback ao finalizar o áudio
 }
 
 export const WhatsAppAudioPlayer = ({
@@ -20,6 +21,7 @@ export const WhatsAppAudioPlayer = ({
   messageTime,
   transcription,
   senderName,
+  onAudioEnded, // Destruturando a nova prop
 }: WhatsAppAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sliderRef = useRef<HTMLInputElement | null>(null);
@@ -76,6 +78,7 @@ export const WhatsAppAudioPlayer = ({
       audio.currentTime = 0; // Reset to start
       setCurrentTime(0);
       setPercentPlayed(0);
+      onAudioEnded?.(); // Chama o callback quando o áudio termina
     };
     const onWaiting = () => setIsLoading(true);
     const onPlaying = () => setIsLoading(false);
@@ -98,7 +101,7 @@ export const WhatsAppAudioPlayer = ({
       audio.removeEventListener('waiting', onWaiting);
       audio.removeEventListener('playing', onPlaying);
     };
-  }, [audioSrc]);
+  }, [audioSrc, onAudioEnded]); // Adiciona onAudioEnded como dependência
 
   const playerBgColor = isMine ? 'bg-[#005c4b]' : 'bg-[#202c33]'; // Ajustado para as cores das bolhas de mensagem
   const featuredColor = 'text-[#00e5c0]'; // Using text color for icons/progress
@@ -167,7 +170,6 @@ export const WhatsAppAudioPlayer = ({
         <div className={cn(
           "relative w-14 h-14 ml-4" // Avatar sempre com ml-4
         )}>
-          {/* Removed: <img src={senderAvatar} alt="Avatar" className="w-14 h-14 rounded-full object-cover bg-white/5" /> */}
           <Mic
             size={26}
             className={cn(
