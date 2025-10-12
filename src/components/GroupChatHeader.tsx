@@ -15,8 +15,8 @@ export const GroupChatHeader = ({ onBack }: GroupChatHeaderProps) => {
         <AvatarImage src="/alessandra.jpg" alt="Grupo" />
         <AvatarFallback>G</AvatarFallback>
       </Avatar>
-      <div>
-        <p className="font-semibold text-white">#12 - Guerrilheiras do H.I.T.S. Fitness</p>
+      <div className="flex-1 min-w-0"> {/* Adicionado flex-1 e min-w-0 aqui */}
+        <p className="font-semibold text-white truncate">#12 - Guerrilheiras do H.I.T.S. Fitness</p>
         <p className="text-sm text-gray-400 truncate">Alessandra, Vanessa R., Jéssica L., Tati M., e mais 50</p>
       </div>
     </header>
