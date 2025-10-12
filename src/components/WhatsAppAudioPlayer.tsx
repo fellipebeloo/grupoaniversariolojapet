@@ -167,11 +167,7 @@ export const WhatsAppAudioPlayer = ({
         <div className={cn(
           "relative w-14 h-14 ml-4" // Avatar sempre com ml-4
         )}>
-          <img
-            src={senderAvatar}
-            alt="Avatar"
-            className="w-14 h-14 rounded-full object-cover bg-white/5"
-          />
+          {/* Removed: <img src={senderAvatar} alt="Avatar" className="w-14 h-14 rounded-full object-cover bg-white/5" /> */}
           <Mic
             size={26}
             className={cn(
