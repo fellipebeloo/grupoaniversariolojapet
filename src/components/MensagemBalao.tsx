@@ -116,7 +116,7 @@ export function MensagemBalao({
               )}
 
               <div className="flex flex-wrap items-baseline">
-                <div className="text-sm mr-2">{texto}</div>
+                <div className="text-base mr-2">{texto}</div> {/* Alterado de text-sm para text-base */}
 
                 <div className="flex-shrink-0 ml-auto pl-2 self-end">
                   <span className="flex items-center whitespace-rap">

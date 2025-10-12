@@ -185,7 +185,7 @@ export const WhatsAppAudioPlayer = ({
 
       {transcription && (
         <p className={cn(
-          "text-sm px-3 pb-2 whitespace-pre-wrap", // Preenchimento consistente lateral/inferior
+          "text-base px-3 pb-2 whitespace-pre-wrap", // Alterado de text-sm para text-base
           isMine ? 'text-white' : 'text-gray-100'
         )}>
           {transcription}
