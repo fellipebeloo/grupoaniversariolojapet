@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Play, Pause, Loader2, CheckCheck, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Import Avatar components
 
 interface WhatsAppAudioPlayerProps {
   audioSrc: string;
@@ -167,13 +168,16 @@ export const WhatsAppAudioPlayer = ({
           </div>
         </div>
 
-        <div className={cn(
-          "relative w-14 h-14 ml-4" // Avatar sempre com ml-4
-        )}>
+        {/* Avatar e Mic */}
+        <div className="relative w-10 h-10 ml-4 flex-shrink-0"> {/* Container para o avatar */}
+          <Avatar className="w-full h-full">
+            <AvatarImage src={senderAvatar} alt={senderName} />
+            <AvatarFallback>{senderName.charAt(0)}</AvatarFallback>
+          </Avatar>
           <Mic
-            size={26}
+            size={18} // Tamanho menor para o ícone do microfone
             className={cn(
-              "absolute bottom-0 left-0 -translate-x-1/2", // Mic agora no canto inferior esquerdo do avatar
+              "absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4", // Posiciona o mic no canto inferior direito do avatar
               featuredColor,
             )}
             style={{ textShadow: `-1px -1px 0 ${isMine ? '#005c4b' : '#202c33'}, 1px -1px 0 ${isMine ? '#005c4b' : '#202c33'}, -1px 1px 0 ${isMine ? '#005c4b' : '#202c33'}, 1px 1px 0 ${isMine ? '#005c4b' : '#202c33'}` }}
@@ -183,7 +187,7 @@ export const WhatsAppAudioPlayer = ({
 
       {transcription && (
         <p className={cn(
-          "text-base px-3 pb-2 whitespace-pre-wrap", // Alterado de text-sm para text-base
+          "text-base px-3 pb-2 whitespace-pre-wrap",
           isMine ? 'text-white' : 'text-gray-100'
         )}>
           {transcription}
