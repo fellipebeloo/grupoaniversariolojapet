@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Mic } from 'lucide-react';
 import { ChatHeader } from '@/components/ChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
@@ -36,6 +36,42 @@ const AudioRecordingIndicator = () => (
     <span className="text-sm">gravando áudio...</span>
   </div>
 );
+
+// Função auxiliar para calcular o atraso com base no conteúdo da mensagem
+const calculateDelay = (content: string | React.ReactNode): number => {
+  let textContent = '';
+
+  if (typeof content === 'string') {
+    textContent = content;
+  } else if (React.isValidElement(content)) {
+    // Para extrair texto de JSX simples (como <>, <strong>, etc.)
+    // Isso é uma heurística e pode não ser perfeito para todos os ReactNodes complexos.
+    // Para o uso atual em FunnelPage, deve ser suficiente.
+    const children = (content as any).props?.children;
+    if (Array.isArray(children)) {
+      textContent = children.map(child => {
+        if (typeof child === 'string') return child;
+        if (React.isValidElement(child) && typeof child.props?.children === 'string') return child.props.children;
+        return ''; // Ignora outros tipos de filhos para cálculo de comprimento de texto
+      }).join(' ');
+    } else if (typeof children === 'string') {
+      textContent = children;
+    }
+  }
+
+  // Limpa o conteúdo do texto para um cálculo de comprimento mais preciso
+  // (remove tags HTML, espaços extras)
+  textContent = textContent.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+
+  const baseDelay = 1500; // Atraso base em ms
+  const charsPerMs = 50;  // ms por caractere (aproximadamente 20 caracteres por segundo)
+  const minDelay = 2000;  // Atraso total mínimo
+  const maxDelay = 8000;  // Atraso total máximo
+
+  const calculatedDelay = baseDelay + (textContent.length * charsPerMs);
+  return Math.max(minDelay, Math.min(maxDelay, calculatedDelay));
+};
+
 
 const FunnelPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -98,7 +134,7 @@ const FunnelPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingIndicator]);
 
-  const addMessage = (
+  const addMessage = useCallback((
     sender: 'bot' | 'user',
     content: React.ReactNode,
     options?: string[],
@@ -113,7 +149,7 @@ const FunnelPage = () => {
       options,
     };
     setMessages(prev => [...prev, newMessage]);
-  };
+  }, [messages.length]); // Adicionado messages.length para garantir que o ID seja único
 
   const handleNextStep = (userResponse: string) => {
     setMessages(prevMessages => {
@@ -131,7 +167,6 @@ const FunnelPage = () => {
     setInputValue('');
     setShowInput(false);
 
-    // Aumentado o tempo de espera geral para a transição de passos
     setTimeout(() => {
       setStep(prev => prev + 1);
     }, 2500); 
@@ -155,6 +190,27 @@ const FunnelPage = () => {
     setStep(9);
   };
 
+  // Refatorando a lógica de exibição de mensagens do bot em uma função auxiliar
+  const displayBotMessage = useCallback(async (messageContent: React.ReactNode, options?: string[], type: Message['tipo'] = 'texto') => {
+    const postMessagePause = 1000; // Uma pequena pausa após a mensagem ser exibida
+
+    if (type === 'audio' || type === 'custom-component') {
+      // Para áudios e componentes customizados, o indicador de digitação é tratado de forma diferente
+      // ou não é exibido. O onAudioEnded ou um atraso fixo controlará o fluxo.
+      addMessage('bot', messageContent, options, type);
+      await new Promise(res => setTimeout(res, postMessagePause)); // Pequena pausa após o componente customizado
+      return;
+    }
+
+    // Para mensagens de texto
+    const delay = calculateDelay(messageContent);
+    setTypingIndicator('text');
+    await new Promise(res => setTimeout(res, delay)); // Espera pelo tempo de "digitação"
+    setTypingIndicator(null);
+    addMessage('bot', messageContent, options, type);
+    await new Promise(res => setTimeout(res, postMessagePause)); // Pausa após a mensagem ser exibida
+  }, [addMessage]); // addMessage é uma dependência
+
   useEffect(() => {
     const runConversation = async () => {
       // Se o passo já foi processado, não faz nada
@@ -167,22 +223,16 @@ const FunnelPage = () => {
 
       switch (step) {
         case 0:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
-          setTypingIndicator(null);
-          addMessage('bot', <>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
+          await displayBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
           setShowInput(true);
           break;
         case 1:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
-          setTypingIndicator(null);
-          addMessage('bot', `Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
+          await displayBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
           setShowInput(true);
           break;
         case 2:
-          setTypingIndicator('audio');
-          await new Promise(res => setTimeout(res, 2000));
+          setTypingIndicator('audio'); // Indica que um áudio está sendo "gravado"
+          await new Promise(res => setTimeout(res, 2000)); // Atraso fixo curto para o indicador de áudio
           setTypingIndicator(null);
           addMessage('bot',
             <WhatsAppAudioPlayer
@@ -190,38 +240,31 @@ const FunnelPage = () => {
               messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               transcription={AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name)}
               senderName="Alessandra"
-              onAudioEnded={() => { // Callback para quando o áudio terminar
+              onAudioEnded={async () => { // Este callback agora lida com a próxima mensagem
+                const nextMessageText = <>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>;
+                const nextDelay = calculateDelay(nextMessageText);
                 setTypingIndicator('text');
-                setTimeout(() => {
-                  setTypingIndicator(null);
-                  addMessage('bot', `Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?`, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
-                  setShowInput(true);
-                }, 2500); // Aumentado o tempo de espera para a próxima mensagem de texto
+                await new Promise(res => setTimeout(res, nextDelay)); // Atraso para a digitação após o áudio
+                setTypingIndicator(null);
+                addMessage('bot', nextMessageText, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
+                setShowInput(true);
               }}
             />,
             undefined,
             'audio'
           );
+          // Não há mais 'await' aqui, pois 'onAudioEnded' gerencia a próxima parte.
           break;
         case 3:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
-          setTypingIndicator(null);
-          addMessage('bot', 'Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
+          await displayBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
           setShowInput(true);
           break;
         case 4:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
-          setTypingIndicator(null);
-          addMessage('bot', `Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
+          await displayBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
           setShowInput(true);
           break;
         case 5:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
-          setTypingIndicator(null);
-          addMessage('bot', 'E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
+          await displayBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
           setShowInput(true);
           break;
         case 6:
@@ -234,13 +277,14 @@ const FunnelPage = () => {
               messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               transcription={AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name)}
               senderName="Alessandra"
-              onAudioEnded={() => { // Callback para quando o áudio terminar
+              onAudioEnded={async () => {
+                const nextMessageText = <>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>;
+                const nextDelay = calculateDelay(nextMessageText);
                 setTypingIndicator('text');
-                setTimeout(() => {
-                  setTypingIndicator(null);
-                  addMessage('bot', <>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
-                  setShowInput(true);
-                }, 2500); // Aumentado o tempo de espera para a próxima mensagem de texto
+                await new Promise(res => setTimeout(res, nextDelay));
+                setTypingIndicator(null);
+                addMessage('bot', nextMessageText, ['👉 Quero entender por que meu corpo trava']);
+                setShowInput(true);
               }}
             />,
             undefined,
@@ -248,118 +292,43 @@ const FunnelPage = () => {
           );
           break;
         case 7:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2500));
-          setTypingIndicator(null);
-          addMessage('bot', `${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', 'Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', 'Olha só:');
-
-          await new Promise(res => setTimeout(res, 2000)); // Aumentado o tempo de espera
-          addMessage(
-            'bot', 
-            <GroupInviteMessage onViewClick={() => setActiveView('group')} />, 
-            undefined, 
-            'custom-component'
-          );
+          await displayBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
+          await displayBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
+          await displayBotMessage('Olha só:');
+          await displayBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component');
           break;
         case 9:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
-          setTypingIndicator(null);
-          addMessage('bot', 'Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
+          await displayBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
           setShowInput(true);
           break;
         case 10:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', `${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', 'Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', <>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
-
-          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
-          addMessage('bot', <PocheteTeimosaEffect />, undefined, 'custom-component');
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 4000)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', <>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>);
-          
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3500)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', <>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3500)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', 'O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', 'Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
+          await displayBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
+          await displayBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
+          await displayBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
+          await displayBotMessage(<PocheteTeimosaEffect />, undefined, 'custom-component');
+          await displayBotMessage(<>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>);
+          await displayBotMessage(<>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
+          await displayBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
+          await displayBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
           setShowInput(true);
           break;
         case 11:
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', `${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
-
-          setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-          setTypingIndicator(null);
-          addMessage('bot', 'Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
-
-          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
-          addMessage(
-            'bot',
-            <GameStartMessage userName={userData.name || 'Guerreira'} />,
-            undefined,
-            'custom-component'
-          );
+          await displayBotMessage(`${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
+          await displayBotMessage('Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
+          await displayBotMessage(<GameStartMessage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
           break;
         case 12:
-            setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-            setTypingIndicator(null);
-            addMessage('bot', `Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
-
-            setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-            setTypingIndicator(null);
-            addMessage('bot', 'Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
-
-            setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
-            setTypingIndicator(null);
-            addMessage('bot', 'Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
-            setShowInput(true);
-            break;
+          await displayBotMessage(`Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
+          await displayBotMessage('Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
+          await displayBotMessage('Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
+          setShowInput(true);
+          break;
         default:
           break;
       }
     };
     runConversation();
-  }, [step, userData.name]); 
+  }, [step, userData.name, displayBotMessage, addMessage]); 
 
   return (
     <>
