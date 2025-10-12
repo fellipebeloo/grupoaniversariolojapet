@@ -101,6 +101,10 @@ const FunnelPage = () => {
   // Ref para controlar os passos já processados
   const processedSteps = useRef<Set<number>>(new Set());
 
+  // Refs para os efeitos sonoros
+  const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
   }, [userData]);
@@ -131,11 +135,24 @@ const FunnelPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingIndicator]);
 
+  // Inicializa os áudios de efeitos sonoros
+  useEffect(() => {
+    messageSentAudioRef.current = new Audio(AlessandraAudios.messageSent);
+    messageReceivedAudioRef.current = new Audio(AlessandraAudios.messageReceived);
+
+    return () => {
+      messageSentAudioRef.current?.pause();
+      messageSentAudioRef.current = null;
+      messageReceivedAudioRef.current?.pause();
+      messageReceivedAudioRef.current = null;
+    };
+  }, []);
+
   const addMessage = useCallback((
     sender: 'bot' | 'user',
     content: React.ReactNode,
     options?: string[],
-    type: Message['tipo'] = 'texto'
+    type: 'texto' | 'imagem' | 'audio' | 'custom-component' = 'texto'
   ) => {
     const newMessage: Message = {
       id: (messages.length + 1).toString(),
@@ -149,6 +166,9 @@ const FunnelPage = () => {
   }, [messages.length]);
 
   const handleNextStep = async (userResponse: string) => {
+    // Reproduz o som de mensagem enviada
+    messageSentAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem enviada:", e));
+
     // 1. Adiciona a mensagem do usuário imediatamente
     setMessages(prevMessages => {
       const updatedMessages = prevMessages.map(msg => ({ ...msg, options: undefined }));
@@ -195,6 +215,9 @@ const FunnelPage = () => {
 
   // Refatorando a lógica de exibição de mensagens do bot em uma função auxiliar
   const displayBotMessage = useCallback(async (messageContent: React.ReactNode, options?: string[], type: Message['tipo'] = 'texto') => {
+    // Reproduz o som de mensagem recebida ANTES de mostrar o indicador de digitação
+    messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
+
     // Para mensagens de áudio, mostramos um indicador de gravação antes de exibir o player
     if (type === 'audio') {
       setTypingIndicator('audio');
