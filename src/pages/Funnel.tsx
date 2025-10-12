@@ -131,10 +131,6 @@ const FunnelPage = () => {
     setInputValue('');
     setShowInput(false);
 
-    const nextStep = step + 1;
-    // Não definimos o typingIndicator aqui, ele será definido no runConversation
-    // para garantir que o indicador correto apareça antes da mensagem do bot.
-
     // Aumentado o tempo de espera geral para a transição de passos
     setTimeout(() => {
       setStep(prev => prev + 1);
@@ -258,16 +254,16 @@ const FunnelPage = () => {
           addMessage('bot', `${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', 'Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', 'Olha só:');
 
-          await new Promise(res => setTimeout(res, 1500));
+          await new Promise(res => setTimeout(res, 2000)); // Aumentado o tempo de espera
           addMessage(
             'bot', 
             <GroupInviteMessage onViewClick={() => setActiveView('group')} />, 
@@ -284,56 +280,56 @@ const FunnelPage = () => {
           break;
         case 10:
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2500));
+          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', `${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', 'Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', <>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
 
-          await new Promise(res => setTimeout(res, 1500));
+          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
           addMessage('bot', <PocheteTeimosaEffect />, undefined, 'custom-component');
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 3000));
+          await new Promise(res => setTimeout(res, 4000)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', <>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>);
           
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 3500)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', <>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 3500)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', 'O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', 'Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
           setShowInput(true);
           break;
         case 11:
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2500));
+          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', `${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
 
           setTypingIndicator('text');
-          await new Promise(res => setTimeout(res, 2000));
+          await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
           setTypingIndicator(null);
           addMessage('bot', 'Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
 
-          await new Promise(res => setTimeout(res, 1500));
+          await new Promise(res => setTimeout(res, 2500)); // Aumentado o tempo de espera
           addMessage(
             'bot',
             <GameStartMessage userName={userData.name || 'Guerreira'} />,
@@ -343,17 +339,17 @@ const FunnelPage = () => {
           break;
         case 12:
             setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 2500));
+            await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
             setTypingIndicator(null);
             addMessage('bot', `Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
 
             setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 2000));
+            await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
             setTypingIndicator(null);
             addMessage('bot', 'Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
 
             setTypingIndicator('text');
-            await new Promise(res => setTimeout(res, 2000));
+            await new Promise(res => setTimeout(res, 3000)); // Aumentado o tempo de espera
             setTypingIndicator(null);
             addMessage('bot', 'Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
             setShowInput(true);
@@ -363,8 +359,7 @@ const FunnelPage = () => {
       }
     };
     runConversation();
-  }, [step, userData.name]); // Removido messages.length das dependências
-  // As funções addMessage, setTypingIndicator, setStep e setShowInput são estáveis e não precisam estar nas dependências.
+  }, [step, userData.name]); 
 
   return (
     <>
