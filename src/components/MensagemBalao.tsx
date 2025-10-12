@@ -65,7 +65,7 @@ export function MensagemBalao({
   if (tipo === 'audio' || tipo === 'custom-component') {
     return (
       <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
-        {!isUser && tipo !== 'audio' && ( // Só mostra o avatar se não for usuário E não for uma mensagem de áudio
+        {!isUser && (
           <img
             src="/alessandra.jpg"
             alt={remetente}
