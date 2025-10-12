@@ -58,10 +58,10 @@ const calculateDelay = (content: string | React.ReactNode): number => {
 
   textContent = textContent.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
 
-  const baseDelay = 1000; // Atraso base em ms (tempo mínimo para ler uma mensagem curta)
-  const charsPerMs = 40;  // ms por caractere (aproximadamente 25 caracteres por segundo para leitura)
-  const minDelay = 1500;  // Atraso total mínimo
-  const maxDelay = 6000;  // Atraso total máximo
+  const baseDelay = 500; // Atraso base em ms
+  const charsPerMs = 30;  // ms por caractere (aproximadamente 33 caracteres por segundo para leitura)
+  const minDelay = 1000;  // Atraso total mínimo
+  const maxDelay = 5000;  // Atraso total máximo
 
   const calculatedDelay = baseDelay + (textContent.length * charsPerMs);
   return Math.max(minDelay, Math.min(maxDelay, calculatedDelay));
@@ -93,6 +93,8 @@ const FunnelPage = () => {
   const [inputValue, setInputValue] = useState('');
   const [typingIndicator, setTypingIndicator] = useState<'text' | 'audio' | null>(null);
   const [showInput, setShowInput] = useState(false);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState('Digite seu nome...'); // Novo estado
+  const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text'); // Novo estado
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
 
@@ -161,7 +163,7 @@ const FunnelPage = () => {
     });
 
     setInputValue('');
-    setShowInput(false);
+    setShowInput(false); // Esconde o input enquanto o bot "processa"
 
     // 2. Calcula o tempo de "processamento" (leitura da resposta do usuário)
     const processingDelay = calculateDelay(userResponse);
@@ -228,14 +230,20 @@ const FunnelPage = () => {
       processedSteps.current.add(step);
 
       setShowInput(false); // Esconde o input por padrão no início de cada passo do bot
+      setCurrentPlaceholder('Sua resposta...'); // Placeholder genérico por padrão
+      setCurrentInputType('text'); // Input type genérico por padrão
 
       switch (step) {
         case 0:
           await displayBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
+          setCurrentPlaceholder('Digite seu nome...');
+          setCurrentInputType('text');
           setShowInput(true);
           break;
         case 1:
           await displayBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
+          setCurrentPlaceholder('Digite seu WhatsApp...');
+          setCurrentInputType('tel');
           setShowInput(true);
           break;
         case 2: // Alessandra audio 1
@@ -358,8 +366,8 @@ const FunnelPage = () => {
                 onSubmit={handleSubmit}
                 inputValue={inputValue}
                 onInputChange={(e) => setInputValue(e.target.value)}
-                inputType={step === 1 ? 'tel' : 'text'}
-                placeholder={step === 0 ? 'Digite seu nome...' : 'Digite seu WhatsApp...'}
+                inputType={currentInputType} // Usando o novo estado
+                placeholder={currentPlaceholder} // Usando o novo estado
               />
             )}
           </div>
