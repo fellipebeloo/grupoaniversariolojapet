@@ -15,5 +15,5 @@ export const AlessandraAudios = {
   alessandraChatAudio1: '/alessandra-chat-audio1.mp3', // Novo áudio para o chat
   alessandraChatAudio1Transcription: 'Oi, mulher! Aqui é a Alessandra. Se você chegou até aqui, provavelmente tá cansada de tentar emagrecer, treinar, comer certinho… e ver tudo estacionar, né? Eu entendo, porque eu já passei por isso. Mas tem uma explicação. E eu vou te ajudar a entender o que tá travando seu corpo. Bora juntas?', // Transcrição do áudio 1
   alessandraChatAudio2: '/alessandra-chat-audio2.mp3', // Novo áudio para o chat
-  alessandraChatAudio2Transcription: 'Incrível! Suas respostas me deram um panorama claro do que está acontecendo. Agora, vou te explicar o porquê seu corpo está travado e como podemos reverter isso com o método H.I.T.S. Prepare-se para a transformação!', // Transcrição do áudio 2
+  alessandraChatAudio2Transcription: 'Agora que eu entendi um pouco sobre você, quero te mostrar umas alunas minhas que estavam exatamente onde você tá hoje. Mulheres que já tinham tentado de tudo… Mas só conseguiram mudar o corpo depois de entender o que tava travando o metabolismo delas. Ouve com carinho, porque pode ser o que vai te destravar também.', // Transcrição do áudio 2
 };
