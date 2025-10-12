@@ -320,6 +320,8 @@ const FunnelPage = () => {
           await displayBotMessage(`${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
           await displayBotMessage('Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
           await displayBotMessage(<GameStartMessage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
+          // Adicionando uma mensagem de instrução explícita
+          await displayBotMessage('Clique no botão "Começar o Jogo 🔥" acima para iniciar o desafio e descobrir o que está travando seu corpo!');
           // setShowInput(false) já é o padrão
           break;
         case 13: // Com opções
