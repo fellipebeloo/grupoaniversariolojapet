@@ -166,12 +166,10 @@ const FunnelPage = () => {
     // 2. Calcula o tempo de "processamento" (leitura da resposta do usuário)
     const processingDelay = calculateDelay(userResponse);
 
-    // 3. Mostra o indicador de digitação enquanto o bot "processa"
-    setTypingIndicator('text');
+    // 3. Espera pelo tempo de processamento SEM mostrar o indicador de digitação
     await new Promise(res => setTimeout(res, processingDelay));
 
-    // 4. Esconde o indicador e avança o passo
-    setTypingIndicator(null);
+    // 4. Avança o passo
     setStep(prev => prev + 1);
   };
 
