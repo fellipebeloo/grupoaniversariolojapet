@@ -93,7 +93,7 @@ const FunnelPage = () => {
   const [inputValue, setInputValue] = useState('');
   const [typingIndicator, setTypingIndicator] = useState<'text' | 'audio' | null>(null);
   const [showInput, setShowInput] = useState(false);
-  const [currentPlaceholder, setCurrentPlaceholder] = useState('Digite seu nome...'); // Novo estado
+  const [currentPlaceholder, setCurrentPlaceholder] = useState('Sua resposta...'); // Novo estado
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text'); // Novo estado
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
@@ -238,13 +238,13 @@ const FunnelPage = () => {
           await displayBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
           setCurrentPlaceholder('Digite seu nome...');
           setCurrentInputType('text');
-          setShowInput(true);
+          setShowInput(true); // Mostra input para nome
           break;
         case 1:
           await displayBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
           setCurrentPlaceholder('Digite seu WhatsApp...');
           setCurrentInputType('tel');
-          setShowInput(true);
+          setShowInput(true); // Mostra input para WhatsApp
           break;
         case 2: // Alessandra audio 1
           await displayBotMessage(
@@ -258,22 +258,23 @@ const FunnelPage = () => {
             undefined,
             'audio'
           );
+          // setShowInput(false) já é o padrão
           break;
-        case 3: // Mensagem de texto após o áudio 1
+        case 3: // Mensagem de texto após o áudio 1 (com opções)
           await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
-        case 4:
+        case 4: // Com opções
           await displayBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
-        case 5:
+        case 5: // Com opções
           await displayBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
-        case 6:
+        case 6: // Com opções
           await displayBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
         case 7: // Alessandra audio 2
           await displayBotMessage(
@@ -287,22 +288,24 @@ const FunnelPage = () => {
             undefined,
             'audio'
           );
+          // setShowInput(false) já é o padrão
           break;
-        case 8: // Mensagem de texto após o áudio 2
+        case 8: // Mensagem de texto após o áudio 2 (com opções)
           await displayBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
-        case 9:
+        case 9: // Grupo de convite (custom-component)
           await displayBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
           await displayBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
           await displayBotMessage('Olha só:');
           await displayBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component');
+          // setShowInput(false) já é o padrão
           break;
-        case 10:
+        case 10: // Com opções
           await displayBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
-        case 11:
+        case 11: // Efeito Pochete Teimosa (custom-component e texto com opções)
           await displayBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
           await displayBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
           await displayBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
@@ -311,18 +314,19 @@ const FunnelPage = () => {
           await displayBotMessage(<>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
           await displayBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
           await displayBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
-        case 12:
+        case 12: // Jogo da Vida Fitness (custom-component)
           await displayBotMessage(`${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
           await displayBotMessage('Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
           await displayBotMessage(<GameStartMessage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
+          // setShowInput(false) já é o padrão
           break;
-        case 13:
+        case 13: // Com opções
           await displayBotMessage(`Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
           await displayBotMessage('Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
           await displayBotMessage('Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
-          setShowInput(true);
+          // setShowInput(false) já é o padrão
           break;
         default:
           break;
