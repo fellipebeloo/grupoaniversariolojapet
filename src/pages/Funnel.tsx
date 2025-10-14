@@ -19,7 +19,8 @@ import { SlotsRemaining } from '@/components/SlotsRemaining';
 import { CtaButton } from '@/components/CtaButton';
 import { WhatsIncluded } from '@/components/WhatsIncluded';
 import { BackgroundMusicPlayer } from '@/components/BackgroundMusicPlayer';
-import { MusicControlIsland } from '@/components/MusicControlIsland'; // Importar o novo componente
+import { MusicControlIsland } from '@/components/MusicControlIsland';
+import { FullScreenPrompt } from '@/components/FullScreenPrompt'; // Importar o novo componente
 
 interface AudioData {
   audioSrc: string;
@@ -111,9 +112,10 @@ const FunnelPage = () => {
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
-  const [playedAudios, setPlayedAudios] = new Set<string>(); // Changed to a Set
+  const [playedAudios, setPlayedAudios] = useState<Set<string>>(new Set()); // Changed to a Set
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
-  const [showMusicControlIsland, setShowMusicControlIsland] = useState(false); // Novo estado para o popup
+  const [showMusicControlIsland, setShowMusicControlIsland] = useState(false);
+  const [showFullScreenPrompt, setShowFullScreenPrompt] = useState(true); // Novo estado para o prompt de tela cheia
 
   const processedSteps = useRef<Set<number>>(new Set());
 
@@ -173,6 +175,45 @@ const FunnelPage = () => {
     // O popup permanece visível mesmo se a música for pausada
     return () => clearTimeout(timer);
   }, [playBackgroundMusic, showMusicControlIsland]);
+
+  // Efeito para verificar o estado de tela cheia
+  useEffect(() => {
+    const checkFullScreen = () => {
+      if (document.fullscreenElement) {
+        setShowFullScreenPrompt(false);
+      } else {
+        // Only show prompt if it was previously shown and user exited fullscreen
+        // Or if it's the initial load and not in fullscreen
+        if (!processedSteps.current.has(-1)) { // Use a special step to mark initial check
+          setShowFullScreenPrompt(true);
+          processedSteps.current.add(-1);
+        }
+      }
+    };
+
+    document.addEventListener('fullscreenchange', checkFullScreen);
+    // Initial check
+    checkFullScreen();
+
+    return () => {
+      document.removeEventListener('fullscreenchange', checkFullScreen);
+    };
+  }, []);
+
+  const handleEnterFullScreen = () => {
+    const element = document.documentElement; // Request full screen for the entire HTML document
+    if (element.requestFullscreen) {
+      element.requestFullscreen().then(() => {
+        setShowFullScreenPrompt(false);
+      }).catch((err) => {
+        console.error("Erro ao tentar entrar em tela cheia:", err);
+        setShowFullScreenPrompt(false); // Hide prompt even if it fails
+      });
+    } else {
+      console.warn("API de tela cheia não suportada neste navegador.");
+      setShowFullScreenPrompt(false); // Hide prompt if not supported
+    }
+  };
 
   const addMessage = useCallback((
     sender: 'bot' | 'user',
@@ -380,10 +421,11 @@ const FunnelPage = () => {
       }
     };
     runConversation();
-  }, [step, userData.name, displayBotMessage, addMessage]); 
+  }, [step, userData.name, displayBotMessage, addMessage, playedAudios]); 
 
   return (
     <>
+      {showFullScreenPrompt && <FullScreenPrompt onEnterFullScreen={handleEnterFullScreen} />}
       <BackgroundMusicPlayer isPlaying={playBackgroundMusic} audioSrc="/background-music.mp3" />
       <MusicControlIsland 
         isPlaying={playBackgroundMusic} 
