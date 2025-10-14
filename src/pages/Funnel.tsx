@@ -18,6 +18,7 @@ import { OfferCard } from '@/components/OfferCard';
 import { SlotsRemaining } from '@/components/SlotsRemaining';
 import { CtaButton } from '@/components/CtaButton';
 import { WhatsIncluded } from '@/components/WhatsIncluded';
+import { BackgroundMusicPlayer } from '@/components/BackgroundMusicPlayer';
 
 interface AudioData {
   audioSrc: string;
@@ -110,6 +111,7 @@ const FunnelPage = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
   const [playedAudios, setPlayedAudios] = useState<Set<string>>(new Set());
+  const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
 
   const processedSteps = useRef<Set<number>>(new Set());
 
@@ -344,6 +346,7 @@ const FunnelPage = () => {
           await displayBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.']);
           break;
         case 15:
+          setPlayBackgroundMusic(true);
           await displayBotMessage(`${userData.name}, com base no que você me respondeu, eu preparei uma análise do seu caso…`);
           await displayBotMessage(<ReportImage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
           await displayBotMessage(<>Nesse relatório eu explico:<br/><br/>✅ O que tá travando seu corpo<br/>✅ Por que nada funcionou até agora<br/>✅ E como começar o H.I.T.S. HOJE pra mudar isso</>);
@@ -367,6 +370,7 @@ const FunnelPage = () => {
 
   return (
     <>
+      <BackgroundMusicPlayer isPlaying={playBackgroundMusic} />
       {activeView === 'chat' && (
         <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
           <ChatHeader />
