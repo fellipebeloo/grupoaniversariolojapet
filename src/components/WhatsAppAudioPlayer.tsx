@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Play, Pause, Loader2, CheckCheck, Mic } from 'lucide-react';
+import { Play, Pause, Loader2, CheckCheck, Mic, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface WhatsAppAudioPlayerProps {
@@ -10,6 +10,7 @@ interface WhatsAppAudioPlayerProps {
   messageTime: string;
   transcription?: string;
   senderName: string;
+  profileImageUrl?: string;
   onAudioEnded?: () => void;
   hasBeenPlayed?: boolean;
   onFirstPlay?: () => void;
@@ -21,6 +22,7 @@ export const WhatsAppAudioPlayer = ({
   messageTime,
   transcription,
   senderName,
+  profileImageUrl,
   onAudioEnded,
   hasBeenPlayed = false,
   onFirstPlay,
@@ -33,6 +35,7 @@ export const WhatsAppAudioPlayer = ({
   const [duration, setDuration] = useState(0);
   const [percentPlayed, setPercentPlayed] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
 
   const formatTimeToDisplay = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -87,7 +90,10 @@ export const WhatsAppAudioPlayer = ({
       }
     };
 
-    const onPlay = () => setIsPlaying(true);
+    const onPlay = () => {
+      setIsPlaying(true);
+      setHasStartedPlaying(true);
+    };
     const onPause = () => setIsPlaying(false);
     const onTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -186,17 +192,27 @@ export const WhatsAppAudioPlayer = ({
           </div>
         </div>
 
-        <div className="relative ml-4 flex-shrink-0">
-          <button
-            type="button"
-            onClick={handleSpeedChange}
-            className={cn(
-              "w-14 h-14 rounded-full flex items-center justify-center font-semibold transition-colors",
-              "bg-white/10 hover:bg-white/20 text-white text-sm"
-            )}
-          >
-            {playbackRate.toFixed(1)}x
-          </button>
+        <div className="relative ml-4 flex-shrink-0 w-14 h-14">
+          {hasStartedPlaying ? (
+            <button
+              type="button"
+              onClick={handleSpeedChange}
+              className={cn(
+                "w-full h-full rounded-full flex items-center justify-center font-semibold transition-colors",
+                "bg-white/10 hover:bg-white/20 text-white text-sm"
+              )}
+            >
+              {playbackRate.toFixed(1)}x
+            </button>
+          ) : (
+            <div className="w-full h-full rounded-full bg-gray-500 overflow-hidden flex items-center justify-center">
+              {profileImageUrl ? (
+                <img src={profileImageUrl} alt={senderName} className="w-full h-full object-cover" />
+              ) : (
+                <User size={32} className="text-white" />
+              )}
+            </div>
+          )}
           <Mic
             size={26}
             className={cn(
