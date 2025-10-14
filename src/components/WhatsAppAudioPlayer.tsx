@@ -3,30 +3,33 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Play, Pause, Loader2, CheckCheck, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Importando Avatar components
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface WhatsAppAudioPlayerProps {
   audioSrc: string;
-  isMine?: boolean; // true for user's message, false for bot's
+  isMine?: boolean;
   senderAvatar?: string;
   messageTime: string;
-  transcription?: string; // Nova prop para a transcrição
-  senderName: string; // Nova prop para o nome do remetente
-  onAudioEnded?: () => void; // Nova prop para callback ao finalizar o áudio
+  transcription?: string;
+  senderName: string;
+  onAudioEnded?: () => void;
+  hasBeenPlayed?: boolean;
+  onFirstPlay?: () => void;
 }
 
 export const WhatsAppAudioPlayer = ({
   audioSrc,
   isMine = false,
-  senderAvatar = '/alessandra.jpg', // Default to Alessandra's avatar
+  senderAvatar = '/alessandra.jpg',
   messageTime,
   transcription,
   senderName,
-  onAudioEnded, // Destruturando a nova prop
+  onAudioEnded,
+  hasBeenPlayed = false,
+  onFirstPlay,
 }: WhatsAppAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sliderRef = useRef<HTMLInputElement | null>(null);
-  const hasAutoPlayed = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
@@ -62,13 +65,12 @@ export const WhatsAppAudioPlayer = ({
     const onLoadedData = () => {
       setDuration(audio.duration);
       setIsLoading(false);
-      // Auto-play on load, but only the first time
-      if (!hasAutoPlayed.current) {
+      if (!hasBeenPlayed) {
         audio.play().catch(error => {
           console.log("Audio auto-play blocked:", error);
-          setIsPlaying(false); // Ensure play button shows if auto-play fails
+          setIsPlaying(false);
         });
-        hasAutoPlayed.current = true;
+        onFirstPlay?.();
       }
     };
 
@@ -80,10 +82,10 @@ export const WhatsAppAudioPlayer = ({
     };
     const onEnded = () => {
       setIsPlaying(false);
-      audio.currentTime = 0; // Reset to start
+      audio.currentTime = 0;
       setCurrentTime(0);
       setPercentPlayed(0);
-      onAudioEnded?.(); // Chama o callback quando o áudio termina
+      onAudioEnded?.();
     };
     const onWaiting = () => setIsLoading(true);
     const onPlaying = () => setIsLoading(false);
@@ -106,22 +108,21 @@ export const WhatsAppAudioPlayer = ({
       audio.removeEventListener('waiting', onWaiting);
       audio.removeEventListener('playing', onPlaying);
     };
-  }, [audioSrc, onAudioEnded]); // Adiciona onAudioEnded como dependência
+  }, [audioSrc, onAudioEnded, hasBeenPlayed, onFirstPlay]);
 
-  const playerBgColor = isMine ? 'bg-[#005c4b]' : 'bg-[#202c33]'; // Ajustado para as cores das bolhas de mensagem
-  const featuredColor = 'text-[#00e5c0]'; // Using text color for icons/progress
+  const playerBgColor = isMine ? 'bg-[#005c4b]' : 'bg-[#202c33]';
+  const featuredColor = 'text-[#00e5c0]';
   const textColor = 'text-[#c5c6c8]';
 
   return (
-    <div className={cn( // Este é o container principal da bolha de mensagem de áudio
+    <div className={cn(
       "flex flex-col min-w-[240px] max-w-[70%] rounded-xl shadow-sm user-select-none font-sans",
       playerBgColor,
     )}>
-      {!isMine && ( // Renderiza o nome do remetente se não for minha mensagem
+      {!isMine && (
         <p className="text-sm font-semibold text-green-400 pt-2 px-3 mb-1">{senderName}</p>
       )}
-      {/* Parte superior: controles de áudio e avatar */}
-      <div className="flex items-center pt-2 px-3"> {/* Preenchimento consistente superior/lateral */}
+      <div className="flex items-center pt-2 px-3">
         <button
           type="button"
           onClick={handlePlayButton}
@@ -140,7 +141,7 @@ export const WhatsAppAudioPlayer = ({
           )}
         </button>
 
-        <div className="flex-1 flex flex-col relative ml-2"> {/* Adicionado ml-2 para espaçamento após o botão de play */}
+        <div className="flex-1 flex flex-col relative ml-2">
           <div className="flex-1 flex items-center relative">
             <div
               className="absolute bg-[#00e5c0] h-[0.24rem] rounded-full"
@@ -172,7 +173,6 @@ export const WhatsAppAudioPlayer = ({
           </div>
         </div>
 
-        {/* Avatar com ícone de microfone sobreposto */}
         <div className="relative ml-4 flex-shrink-0">
           <Avatar className="w-14 h-14">
             <AvatarImage src={senderAvatar} alt={senderName} />
@@ -192,7 +192,7 @@ export const WhatsAppAudioPlayer = ({
       {transcription && (
         <p className={cn(
           "text-base px-3 pb-2 whitespace-pre-wrap",
-          'text-gray-400' // Alterado para text-gray-400 para um tom mais cinza
+          'text-gray-400'
         )}>
           {transcription}
         </p>

@@ -13,6 +13,12 @@ import { GameStartMessage } from '@/components/GameStartMessage';
 import { useSearchParams } from 'react-router-dom';
 import { AlessandraAudios } from '@/constants/audioPaths';
 
+interface AudioData {
+  audioSrc: string;
+  transcription: string;
+  onAudioEnded: () => void;
+}
+
 interface Message {
   id: string;
   texto: React.ReactNode;
@@ -20,6 +26,7 @@ interface Message {
   remetente: string;
   tipo: 'texto' | 'imagem' | 'audio' | 'custom-component';
   options?: string[];
+  audioData?: AudioData;
 }
 
 const TypingIndicator = () => (
@@ -37,7 +44,6 @@ const AudioRecordingIndicator = () => (
   </div>
 );
 
-// Função auxiliar para calcular o atraso com base no conteúdo da mensagem
 const calculateDelay = (content: string | React.ReactNode): number => {
   let textContent = '';
 
@@ -58,10 +64,10 @@ const calculateDelay = (content: string | React.ReactNode): number => {
 
   textContent = textContent.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
 
-  const baseDelay = 500; // Atraso base em ms
-  const charsPerMs = 30;  // ms por caractere (aproximadamente 33 caracteres por segundo para leitura)
-  const minDelay = 1000;  // Atraso total mínimo
-  const maxDelay = 5000;  // Atraso total máximo
+  const baseDelay = 500;
+  const charsPerMs = 30;
+  const minDelay = 1000;
+  const maxDelay = 5000;
 
   const calculatedDelay = baseDelay + (textContent.length * charsPerMs);
   return Math.max(minDelay, Math.min(maxDelay, calculatedDelay));
@@ -93,15 +99,14 @@ const FunnelPage = () => {
   const [inputValue, setInputValue] = useState('');
   const [typingIndicator, setTypingIndicator] = useState<'text' | 'audio' | null>(null);
   const [showInput, setShowInput] = useState(false);
-  const [currentPlaceholder, setCurrentPlaceholder] = useState('Sua resposta...'); // Novo estado
-  const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text'); // Novo estado
+  const [currentPlaceholder, setCurrentPlaceholder] = useState('Sua resposta...');
+  const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
+  const [playedAudios, setPlayedAudios] = useState<Set<string>>(new Set());
 
-  // Ref para controlar os passos já processados
   const processedSteps = useRef<Set<number>>(new Set());
 
-  // Refs para os efeitos sonoros
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
   const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -114,8 +119,8 @@ const FunnelPage = () => {
     if (stepFromParam) {
       const numericStep = parseInt(stepFromParam, 10);
       if (step !== numericStep) {
-        setMessages([]); // Limpa mensagens para reconstruir a conversa
-        processedSteps.current.clear(); // Limpa os passos processados também
+        setMessages([]);
+        processedSteps.current.clear();
         setStep(numericStep);
       }
       searchParams.delete('step');
@@ -135,7 +140,6 @@ const FunnelPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingIndicator]);
 
-  // Inicializa os áudios de efeitos sonoros
   useEffect(() => {
     messageSentAudioRef.current = new Audio(AlessandraAudios.messageSent);
     messageReceivedAudioRef.current = new Audio(AlessandraAudios.messageReceived);
@@ -152,7 +156,8 @@ const FunnelPage = () => {
     sender: 'bot' | 'user',
     content: React.ReactNode,
     options?: string[],
-    type: 'texto' | 'imagem' | 'audio' | 'custom-component' = 'texto'
+    type: 'texto' | 'imagem' | 'audio' | 'custom-component' = 'texto',
+    audioData?: AudioData
   ) => {
     const newMessage: Message = {
       id: `${Date.now()}-${Math.random()}`,
@@ -161,15 +166,14 @@ const FunnelPage = () => {
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       tipo: type,
       options,
+      audioData,
     };
     setMessages(prev => [...prev, newMessage]);
   }, []);
 
   const handleNextStep = async (userResponse: string) => {
-    // Reproduz o som de mensagem enviada
     messageSentAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem enviada:", e));
 
-    // 1. Adiciona a mensagem do usuário imediatamente
     setMessages(prevMessages => {
       const updatedMessages = prevMessages.map(msg => ({ ...msg, options: undefined }));
       const userMessage: Message = {
@@ -183,15 +187,10 @@ const FunnelPage = () => {
     });
 
     setInputValue('');
-    setShowInput(false); // Esconde o input enquanto o bot "processa"
+    setShowInput(false);
 
-    // 2. Calcula o tempo de "processamento" (leitura da resposta do usuário)
     const processingDelay = calculateDelay(userResponse);
-
-    // 3. Espera pelo tempo de processamento SEM mostrar o indicador de digitação
     await new Promise(res => setTimeout(res, processingDelay));
-
-    // 4. Avança o passo
     setStep(prev => prev + 1);
   };
 
@@ -215,36 +214,22 @@ const FunnelPage = () => {
     }
   };
 
-  // Refatorando a lógica de exibição de mensagens do bot em uma função auxiliar
-  const displayBotMessage = useCallback(async (messageContent: React.ReactNode, options?: string[], type: Message['tipo'] = 'texto') => {
-    // Reproduz o som de mensagem recebida ANTES de mostrar o indicador de digitação
+  const displayBotMessage = useCallback(async (messageContent: React.ReactNode, options?: string[], type: Message['tipo'] = 'texto', audioData?: AudioData) => {
     messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
 
-    // Para mensagens de áudio, mostramos um indicador de gravação antes de exibir o player
-    if (type === 'audio') {
+    if (type === 'audio' && audioData) {
       setTypingIndicator('audio');
-      await new Promise(res => setTimeout(res, 1000)); // Curto atraso para o indicador de gravação
-      setTypingIndicator(null); // Esconde o indicador de gravação antes de mostrar o player
-      addMessage('bot', messageContent, options, type);
-      // O tempo de "leitura" para áudio é o próprio tempo de reprodução.
-      // A próxima ação será acionada pelo `onAudioEnded` do player.
+      await new Promise(res => setTimeout(res, 1000));
+      setTypingIndicator(null);
+      addMessage('bot', '', options, type, audioData);
       return;
     }
 
-    // Para mensagens de texto e componentes customizados:
-    // 1. Adiciona a mensagem/componente ao chat imediatamente.
     addMessage('bot', messageContent, options, type);
-
-    // 2. Calcula o tempo de leitura para a mensagem que acabou de ser adicionada.
     const readingDelay = calculateDelay(messageContent);
-
-    // 3. Mostra o indicador de digitação enquanto o usuário lê.
     setTypingIndicator('text');
     await new Promise(res => setTimeout(res, readingDelay));
-
-    // 4. Esconde o indicador após o tempo de leitura.
     setTypingIndicator(null);
-
   }, [addMessage]);
 
   useEffect(() => {
@@ -254,83 +239,72 @@ const FunnelPage = () => {
       }
       processedSteps.current.add(step);
 
-      setShowInput(false); // Esconde o input por padrão no início de cada passo do bot
-      setCurrentPlaceholder('Sua resposta...'); // Placeholder genérico por padrão
-      setCurrentInputType('text'); // Input type genérico por padrão
+      setShowInput(false);
+      setCurrentPlaceholder('Sua resposta...');
+      setCurrentInputType('text');
 
       switch (step) {
         case 0:
           await displayBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
           setCurrentPlaceholder('Digite seu nome...');
           setCurrentInputType('text');
-          setShowInput(true); // Mostra input para nome
+          setShowInput(true);
           break;
         case 1:
           await displayBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
           setCurrentPlaceholder('Digite seu WhatsApp...');
           setCurrentInputType('tel');
-          setShowInput(true); // Mostra input para WhatsApp
+          setShowInput(true);
           break;
-        case 2: // Alessandra audio 1
+        case 2:
           await displayBotMessage(
-            <WhatsAppAudioPlayer
-              audioSrc={AlessandraAudios.alessandraChatAudio1}
-              messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              transcription={AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name)}
-              senderName="Alessandra"
-              onAudioEnded={() => setStep(3)} // Avança para o próximo passo após o áudio terminar
-            />,
+            '',
             undefined,
-            'audio'
+            'audio',
+            {
+              audioSrc: AlessandraAudios.alessandraChatAudio1,
+              transcription: AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name),
+              onAudioEnded: () => setStep(3),
+            }
           );
-          // setShowInput(false) já é o padrão
           break;
-        case 3: // Mensagem de texto após o áudio 1 (com opções)
+        case 3:
           await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
-          // setShowInput(false) já é o padrão
           break;
-        case 4: // Com opções
+        case 4:
           await displayBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
-          // setShowInput(false) já é o padrão
           break;
-        case 5: // Com opções
+        case 5:
           await displayBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
-          // setShowInput(false) já é o padrão
           break;
-        case 6: // Com opções
+        case 6:
           await displayBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
-          // setShowInput(false) já é o padrão
           break;
-        case 7: // Alessandra audio 2
+        case 7:
           await displayBotMessage(
-            <WhatsAppAudioPlayer
-              audioSrc={AlessandraAudios.alessandraChatAudio2}
-              messageTime={new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              transcription={AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name)}
-              senderName="Alessandra"
-              onAudioEnded={() => setStep(8)} // Avança para o próximo passo após o áudio terminar
-            />,
+            '',
             undefined,
-            'audio'
+            'audio',
+            {
+              audioSrc: AlessandraAudios.alessandraChatAudio2,
+              transcription: AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name),
+              onAudioEnded: () => setStep(8),
+            }
           );
-          // setShowInput(false) já é o padrão
           break;
-        case 8: // Mensagem de texto após o áudio 2 (com opções)
+        case 8:
           await displayBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
-          // setShowInput(false) já é o padrão
           break;
-        case 9: // Grupo de convite (custom-component)
+        case 9:
           await displayBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
           await displayBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
           await displayBotMessage('Olha só:');
           await displayBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component');
-          // setShowInput(false) já é o padrão
           break;
-        case 10: // Com opções
+        case 10:
           await displayBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
-          // setShowInput(false) já é o padrão
           break;
-        case 11: // Efeito Pochete Teimosa (custom-component e texto com opções)
+        case 11:
           await displayBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
           await displayBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
           await displayBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
@@ -339,21 +313,17 @@ const FunnelPage = () => {
           await displayBotMessage(<>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
           await displayBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
           await displayBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
-          // setShowInput(false) já é o padrão
           break;
-        case 12: // Jogo da Vida Fitness (custom-component)
+        case 12:
           await displayBotMessage(`${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
           await displayBotMessage('Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
           await displayBotMessage(<GameStartMessage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
-          // Adicionando uma mensagem de instrução explícita
           await displayBotMessage('Clique no botão "Começar o Jogo 🔥" acima para iniciar o desafio e descobrir o que está travando seu corpo!');
-          // setShowInput(false) já é o padrão
           break;
-        case 13: // Com opções
+        case 13:
           await displayBotMessage(`Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
           await displayBotMessage('Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
           await displayBotMessage('Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
-          // setShowInput(false) já é o padrão
           break;
         default:
           break;
@@ -372,9 +342,31 @@ const FunnelPage = () => {
             <div 
               className="overflow-y-auto overscroll-y-contain p-4 space-y-4 h-full"
             >
-              {messages.map(msg => (
-                <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />
-              ))}
+              {messages.map(msg => {
+                if (msg.tipo === 'audio' && msg.audioData) {
+                  return (
+                    <MensagemBalao
+                      key={msg.id}
+                      {...msg}
+                      texto={
+                        <WhatsAppAudioPlayer
+                          audioSrc={msg.audioData.audioSrc}
+                          messageTime={msg.horario}
+                          transcription={msg.audioData.transcription}
+                          senderName={msg.remetente}
+                          onAudioEnded={msg.audioData.onAudioEnded}
+                          hasBeenPlayed={playedAudios.has(msg.audioData.audioSrc)}
+                          onFirstPlay={() => {
+                            setPlayedAudios(prev => new Set(prev).add(msg.audioData!.audioSrc));
+                          }}
+                        />
+                      }
+                      onOptionClick={handleNextStep}
+                    />
+                  );
+                }
+                return <MensagemBalao key={msg.id} {...msg} onOptionClick={handleNextStep} />;
+              })}
               {typingIndicator && (
                 <div className="flex items-end gap-2 justify-start">
                   <img
@@ -397,8 +389,8 @@ const FunnelPage = () => {
                 onSubmit={handleSubmit}
                 inputValue={inputValue}
                 onInputChange={(e) => setInputValue(e.target.value)}
-                inputType={currentInputType} // Usando o novo estado
-                placeholder={currentPlaceholder} // Usando o novo estado
+                inputType={currentInputType}
+                placeholder={currentPlaceholder}
               />
             )}
           </div>
