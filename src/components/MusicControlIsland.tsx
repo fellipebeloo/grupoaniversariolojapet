@@ -40,10 +40,12 @@ export const MusicControlIsland = ({ isPlaying, onTogglePlay, isVisible }: Music
       <button onClick={onTogglePlay} className="flex items-center justify-center p-1 rounded-full hover:bg-white/20 transition-colors">
         {isPlaying ? <Pause size={20} /> : <Play size={20} />}
       </button>
-      <div className="flex items-center gap-1">
-        <span className={cn("w-1.5 h-1.5 rounded-full bg-white", isPlaying && "animate-pulse-slow")} style={{ animationDelay: '0s' }}></span>
-        <span className={cn("w-1.5 h-1.5 rounded-full bg-white", isPlaying && "animate-pulse-slow")} style={{ animationDelay: '0.2s' }}></span>
-        <span className={cn("w-1.5 h-1.5 rounded-full bg-white", isPlaying && "animate-pulse-slow")} style={{ animationDelay: '0.4s' }}></span>
+      <div className="flex items-end gap-0.5 h-5"> {/* Changed items-center to items-end, added h-5 */}
+        <div className={cn("w-1.5 bg-white rounded-full", isPlaying && "animate-wave-pulse")} style={{ animationDelay: '0s' }}></div>
+        <div className={cn("w-1.5 bg-white rounded-full", isPlaying && "animate-wave-pulse")} style={{ animationDelay: '0.1s' }}></div>
+        <div className={cn("w-1.5 bg-white rounded-full", isPlaying && "animate-wave-pulse")} style={{ animationDelay: '0.2s' }}></div>
+        <div className={cn("w-1.5 bg-white rounded-full", isPlaying && "animate-wave-pulse")} style={{ animationDelay: '0.3s' }}></div>
+        <div className={cn("w-1.5 bg-white rounded-full", isPlaying && "animate-wave-pulse")} style={{ animationDelay: '0.4s' }}></div>
       </div>
       <span className="text-sm font-medium">Música</span>
     </div>

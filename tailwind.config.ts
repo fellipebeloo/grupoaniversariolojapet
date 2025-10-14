@@ -104,6 +104,11 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        "wave-pulse": {
+          "0%, 100%": { height: "0.5rem" }, // h-2
+          "25%": { height: "1.25rem" },    // h-5
+          "75%": { height: "0.75rem" },    // h-3
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -111,6 +116,7 @@ export default {
         "fade-in-down": "fade-in-down 0.5s ease-out",
         "shake": "shake 0.3s ease-in-out infinite",
         "pulse-slow": "pulse-slow 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "wave-pulse": "wave-pulse 1s ease-in-out infinite alternate",
       },
     },
   },
