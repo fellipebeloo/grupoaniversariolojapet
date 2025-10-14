@@ -3,12 +3,10 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Play, Pause, Loader2, CheckCheck, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface WhatsAppAudioPlayerProps {
   audioSrc: string;
   isMine?: boolean;
-  senderAvatar?: string;
   messageTime: string;
   transcription?: string;
   senderName: string;
@@ -20,7 +18,6 @@ interface WhatsAppAudioPlayerProps {
 export const WhatsAppAudioPlayer = ({
   audioSrc,
   isMine = false,
-  senderAvatar = '/alessandra.jpg',
   messageTime,
   transcription,
   senderName,
@@ -35,6 +32,7 @@ export const WhatsAppAudioPlayer = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [percentPlayed, setPercentPlayed] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
 
   const formatTimeToDisplay = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -58,9 +56,24 @@ export const WhatsAppAudioPlayer = ({
     }
   }, [duration]);
 
+  const handleSpeedChange = useCallback(() => {
+    setPlaybackRate(currentRate => {
+      let newRate;
+      if (currentRate === 1.0) newRate = 1.5;
+      else if (currentRate === 1.5) newRate = 2.0;
+      else newRate = 1.0;
+      
+      if (audioRef.current) {
+        audioRef.current.playbackRate = newRate;
+      }
+      return newRate;
+    });
+  }, []);
+
   useEffect(() => {
     audioRef.current = new Audio(audioSrc);
     const audio = audioRef.current;
+    audio.playbackRate = playbackRate;
 
     const onLoadedData = () => {
       setDuration(audio.duration);
@@ -174,10 +187,16 @@ export const WhatsAppAudioPlayer = ({
         </div>
 
         <div className="relative ml-4 flex-shrink-0">
-          <Avatar className="w-14 h-14">
-            <AvatarImage src={senderAvatar} alt={senderName} />
-            <AvatarFallback>{senderName.charAt(0)}</AvatarFallback>
-          </Avatar>
+          <button
+            type="button"
+            onClick={handleSpeedChange}
+            className={cn(
+              "w-14 h-14 rounded-full flex items-center justify-center font-semibold transition-colors",
+              "bg-white/10 hover:bg-white/20 text-white text-sm"
+            )}
+          >
+            {playbackRate.toFixed(1)}x
+          </button>
           <Mic
             size={26}
             className={cn(
