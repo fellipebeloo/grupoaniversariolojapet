@@ -20,7 +20,6 @@ import { CtaButton } from '@/components/CtaButton';
 import { WhatsIncluded } from '@/components/WhatsIncluded';
 import { BackgroundMusicPlayer } from '@/components/BackgroundMusicPlayer';
 import { MusicControlIsland } from '@/components/MusicControlIsland';
-import { FullScreenPrompt } from '@/components/FullScreenPrompt';
 
 interface AudioData {
   audioSrc: string;
@@ -112,11 +111,11 @@ const FunnelPage = () => {
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
-  const [playedAudios, setPlayedAudios] = useState<Set<string>>(new Set());
+  const [playedAudios, setPlayedAudios] = new useState<Set<string>>(new Set());
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
   const [showMusicControlIsland, setShowMusicControlIsland] = useState(false);
-  const [showFullScreenPrompt, setShowFullScreenPrompt] = useState(true);
-  const [userInteractedWithPage, setUserInteractedWithPage] = useState(false); // Novo estado
+  // Removido: const [showFullScreenPrompt, setShowFullScreenPrompt] = useState(true);
+  // Removido: const [userInteractedWithPage, setUserInteractedWithPage] = useState(false);
 
   const processedSteps = useRef<Set<number>>(new Set());
 
@@ -168,53 +167,16 @@ const FunnelPage = () => {
   // Efeito para mostrar o MusicControlIsland após 5 segundos e mantê-lo visível
   useEffect(() => {
     let timer: number;
-    if (playBackgroundMusic && !showMusicControlIsland && userInteractedWithPage) { // Adicionado userInteractedWithPage
+    if (playBackgroundMusic && !showMusicControlIsland) { // Removido userInteractedWithPage
       timer = window.setTimeout(() => {
         setShowMusicControlIsland(true);
       }, 5000);
     }
     return () => clearTimeout(timer);
-  }, [playBackgroundMusic, showMusicControlIsland, userInteractedWithPage]); // Adicionado userInteractedWithPage
+  }, [playBackgroundMusic, showMusicControlIsland]); // Removido userInteractedWithPage
 
-  // Efeito para verificar o estado de tela cheia
-  useEffect(() => {
-    const checkFullScreen = () => {
-      if (document.fullscreenElement) {
-        setShowFullScreenPrompt(false);
-        setUserInteractedWithPage(true); // Marca interação ao entrar em tela cheia
-      } else {
-        if (!processedSteps.current.has(-1)) {
-          setShowFullScreenPrompt(true);
-          processedSteps.current.add(-1);
-        }
-      }
-    };
-
-    document.addEventListener('fullscreenchange', checkFullScreen);
-    checkFullScreen();
-
-    return () => {
-      document.removeEventListener('fullscreenchange', checkFullScreen);
-    };
-  }, []);
-
-  const handleEnterFullScreen = () => {
-    const element = document.documentElement;
-    if (element.requestFullscreen) {
-      element.requestFullscreen().then(() => {
-        setShowFullScreenPrompt(false);
-        setUserInteractedWithPage(true); // Marca interação
-      }).catch((err) => {
-        console.error("Erro ao tentar entrar em tela cheia:", err);
-        setShowFullScreenPrompt(false);
-        setUserInteractedWithPage(true); // Marca interação mesmo se falhar
-      });
-    } else {
-      console.warn("API de tela cheia não suportada neste navegador.");
-      setShowFullScreenPrompt(false);
-      setUserInteractedWithPage(true); // Marca interação se não suportado
-    }
-  };
+  // Removido: Efeito para verificar o estado de tela cheia
+  // Removido: const handleEnterFullScreen = () => { ... };
 
   const addMessage = useCallback((
     sender: 'bot' | 'user',
@@ -426,11 +388,11 @@ const FunnelPage = () => {
 
   return (
     <>
-      {showFullScreenPrompt && <FullScreenPrompt onEnterFullScreen={handleEnterFullScreen} />}
+      {/* Removido: {showFullScreenPrompt && <FullScreenPrompt onEnterFullScreen={handleEnterFullScreen} />} */}
       <BackgroundMusicPlayer 
         isPlaying={playBackgroundMusic} 
         audioSrc="/background-music.mp3" 
-        userInteracted={userInteractedWithPage} // Passando o novo prop
+        // Removido: userInteracted={userInteractedWithPage}
       />
       <MusicControlIsland 
         isPlaying={playBackgroundMusic} 

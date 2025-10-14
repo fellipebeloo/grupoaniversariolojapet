@@ -6,10 +6,10 @@ interface BackgroundMusicPlayerProps {
   isPlaying: boolean;
   audioSrc: string;
   volume?: number;
-  userInteracted: boolean; // Novo prop
+  // Removido: userInteracted: boolean;
 }
 
-export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1, userInteracted }: BackgroundMusicPlayerProps) => {
+export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1 }: BackgroundMusicPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeIntervalRef = useRef<number | null>(null);
 
@@ -22,7 +22,7 @@ export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1, userI
 
     const audio = audioRef.current;
 
-    if (isPlaying && userInteracted) { // Só tenta reproduzir se o usuário interagiu
+    if (isPlaying) { // Removido: && userInteracted
       audio.play().catch(e => console.error("Erro ao tentar reproduzir música de fundo:", e));
 
       // Clear any existing fade interval
@@ -56,7 +56,7 @@ export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1, userI
           fadeIntervalRef.current = null;
         }
       }, 100);
-    } else if (!isPlaying && !userInteracted) { // Se não está tocando e não houve interação, garante que está pausado e resetado
+    } else if (!isPlaying) { // Se não está tocando, garante que está pausado e resetado
         audio.pause();
         audio.currentTime = 0;
         audio.volume = 0;
@@ -71,7 +71,7 @@ export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1, userI
         audioRef.current.currentTime = 0;
       }
     };
-  }, [isPlaying, audioSrc, volume, userInteracted]); // Adicionado userInteracted às dependências
+  }, [isPlaying, audioSrc, volume]); // Removido userInteracted das dependências
 
   return null;
 };
