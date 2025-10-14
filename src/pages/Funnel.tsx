@@ -155,7 +155,7 @@ const FunnelPage = () => {
     type: 'texto' | 'imagem' | 'audio' | 'custom-component' = 'texto'
   ) => {
     const newMessage: Message = {
-      id: (messages.length + 1).toString(),
+      id: `${Date.now()}-${Math.random()}`,
       remetente: sender === 'bot' ? 'Alessandra' : 'user',
       texto: content,
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -163,7 +163,7 @@ const FunnelPage = () => {
       options,
     };
     setMessages(prev => [...prev, newMessage]);
-  }, [messages.length]);
+  }, []);
 
   const handleNextStep = async (userResponse: string) => {
     // Reproduz o som de mensagem enviada
@@ -173,7 +173,7 @@ const FunnelPage = () => {
     setMessages(prevMessages => {
       const updatedMessages = prevMessages.map(msg => ({ ...msg, options: undefined }));
       const userMessage: Message = {
-        id: (prevMessages.length + 1).toString(),
+        id: `${Date.now()}-${Math.random()}`,
         remetente: 'user',
         texto: userResponse,
         horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -210,7 +210,9 @@ const FunnelPage = () => {
 
   const handleBackFromGroup = () => {
     setActiveView('chat');
-    setStep(10); // Retorna ao passo 10 após sair do grupo (antigo step 9)
+    if (step < 10) {
+      setStep(10);
+    }
   };
 
   // Refatorando a lógica de exibição de mensagens do bot em uma função auxiliar
