@@ -70,13 +70,12 @@ export const WhatsAppAudioPlayer = ({
       else if (currentRate === 1.5) newRate = 2.0;
       else newRate = 1.0;
       
-      if (audioRef.current) {
-        audioRef.current.playbackRate = newRate;
-      }
+      // A velocidade de reprodução será atualizada no useEffect abaixo
       return newRate;
     });
   }, []);
 
+  // Efeito para inicializar o elemento de áudio e configurar listeners
   useEffect(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio();
@@ -84,18 +83,17 @@ export const WhatsAppAudioPlayer = ({
     const audio = audioRef.current;
 
     audio.src = audioSrc;
-    audio.load();
-    audio.playbackRate = playbackRate;
+    audio.load(); // Carrega o novo áudio
+    setIsLoading(true); // Define como carregando ao mudar a fonte
 
     const onLoadedData = () => {
       setDuration(audio.duration);
       setIsLoading(false);
-      // Removido o autoplay aqui para compatibilidade com iOS
     };
 
     const onPlay = () => {
       setIsPlaying(true);
-      // hasStartedPlaying é definido em handlePlayButton para garantir que seja por interação do usuário
+      setHasStartedPlaying(true); // Garante que hasStartedPlaying é true ao iniciar a reprodução
     };
     const onPause = () => setIsPlaying(false);
     const onTimeUpdate = () => {
@@ -130,7 +128,14 @@ export const WhatsAppAudioPlayer = ({
       audio.removeEventListener('waiting', onWaiting);
       audio.removeEventListener('playing', onPlaying);
     };
-  }, [audioSrc, onAudioEnded, onFirstPlay, playbackRate]); // Removido hasBeenPlayed das dependências, pois não é mais usado para autoplay
+  }, [audioSrc, onAudioEnded]); // Depende apenas de audioSrc e onAudioEnded
+
+  // Efeito para atualizar a velocidade de reprodução
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]); // Depende apenas de playbackRate
 
   const playerBgColor = isMine ? 'bg-[#005c4b]' : 'bg-[#202c33]';
   const featuredColor = 'text-[#00e5c0]';
@@ -182,7 +187,7 @@ export const WhatsAppAudioPlayer = ({
                 "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-[#00e5c0] [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:-mt-[0.336rem]",
                 "[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[#00e5c0] [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:-mt-[0.336rem]",
                 "[&::-webkit-slider-runnable-track]:bg-white/20 [&::-webkit-slider-runnable-track]:h-[0.24rem] [&::-webkit-slider-runnable-track]:rounded-full",
-                "[&::-moz-range-track]:bg-white/20 [&::-moz-range-track]:h-[0.24rem] [&::-moz-range-track]:rounded-full"
+                "[&::-moz-range-track]:bg-white/20 [&::-moz-range-track]:h-[0.24rem] [&::-::-moz-range-track]:rounded-full"
               )}
             />
           </div>
