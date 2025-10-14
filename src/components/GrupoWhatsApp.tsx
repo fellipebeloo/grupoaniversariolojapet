@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ImageModal } from './ImageModal';
+import { ImageGalleryModal } from './ImageGalleryModal';
 
 const groupMessages = [
   { sender: 'Vanessa R.', text: 'Gente, 3 semanas de treino e minha barriga já tá muito mais seca 😭 Nunca achei que ia ver diferença tão rápido!', color: 'text-orange-400', image: '/testimonial-vanessa.png' },
@@ -11,6 +11,8 @@ const groupMessages = [
   { sender: 'Fernanda C.', text: '15kg a menos e contando! Bora arrochar que ainda não cheguei no meu objetivo 🚀', color: 'text-indigo-400', image: '/testimonial-extra3.jpg' },
   { sender: 'Mariana A.', text: 'A diferença nas costas e na cintura é gritante. Foco total!', color: 'text-rose-400', image: '/testimonial-extra4.png' },
 ];
+
+const galleryItems = groupMessages.filter(msg => msg.image);
 
 const GroupMessage = ({ sender, text, color, image, onImageClick }: { sender: string, text: string, color: string, image?: string, onImageClick: (src: string) => void }) => (
   <div className="bg-[#202c33] rounded-xl max-w-[90%] self-start shadow-md overflow-hidden">
@@ -27,14 +29,19 @@ const GroupMessage = ({ sender, text, color, image, onImageClick }: { sender: st
 );
 
 export const GrupoWhatsApp = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [initialIndex, setInitialIndex] = useState(0);
 
   const handleImageClick = (src: string) => {
-    setSelectedImage(src);
+    const imageIndex = galleryItems.findIndex(item => item.image === src);
+    if (imageIndex !== -1) {
+      setInitialIndex(imageIndex);
+      setGalleryOpen(true);
+    }
   };
 
-  const handleCloseModal = () => {
-    setSelectedImage(null);
+  const handleCloseGallery = () => {
+    setGalleryOpen(false);
   };
 
   return (
@@ -51,8 +58,17 @@ export const GrupoWhatsApp = () => {
           />
         ))}
       </div>
-      {selectedImage && (
-        <ImageModal src={selectedImage} onClose={handleCloseModal} />
+      {galleryOpen && (
+        <ImageGalleryModal 
+          items={galleryItems.map(item => ({
+            src: item.image!,
+            sender: item.sender,
+            text: item.text,
+            color: item.color,
+          }))}
+          initialIndex={initialIndex} 
+          onClose={handleCloseGallery} 
+        />
       )}
     </>
   );
