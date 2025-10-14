@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Gamepad2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AlarmNotification } from '@/components/AlarmNotification';
+import { FullScreenAlarm } from '@/components/FullScreenAlarm';
 import { showError } from '@/utils/toast';
 import { AlessandraAudios } from '@/constants/audioPaths'; // Importando os caminhos dos áudios
 
@@ -182,9 +182,7 @@ const FitnessGamePage = () => {
       style={{ backgroundImage: `url('/game-background.jpg')` }}
     >
       {gameState === 'playing' && currentQuestionIndex === 0 && showAlarm && (
-        <div className="absolute top-8 left-0 right-0 px-4">
-          <AlarmNotification onDismiss={handleDismissAlarm} />
-        </div>
+        <FullScreenAlarm onDismiss={handleDismissAlarm} />
       )}
 
       <div className="w-full max-w-md mx-auto bg-purple-900/70 backdrop-blur-sm rounded-lg shadow-lg p-6 border border-purple-700">
