@@ -21,9 +21,9 @@ const GroupMessage = ({ sender, text, color, image, time, onImageClick }: { send
       {image && (
         <button 
           onClick={() => onImageClick(image)} 
-          className="w-full h-auto block cursor-pointer focus:outline-none -mx-3 mb-1 rounded-lg overflow-hidden"
+          className="w-full aspect-square block cursor-pointer focus:outline-none -mx-3 mb-2 rounded-lg overflow-hidden"
         >
-          <img src={image} alt={`Depoimento de ${sender}`} className="w-full h-auto" />
+          <img src={image} alt={`Depoimento de ${sender}`} className="w-full h-full object-cover" />
         </button>
       )}
       <div className="relative">
