@@ -26,6 +26,7 @@ export const WhatsAppAudioPlayer = ({
 }: WhatsAppAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sliderRef = useRef<HTMLInputElement | null>(null);
+  const hasAutoPlayed = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
@@ -61,11 +62,14 @@ export const WhatsAppAudioPlayer = ({
     const onLoadedData = () => {
       setDuration(audio.duration);
       setIsLoading(false);
-      // Auto-play on load, but catch potential browser restrictions
-      audio.play().catch(error => {
-        console.log("Audio auto-play blocked:", error);
-        setIsPlaying(false); // Ensure play button shows if auto-play fails
-      });
+      // Auto-play on load, but only the first time
+      if (!hasAutoPlayed.current) {
+        audio.play().catch(error => {
+          console.log("Audio auto-play blocked:", error);
+          setIsPlaying(false); // Ensure play button shows if auto-play fails
+        });
+        hasAutoPlayed.current = true;
+      }
     };
 
     const onPlay = () => setIsPlaying(true);
