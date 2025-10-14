@@ -174,7 +174,7 @@ const FitnessGamePage = () => {
   };
 
   const handleGameComplete = () => {
-    navigate('/funil?step=12');
+    navigate('/funil?step=13');
   };
 
   const currentQuestion = questions[currentQuestionIndex];
