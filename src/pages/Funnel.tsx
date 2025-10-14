@@ -162,18 +162,17 @@ const FunnelPage = () => {
     };
   }, []);
 
-  // Efeito para mostrar o MusicControlIsland após 5 segundos
+  // Efeito para mostrar o MusicControlIsland após 5 segundos e mantê-lo visível
   useEffect(() => {
     let timer: number;
-    if (playBackgroundMusic) {
+    if (playBackgroundMusic && !showMusicControlIsland) {
       timer = window.setTimeout(() => {
         setShowMusicControlIsland(true);
       }, 5000);
-    } else {
-      setShowMusicControlIsland(false);
     }
+    // O popup permanece visível mesmo se a música for pausada
     return () => clearTimeout(timer);
-  }, [playBackgroundMusic]);
+  }, [playBackgroundMusic, showMusicControlIsland]);
 
   const addMessage = useCallback((
     sender: 'bot' | 'user',
