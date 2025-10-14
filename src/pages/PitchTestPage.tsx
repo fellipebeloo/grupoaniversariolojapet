@@ -10,6 +10,7 @@ import { CtaButton } from '@/components/CtaButton';
 import { WhatsIncluded } from '@/components/WhatsIncluded';
 import { BackgroundMusicPlayer } from '@/components/BackgroundMusicPlayer';
 import { AlessandraAudios } from '@/constants/audioPaths';
+import { MusicControlIsland } from '@/components/MusicControlIsland'; // Importar o novo componente
 
 interface Message {
   id: string;
@@ -61,6 +62,7 @@ const PitchTestPage = () => {
   const [userData] = useState({ name: 'Guerreira', whatsapp: '' });
   const [typingIndicator, setTypingIndicator] = useState<boolean>(false);
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
+  const [showMusicControlIsland, setShowMusicControlIsland] = useState(false); // Novo estado para o popup
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -75,6 +77,19 @@ const PitchTestPage = () => {
       messageReceivedAudioRef.current = null;
     };
   }, []);
+
+  // Efeito para mostrar o MusicControlIsland após 5 segundos
+  useEffect(() => {
+    let timer: number;
+    if (playBackgroundMusic) {
+      timer = window.setTimeout(() => {
+        setShowMusicControlIsland(true);
+      }, 5000);
+    } else {
+      setShowMusicControlIsland(false);
+    }
+    return () => clearTimeout(timer);
+  }, [playBackgroundMusic]);
 
   const addMessage = useCallback((
     sender: 'bot' | 'user',
@@ -125,6 +140,11 @@ const PitchTestPage = () => {
   return (
     <>
       <BackgroundMusicPlayer isPlaying={playBackgroundMusic} audioSrc="/background-music.mp3" />
+      <MusicControlIsland 
+        isPlaying={playBackgroundMusic} 
+        onTogglePlay={() => setPlayBackgroundMusic(prev => !prev)} 
+        isVisible={showMusicControlIsland} 
+      />
       <div className="h-dvh grid grid-rows-[auto_1fr] bg-[#0f1418] w-full">
         <ChatHeader />
         <div className="relative overflow-hidden h-full">

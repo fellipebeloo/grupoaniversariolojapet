@@ -19,6 +19,7 @@ import { SlotsRemaining } from '@/components/SlotsRemaining';
 import { CtaButton } from '@/components/CtaButton';
 import { WhatsIncluded } from '@/components/WhatsIncluded';
 import { BackgroundMusicPlayer } from '@/components/BackgroundMusicPlayer';
+import { MusicControlIsland } from '@/components/MusicControlIsland'; // Importar o novo componente
 
 interface AudioData {
   audioSrc: string;
@@ -112,6 +113,7 @@ const FunnelPage = () => {
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
   const [playedAudios, setPlayedAudios] = new Set<string>(); // Changed to a Set
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
+  const [showMusicControlIsland, setShowMusicControlIsland] = useState(false); // Novo estado para o popup
 
   const processedSteps = useRef<Set<number>>(new Set());
 
@@ -159,6 +161,19 @@ const FunnelPage = () => {
       messageReceivedAudioRef.current = null;
     };
   }, []);
+
+  // Efeito para mostrar o MusicControlIsland após 5 segundos
+  useEffect(() => {
+    let timer: number;
+    if (playBackgroundMusic) {
+      timer = window.setTimeout(() => {
+        setShowMusicControlIsland(true);
+      }, 5000);
+    } else {
+      setShowMusicControlIsland(false);
+    }
+    return () => clearTimeout(timer);
+  }, [playBackgroundMusic]);
 
   const addMessage = useCallback((
     sender: 'bot' | 'user',
@@ -371,6 +386,11 @@ const FunnelPage = () => {
   return (
     <>
       <BackgroundMusicPlayer isPlaying={playBackgroundMusic} audioSrc="/background-music.mp3" />
+      <MusicControlIsland 
+        isPlaying={playBackgroundMusic} 
+        onTogglePlay={() => setPlayBackgroundMusic(prev => !prev)} 
+        isVisible={showMusicControlIsland} 
+      />
       {activeView === 'chat' && (
         <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
           <ChatHeader />
