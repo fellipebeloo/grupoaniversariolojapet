@@ -65,9 +65,9 @@ const calculateDelay = (content: string | React.ReactNode): number => {
   textContent = textContent.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
 
   const baseDelay = 500;
-  const charsPerMs = 30;
+  const charsPerMs = 50;
   const minDelay = 1000;
-  const maxDelay = 5000;
+  const maxDelay = 6000;
 
   const calculatedDelay = baseDelay + (textContent.length * charsPerMs);
   return Math.max(minDelay, Math.min(maxDelay, calculatedDelay));
@@ -101,7 +101,7 @@ const FunnelPage = () => {
   const [showInput, setShowInput] = useState(false);
   const [currentPlaceholder, setCurrentPlaceholder] = useState('Sua resposta...');
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
   const [playedAudios, setPlayedAudios] = useState<Set<string>>(new Set());
 
