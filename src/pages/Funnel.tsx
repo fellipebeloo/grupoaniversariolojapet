@@ -13,6 +13,11 @@ import { GameStartMessage } from '@/components/GameStartMessage';
 import { useSearchParams } from 'react-router-dom';
 import { AlessandraAudios } from '@/constants/audioPaths';
 import { HitsProtocolCard } from '@/components/HitsProtocolCard';
+import { ReportImage } from '@/components/ReportImage';
+import { OfferCard } from '@/components/OfferCard';
+import { SlotsRemaining } from '@/components/SlotsRemaining';
+import { CtaButton } from '@/components/CtaButton';
+import { WhatsIncluded } from '@/components/WhatsIncluded';
 
 interface AudioData {
   audioSrc: string;
@@ -337,6 +342,21 @@ const FunnelPage = () => {
           await displayBotMessage('E o melhor: você faz em casa, com o seu tempo, sem depender de nada.');
           await displayBotMessage(<strong>Se você chegou até aqui, é porque seu corpo tá gritando por mudança.</strong>);
           await displayBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.']);
+          break;
+        case 15:
+          await displayBotMessage(`${userData.name}, com base no que você me respondeu, eu preparei uma análise do seu caso…`);
+          await displayBotMessage(<ReportImage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
+          await displayBotMessage(<>Nesse relatório eu explico:<br/><br/>✅ O que tá travando seu corpo<br/>✅ Por que nada funcionou até agora<br/>✅ E como começar o H.I.T.S. HOJE pra mudar isso</>);
+          await displayBotMessage('MAS…');
+          await displayBotMessage('Eu só libero esse relatório e o protocolo completo pra quem tá decidida de verdade.');
+          await displayBotMessage(<>Porque não é mais um videozinho qualquer…<br/>É um método testado, com passo a passo, e resultado de verdade.</>);
+          await displayBotMessage('E pra você que chegou até aqui, eu consegui liberar um acesso promocional:');
+          await displayBotMessage(<OfferCard />, undefined, 'custom-component');
+          await displayBotMessage('Mas tem um detalhe:\nEu só consigo segurar esse valor pras PRIMEIRAS 30 alunas que finalizarem hoje.');
+          await displayBotMessage(<SlotsRemaining />, undefined, 'custom-component');
+          await displayBotMessage('Quer mudar de verdade?\nEntão clica aqui e garante agora:');
+          await displayBotMessage(<CtaButton />, undefined, 'custom-component');
+          await displayBotMessage(<WhatsIncluded />, undefined, 'custom-component');
           break;
         default:
           break;
