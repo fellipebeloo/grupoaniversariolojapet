@@ -354,6 +354,7 @@ const FunnelPage = () => {
                           messageTime={msg.horario}
                           transcription={msg.audioData.transcription}
                           senderName={msg.remetente}
+                          profileImageUrl={msg.remetente === 'Alessandra' ? '/alessandra.jpg' : undefined}
                           onAudioEnded={msg.audioData.onAudioEnded}
                           hasBeenPlayed={playedAudios.has(msg.audioData.audioSrc)}
                           onFirstPlay={() => {
