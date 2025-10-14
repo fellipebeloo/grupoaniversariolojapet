@@ -11,7 +11,7 @@ export const AlessandraAudios = {
   correct4: '/correct4.ogg',
   correct5: '/correct5.ogg',
   yawn: '/yaaaam.ogg',
-  alarm: '/alarm.ogg',
+  alarm: '/alarm.mp3',
   alessandraChatAudio1: '/alessandra-chat-audio1.ogg', // Novo áudio para o chat
   alessandraChatAudio1Transcription: 'Oi, mulher! Aqui é a Alessandra. Se você chegou até aqui, provavelmente tá cansada de tentar emagrecer, treinar, comer certinho… e ver tudo estacionar, né? Eu entendo, porque eu já passei por isso. Mas tem uma explicação. E eu vou te ajudar a entender o que tá travando seu corpo. Bora juntas?', // Transcrição do áudio 1
   alessandraChatAudio2: '/alessandra-chat-audio2.ogg', // Novo áudio para o chat
