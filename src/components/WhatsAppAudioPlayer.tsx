@@ -45,9 +45,13 @@ export const WhatsAppAudioPlayer = ({
 
   const handlePlayButton = useCallback(() => {
     if (audioRef.current) {
+      if (!hasStartedPlaying) { // Only call onFirstPlay on the very first user-initiated play
+        onFirstPlay?.();
+        setHasStartedPlaying(true); // Mark that playback has been initiated by user
+      }
       isPlaying ? audioRef.current.pause() : audioRef.current.play();
     }
-  }, [isPlaying]);
+  }, [isPlaying, hasStartedPlaying, onFirstPlay]);
 
   const handleSliderChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (audioRef.current) {
@@ -79,26 +83,19 @@ export const WhatsAppAudioPlayer = ({
     }
     const audio = audioRef.current;
 
-    // Define o src diretamente para o arquivo MP3
     audio.src = audioSrc;
-    audio.load(); // Carrega o novo áudio
+    audio.load();
     audio.playbackRate = playbackRate;
 
     const onLoadedData = () => {
       setDuration(audio.duration);
       setIsLoading(false);
-      if (!hasBeenPlayed) {
-        audio.play().catch(error => {
-          console.log("Audio auto-play blocked:", error);
-          setIsPlaying(false);
-        });
-        onFirstPlay?.();
-      }
+      // Removido o autoplay aqui para compatibilidade com iOS
     };
 
     const onPlay = () => {
       setIsPlaying(true);
-      setHasStartedPlaying(true);
+      // hasStartedPlaying é definido em handlePlayButton para garantir que seja por interação do usuário
     };
     const onPause = () => setIsPlaying(false);
     const onTimeUpdate = () => {
@@ -133,7 +130,7 @@ export const WhatsAppAudioPlayer = ({
       audio.removeEventListener('waiting', onWaiting);
       audio.removeEventListener('playing', onPlaying);
     };
-  }, [audioSrc, onAudioEnded, hasBeenPlayed, onFirstPlay, playbackRate]);
+  }, [audioSrc, onAudioEnded, onFirstPlay, playbackRate]); // Removido hasBeenPlayed das dependências, pois não é mais usado para autoplay
 
   const playerBgColor = isMine ? 'bg-[#005c4b]' : 'bg-[#202c33]';
   const featuredColor = 'text-[#00e5c0]';

@@ -4,11 +4,12 @@ import React, { useEffect, useRef } from 'react';
 
 interface BackgroundMusicPlayerProps {
   isPlaying: boolean;
-  audioSrc: string; // Nova propriedade para o caminho do arquivo MP3
-  volume?: number; // Adiciona uma propriedade de volume opcional
+  audioSrc: string;
+  volume?: number;
+  userInteracted: boolean; // Novo prop
 }
 
-export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1 }: BackgroundMusicPlayerProps) => {
+export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1, userInteracted }: BackgroundMusicPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeIntervalRef = useRef<number | null>(null);
 
@@ -21,7 +22,7 @@ export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1 }: Bac
 
     const audio = audioRef.current;
 
-    if (isPlaying) {
+    if (isPlaying && userInteracted) { // Só tenta reproduzir se o usuário interagiu
       audio.play().catch(e => console.error("Erro ao tentar reproduzir música de fundo:", e));
 
       // Clear any existing fade interval
@@ -37,8 +38,8 @@ export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1 }: Bac
           clearInterval(fadeIntervalRef.current!);
           fadeIntervalRef.current = null;
         }
-      }, 100); // Ajuste o intervalo para um fade mais suave ou rápido
-    } else {
+      }, 100);
+    } else if (!isPlaying && audio.played.length > 0) { // Só faz fade out se estava tocando
       // Clear any existing fade interval
       if (fadeIntervalRef.current) {
         clearInterval(fadeIntervalRef.current);
@@ -54,20 +55,23 @@ export const BackgroundMusicPlayer = ({ isPlaying, audioSrc, volume = 0.1 }: Bac
           clearInterval(fadeIntervalRef.current!);
           fadeIntervalRef.current = null;
         }
-      }, 100); // Ajuste o intervalo para um fade mais suave ou rápido
+      }, 100);
+    } else if (!isPlaying && !userInteracted) { // Se não está tocando e não houve interação, garante que está pausado e resetado
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 0;
     }
 
     return () => {
       if (fadeIntervalRef.current) {
         clearInterval(fadeIntervalRef.current);
       }
-      // Pausa e reseta o áudio ao desmontar o componente
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
     };
-  }, [isPlaying, audioSrc, volume]);
+  }, [isPlaying, audioSrc, volume, userInteracted]); // Adicionado userInteracted às dependências
 
-  return null; // Este componente não renderiza nada visualmente
+  return null;
 };
