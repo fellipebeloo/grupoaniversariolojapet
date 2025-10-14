@@ -97,15 +97,6 @@ const FitnessGamePage = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (gameState === 'playing' && currentQuestionIndex === 0 && showAlarm) {
-      if ('vibrate' in navigator) {
-        navigator.vibrate([200, 100, 200]);
-      }
-      alarmAudioRef.current?.play().catch(error => console.log("Alarm audio blocked by browser"));
-    }
-  }, [gameState, currentQuestionIndex, showAlarm]);
-
   const handleDismissAlarm = () => {
     setShowAlarm(false);
     alarmAudioRef.current?.pause();
@@ -128,6 +119,12 @@ const FitnessGamePage = () => {
 
   const handleStart = () => {
     setGameState('playing');
+    if (showAlarm) {
+      if ('vibrate' in navigator) {
+        navigator.vibrate([200, 100, 200]);
+      }
+      alarmAudioRef.current?.play().catch(error => console.log("Alarm audio blocked by browser"));
+    }
   };
 
   const handleOptionClick = (index: number) => {
