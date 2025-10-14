@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 export const CtaButton = () => {
   const handleClick = () => {
     console.log('cta_checkout_clicked');
-    window.location.href = 'https://pay.hotmart.com/S70056014G?checkoutMode=10';
+    window.location.href = 'https://pay.kiwify.com.br/m9JXKJM';
   };
 
   return (
