@@ -2,7 +2,7 @@ import { Users } from 'lucide-react';
 
 export const GroupInfoHeader = () => {
   return (
-    <div className="bg-[#202c33] rounded-lg p-3 text-center text-sm text-gray-400 mb-4 shadow-lg max-w-xs mx-auto">
+    <div className="bg-[#202c33] rounded-lg p-3 text-center text-sm text-gray-400 mb-4 shadow-lg w-full max-w-xs mx-auto">
       <div className="flex justify-center mb-2">
         <div className="w-14 h-14 bg-gray-500 rounded-full flex items-center justify-center">
           <Users size={32} className="text-gray-300" />

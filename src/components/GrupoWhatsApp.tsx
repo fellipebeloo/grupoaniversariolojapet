@@ -27,7 +27,7 @@ const GroupMessage = ({ sender, text, color, image, time, onImageClick }: { send
         </button>
       )}
       <div className="relative">
-        <p className="text-sm text-gray-100 whitespace-pre-wrap pr-12">{text}</p>
+        <p className="text-sm text-gray-100 whitespace-pre-wrap pr-12 break-words">{text}</p>
         <div className="absolute bottom-0 right-0">
           <span className="text-xs text-gray-400">{time}</span>
         </div>

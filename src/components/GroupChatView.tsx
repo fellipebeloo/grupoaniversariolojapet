@@ -10,7 +10,7 @@ interface GroupChatViewProps {
 
 export const GroupChatView = ({ onBack }: GroupChatViewProps) => {
   return (
-    <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
+    <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full overflow-hidden">
       <GroupChatHeader onBack={onBack} />
       <div className="overflow-y-auto p-4">
         <GroupInfoHeader />
