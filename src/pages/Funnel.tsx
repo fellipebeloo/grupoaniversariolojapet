@@ -12,6 +12,7 @@ import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
 import { GameStartMessage } from '@/components/GameStartMessage';
 import { useSearchParams } from 'react-router-dom';
 import { AlessandraAudios } from '@/constants/audioPaths';
+import { HitsProtocolCard } from '@/components/HitsProtocolCard';
 
 interface AudioData {
   audioSrc: string;
@@ -324,6 +325,18 @@ const FunnelPage = () => {
           await displayBotMessage(`Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
           await displayBotMessage('Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
           await displayBotMessage('Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
+          break;
+        case 14:
+          await displayBotMessage(`${userData.name}, agora eu vou te mostrar o que realmente faz o corpo sair do travamento...`);
+          await displayBotMessage(<>O nome disso é:<br/>💥 <strong>PROTOCOLO H.I.T.S.</strong> 💥</>);
+          await displayBotMessage(<HitsProtocolCard />, undefined, 'custom-component');
+          await displayBotMessage('É um tipo de treino que ativa seu metabolismo em poucos minutos, sem precisar de academia, peso ou experiência.');
+          await displayBotMessage(<>Ele é focado em 3 coisas:<br/><br/>✅ Destravar o corpo<br/>✅ Secar a pochete teimosa<br/>✅ E te dar resultado visível em até 21 dias</>);
+          await displayBotMessage('É como se fosse um botão RESET no seu corpo.');
+          await displayBotMessage('As mulheres que tão fazendo isso comigo já tão sentindo a diferença na disposição, no espelho, na roupa, em tudo.');
+          await displayBotMessage('E o melhor: você faz em casa, com o seu tempo, sem depender de nada.');
+          await displayBotMessage(<strong>Se você chegou até aqui, é porque seu corpo tá gritando por mudança.</strong>);
+          await displayBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.']);
           break;
         default:
           break;
