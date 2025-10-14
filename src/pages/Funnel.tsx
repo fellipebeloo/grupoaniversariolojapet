@@ -110,7 +110,7 @@ const FunnelPage = () => {
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
-  const [playedAudios, setPlayedAudios] = useState<Set<string>>(new Set());
+  const [playedAudios, setPlayedAudios] = new Set<string>(); // Changed to a Set
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
 
   const processedSteps = useRef<Set<number>>(new Set());
@@ -277,7 +277,7 @@ const FunnelPage = () => {
           );
           break;
         case 3:
-          await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
+          await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
           break;
         case 4:
           await displayBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
@@ -301,7 +301,7 @@ const FunnelPage = () => {
           );
           break;
         case 8:
-          await displayBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
+          await displayBotMessage(<>Arrasou, ${userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
           break;
         case 9:
           await displayBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
@@ -370,7 +370,7 @@ const FunnelPage = () => {
 
   return (
     <>
-      <BackgroundMusicPlayer isPlaying={playBackgroundMusic} />
+      <BackgroundMusicPlayer isPlaying={playBackgroundMusic} audioSrc="/background-music.mp3" />
       {activeView === 'chat' && (
         <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
           <ChatHeader />

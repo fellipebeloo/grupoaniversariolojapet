@@ -124,7 +124,7 @@ const PitchTestPage = () => {
 
   return (
     <>
-      <BackgroundMusicPlayer isPlaying={playBackgroundMusic} />
+      <BackgroundMusicPlayer isPlaying={playBackgroundMusic} audioSrc="/background-music.mp3" />
       <div className="h-dvh grid grid-rows-[auto_1fr] bg-[#0f1418] w-full">
         <ChatHeader />
         <div className="relative overflow-hidden h-full">
