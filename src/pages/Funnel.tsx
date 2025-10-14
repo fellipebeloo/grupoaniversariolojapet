@@ -23,7 +23,7 @@ import { MusicControlIsland } from '@/components/MusicControlIsland';
 import { FullScreenPrompt } from '@/components/FullScreenPrompt'; // Importar o novo componente
 
 interface AudioData {
-  audioSrc: string | { ogg?: string; mp3?: string; }; // Atualizado para aceitar objeto
+  audioSrc: string; // Agora espera apenas uma string
   transcription: string;
   onAudioEnded: () => void;
 }
@@ -325,7 +325,7 @@ const FunnelPage = () => {
             undefined,
             'audio',
             {
-              audioSrc: AlessandraAudios.alessandraChatAudio1, // Agora é um objeto { ogg, mp3 }
+              audioSrc: AlessandraAudios.alessandraChatAudio1, // Agora é uma string
               transcription: AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name),
               onAudioEnded: () => setStep(3),
             }
@@ -349,7 +349,7 @@ const FunnelPage = () => {
             undefined,
             'audio',
             {
-              audioSrc: AlessandraAudios.alessandraChatAudio2, // Agora é um objeto { ogg, mp3 }
+              audioSrc: AlessandraAudios.alessandraChatAudio2, // Agora é uma string
               transcription: AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name),
               onAudioEnded: () => setStep(8),
             }
@@ -454,16 +454,9 @@ const FunnelPage = () => {
                           senderName={msg.remetente}
                           profileImageUrl={msg.remetente === 'Alessandra' ? '/alessandra.jpg' : undefined}
                           onAudioEnded={msg.audioData.onAudioEnded}
-                          hasBeenPlayed={playedAudios.has(
-                            typeof msg.audioData.audioSrc === 'string' 
-                              ? msg.audioData.audioSrc 
-                              : msg.audioData.audioSrc.mp3 || msg.audioData.audioSrc.ogg || ''
-                          )}
+                          hasBeenPlayed={playedAudios.has(msg.audioData.audioSrc)}
                           onFirstPlay={() => {
-                            const srcKey = typeof msg.audioData!.audioSrc === 'string' 
-                              ? msg.audioData!.audioSrc 
-                              : msg.audioData!.audioSrc.mp3 || msg.audioData!.audioSrc.ogg || '';
-                            setPlayedAudios(prev => new Set(prev).add(srcKey));
+                            setPlayedAudios(prev => new Set(prev).add(msg.audioData!.audioSrc));
                           }}
                         />
                       }

@@ -4,13 +4,8 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Play, Pause, Loader2, CheckCheck, Mic, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface AudioSource {
-  ogg?: string;
-  mp3?: string;
-}
-
 interface WhatsAppAudioPlayerProps {
-  audioSrc: string | AudioSource; // Pode ser uma string (para mp3) ou um objeto (para ogg/mp3)
+  audioSrc: string; // Agora espera apenas uma string para o caminho do MP3
   isMine?: boolean;
   messageTime: string;
   transcription?: string;
@@ -79,39 +74,14 @@ export const WhatsAppAudioPlayer = ({
   }, []);
 
   useEffect(() => {
-    // Create a new Audio element if it doesn't exist or if audioSrc changes
     if (!audioRef.current) {
       audioRef.current = new Audio();
     }
     const audio = audioRef.current;
 
-    // Clear existing sources
-    while (audio.firstChild) {
-      audio.removeChild(audio.firstChild);
-    }
-
-    // Add new sources based on audioSrc type
-    if (typeof audioSrc === 'string') {
-      const source = document.createElement('source');
-      source.src = audioSrc;
-      source.type = audioSrc.endsWith('.mp3') ? 'audio/mpeg' : 'audio/ogg'; // Infer type
-      audio.appendChild(source);
-    } else if (typeof audioSrc === 'object') {
-      if (audioSrc.ogg) {
-        const sourceOgg = document.createElement('source');
-        sourceOgg.src = audioSrc.ogg;
-        sourceOgg.type = 'audio/ogg';
-        audio.appendChild(sourceOgg);
-      }
-      if (audioSrc.mp3) {
-        const sourceMp3 = document.createElement('source');
-        sourceMp3.src = audioSrc.mp3;
-        sourceMp3.type = 'audio/mpeg';
-        audio.appendChild(sourceMp3);
-      }
-    }
-
-    audio.load(); // Load the new sources
+    // Define o src diretamente para o arquivo MP3
+    audio.src = audioSrc;
+    audio.load(); // Carrega o novo áudio
     audio.playbackRate = playbackRate;
 
     const onLoadedData = () => {
@@ -163,7 +133,7 @@ export const WhatsAppAudioPlayer = ({
       audio.removeEventListener('waiting', onWaiting);
       audio.removeEventListener('playing', onPlaying);
     };
-  }, [audioSrc, onAudioEnded, hasBeenPlayed, onFirstPlay, playbackRate]); // Added playbackRate to dependencies
+  }, [audioSrc, onAudioEnded, hasBeenPlayed, onFirstPlay, playbackRate]);
 
   const playerBgColor = isMine ? 'bg-[#005c4b]' : 'bg-[#202c33]';
   const featuredColor = 'text-[#00e5c0]';
