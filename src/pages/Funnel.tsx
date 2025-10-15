@@ -120,7 +120,7 @@ const FunnelPage = () => {
   const processedSteps = useRef<Set<number>>(new Set());
 
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(messageReceivedAudioRef.current || new Audio(AlessandraAudios.messageReceived));
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null); // Inicializado corretamente com null
 
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
@@ -164,7 +164,7 @@ const FunnelPage = () => {
 
   useEffect(() => {
     messageSentAudioRef.current = new Audio(AlessandraAudios.messageSent);
-    messageReceivedAudioRef.current = new Audio(AlessandraAudios.messageReceived);
+    messageReceivedAudioRef.current = new Audio(AlessandraAudios.messageReceived); // Atribuição dentro do useEffect
 
     return () => {
       messageSentAudioRef.current?.pause();
