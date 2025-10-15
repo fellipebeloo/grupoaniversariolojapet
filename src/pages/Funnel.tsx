@@ -283,9 +283,9 @@ const FunnelPage = () => {
             {
               audioSrc: AlessandraAudios.alessandraChatAudio1,
               transcription: AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name),
+              onAudioEnded: () => setStep(3), // Avança para o próximo passo quando o áudio terminar
             }
           );
-          await displayBotMessage('Clique abaixo quando estiver pronta para continuar.', ['Continuar']);
           break;
         case 3:
           await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
@@ -307,9 +307,9 @@ const FunnelPage = () => {
             {
               audioSrc: AlessandraAudios.alessandraChatAudio2,
               transcription: AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name),
+              onAudioEnded: () => setStep(8), // Avança para o próximo passo quando o áudio terminar
             }
           );
-          await displayBotMessage('Pronta para o próximo passo?', ['Estou pronta!']);
           break;
         case 8:
           await displayBotMessage(<>Arrasou, ${userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
