@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import FunnelPage from "./pages/Funnel";
 import GroupTestPage from "./pages/GroupTestPage";
@@ -18,7 +17,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<FunnelPage />} /> {/* FunnelPage agora é a rota padrão */}
           <Route path="/funil" element={<FunnelPage />} />
           <Route path="/grupo-teste" element={<GroupTestPage />} />
           <Route path="/pitch-teste" element={<PitchTestPage />} />
