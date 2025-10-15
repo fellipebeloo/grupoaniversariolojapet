@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useRef, useEffect, useState } from 'react';
 import Hammer from 'hammerjs';
 import { CheckCheck, CornerUpLeft } from 'lucide-react';
+import { AlessandraInfoModal } from './AlessandraInfoModal'; // Importando o modal
 
 interface MensagemBalaoProps {
   id: string;
@@ -68,7 +71,7 @@ export function MensagemBalao({
     // Para 'texto' ou 'imagem', texto é uma string ou ReactNode a ser envolvido
     return (
       <div className="flex flex-wrap items-baseline">
-        <div className="text-base mr-2">{texto}</div> {/* Alterado de text-sm para text-base */}
+        <div className="text-base mr-2">{texto}</div>
 
         <div className="flex-shrink-0 ml-auto pl-2 self-end">
           <span className="flex items-center whitespace-rap">
@@ -102,11 +105,13 @@ export function MensagemBalao({
       >
         <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
           {!isUser && (
-            <img
-              src="/alessandra.jpg"
-              alt={remetente}
-              className="w-8 h-8 rounded-full object-cover"
-            />
+            <AlessandraInfoModal> {/* Envolvendo a imagem com o modal */}
+              <img
+                src="/alessandra.jpg"
+                alt={remetente}
+                className="w-8 h-8 rounded-full object-cover cursor-pointer" // Adicionado cursor-pointer
+              />
+            </AlessandraInfoModal>
           )}
 
           <div
