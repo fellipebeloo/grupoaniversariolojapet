@@ -117,7 +117,7 @@ const FunnelPage = () => {
   const processedSteps = useRef<Set<number>>(new Set());
 
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(messageReceivedAudioRef.current || null);
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null); // Corrigido aqui
 
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
