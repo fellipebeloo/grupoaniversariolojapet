@@ -16,8 +16,8 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
   };
 
   const handleWhatsAppClick = () => {
-    // Você pode adicionar o link do WhatsApp aqui quando tiver um
-    console.log('Botão WhatsApp clicado');
+    // Link do WhatsApp com o número fornecido (55 é o código do Brasil, 38 é o DDD)
+    window.open('https://wa.me/553897289879', '_blank');
   };
 
   return (
