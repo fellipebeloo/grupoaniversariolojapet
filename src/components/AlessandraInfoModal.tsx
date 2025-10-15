@@ -71,7 +71,7 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
           <div className="bg-[#202c33] rounded-lg p-4">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-semibold">Catálogo</h3>
-              <Button variant="link" className="text-green-400 p-0 h-auto">
+              <Button variant="link" className="text-green-400 p-0 h-auto" onClick={handleCatalogClick}>
                 Mostrar tudo <ArrowLeft size={16} className="ml-1 rotate-180" />
               </Button>
             </div>
