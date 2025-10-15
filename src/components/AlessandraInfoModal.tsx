@@ -4,13 +4,22 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Dumbbell, Instagram, MessageCircle } from 'lucide-react'; // Corrigido: Importando MessageCircle em vez de Whatsapp
+import { ArrowLeft, Dumbbell, Instagram, MessageCircle } from 'lucide-react';
 
 interface AlessandraInfoModalProps {
   children: React.ReactNode;
 }
 
 export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
+  const handleInstagramClick = () => {
+    window.open('https://www.instagram.com/alessandrappersonal', '_blank');
+  };
+
+  const handleWhatsAppClick = () => {
+    // Você pode adicionar o link do WhatsApp aqui quando tiver um
+    console.log('Botão WhatsApp clicado');
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -45,12 +54,12 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
+            <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700" onClick={handleInstagramClick}>
               <Instagram size={20} className="mb-1" />
               <span className="text-xs">Instagram</span>
             </Button>
-            <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
-              <MessageCircle size={20} className="mb-1" /> {/* Corrigido para MessageCircle */}
+            <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700" onClick={handleWhatsAppClick}>
+              <MessageCircle size={20} className="mb-1" />
               <span className="text-xs">WhatsApp</span>
             </Button>
           </div>
