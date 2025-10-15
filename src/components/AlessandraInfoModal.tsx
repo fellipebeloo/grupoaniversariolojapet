@@ -72,7 +72,7 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
               </Button>
             </div>
             <div className="w-full h-48 bg-gray-800 rounded-md overflow-hidden flex items-center justify-center">
-              <img src="/alessandra-catalog.png" alt="Catálogo" className="w-full h-full object-cover" />
+              <img src="/alessandra-catalog.png" alt="Catálogo" className="w-full h-full object-contain" />
             </div>
           </div>
 
