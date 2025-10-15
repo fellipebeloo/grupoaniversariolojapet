@@ -24,7 +24,7 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
                 <ArrowLeft size={24} />
               </Button>
             </DialogTrigger>
-            <DialogTitle className="text-white text-lg font-semibold">Dados da empresa</DialogTitle>
+            <DialogTitle className="text-white text-lg font-semibold">Quem será sua instrutora?</DialogTitle>
           </div>
           <Button variant="ghost" className="text-green-400 hover:bg-gray-700">
             Editar
