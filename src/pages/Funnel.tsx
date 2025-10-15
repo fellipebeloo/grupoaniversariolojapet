@@ -23,8 +23,8 @@ import { MusicControlIsland } from '@/components/MusicControlIsland';
 interface AudioData {
   audioSrc: string;
   transcription: string;
-  durationSeconds: number; // Adicionado para controle do fluxo da conversa
-  onAudioEnded?: () => void; // Mantido opcional, mas não será usado para avançar o step
+  durationSeconds: number;
+  onAudioEnded?: () => void;
 }
 
 interface Message {
@@ -110,8 +110,8 @@ const FunnelPage = () => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState('Sua resposta...');
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const chatContainerRef = useRef<HTMLDivElement | null>(null); // Ref para o contêiner do chat
-  const [isAtBottom, setIsAtBottom] = useState(true); // Estado para controlar se o usuário está no final
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
   const [playedAudios, setPlayedAudios] = new useState<Set<string>>(new Set());
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
@@ -148,18 +148,16 @@ const FunnelPage = () => {
     };
   }, []);
 
-  // Efeito para rolagem condicional
   useEffect(() => {
     if (isAtBottom && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, typingIndicator, isAtBottom]); // Adicionado isAtBottom como dependência
+  }, [messages, typingIndicator, isAtBottom]);
   
-  // Função para verificar a posição de rolagem
   const handleScroll = useCallback(() => {
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-      const threshold = 100; // Distância do fundo para considerar "no final"
+      const threshold = 100;
       setIsAtBottom(scrollHeight - scrollTop - clientHeight < threshold);
     }
   }, []);
@@ -243,31 +241,41 @@ const FunnelPage = () => {
 
   const handleBackFromGroup = () => {
     setActiveView('chat');
-    if (step < 10) { // Ajustado para o novo número do passo
-      setStep(10); // Ajustado para o novo número do passo
+    if (step < 10) {
+      setStep(10);
     }
   };
 
-  const displayBotMessage = useCallback(async (messageContent: React.ReactNode, options?: string[], type: Message['tipo'] = 'texto', audioData?: AudioData) => {
-    messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
-
-    if (type === 'audio' && audioData) {
-      setTypingIndicator('audio');
-      await new Promise(res => setTimeout(res, 1000)); // Indicador de digitação por 1 segundo
-      setTypingIndicator(null);
-      addMessage('bot', '', options, type, audioData);
-      return; // Retorna aqui, o avanço do step será gerenciado pelo useEffect
-    }
-
-    addMessage('bot', messageContent, options, type);
-    const readingDelay = calculateDelay(messageContent);
-    setTypingIndicator('text');
-    await new Promise(res => setTimeout(res, readingDelay));
-    setTypingIndicator(null);
-  }, [addMessage]);
-
   useEffect(() => {
-    let audioTimeout: number | undefined; // Para armazenar o ID do timeout
+    let audioTimeout: number | undefined;
+
+    const TYPING_INDICATOR_DELAY = 1000; // 1 second for typing indicator
+    const CUSTOM_COMPONENT_POST_DISPLAY_DELAY = 2000; // Delay after custom components
+
+    // Helper to add a bot message, wait for reading, and optionally show typing indicator
+    const processBotMessage = async (
+      content: React.ReactNode,
+      options?: string[],
+      type: Message['tipo'] = 'texto',
+      audioData?: AudioData,
+      isFollowedByBotMessage: boolean = false // Indicates if the *next* message is also from the bot
+    ) => {
+      messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
+      addMessage('bot', content, options, type, audioData);
+      const readingDelay = calculateDelay(content);
+      await new Promise(res => setTimeout(res, readingDelay));
+
+      if (type === 'custom-component') {
+        await new Promise(res => setTimeout(res, CUSTOM_COMPONENT_POST_DISPLAY_DELAY));
+      }
+
+      // Show typing indicator ONLY if followed by another bot message (and not options/input)
+      if (isFollowedByBotMessage && !options && type !== 'audio') {
+        setTypingIndicator('text');
+        await new Promise(res => setTimeout(res, TYPING_INDICATOR_DELAY));
+        setTypingIndicator(null);
+      }
+    };
 
     const runConversation = async () => {
       if (processedSteps.current.has(step)) {
@@ -281,21 +289,22 @@ const FunnelPage = () => {
 
       switch (step) {
         case 0:
-          await displayBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
+          await processBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>, undefined, 'texto', undefined, false); // Next is user input
           setCurrentPlaceholder('Digite seu nome...');
           setCurrentInputType('text');
           setShowInput(true);
           break;
         case 1:
-          await displayBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
+          await processBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`, undefined, 'texto', undefined, false); // Next is user input
           setCurrentPlaceholder('Digite seu WhatsApp...');
           setCurrentInputType('tel');
           setShowInput(true);
           break;
         case 2:
-          await displayBotMessage(
+          addMessage(
+            'bot',
             '',
-            ['Bora!'], // Adicionado o botão 'Bora!' diretamente na mensagem de áudio
+            ['Bora!'],
             'audio',
             {
               audioSrc: AlessandraAudios.alessandraChatAudio1,
@@ -303,27 +312,27 @@ const FunnelPage = () => {
               durationSeconds: AlessandraAudios.alessandraChatAudio1Duration,
             }
           );
-          // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
           audioTimeout = window.setTimeout(() => {
-            setStep(3); // Avança para o novo passo com o botão "Bora!"
+            setStep(3);
           }, AlessandraAudios.alessandraChatAudio1Duration * 1000);
           break;
-        case 3: // Antigo Step 4, agora Step 3
-          await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
+        case 3:
+          await processBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia'], 'texto', undefined, false); // Next is user options
           break;
-        case 4: // Antigo Step 5, agora Step 4
-          await displayBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
+        case 4:
+          await processBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério'], 'texto', undefined, false); // Next is user options
           break;
-        case 5: // Antigo Step 6, agora Step 5
-          await displayBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
+        case 5:
+          await processBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅'], 'texto', undefined, false); // Next is user options
           break;
-        case 6: // Antigo Step 7, agora Step 6
-          await displayBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
+        case 6:
+          await processBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta'], 'texto', undefined, false); // Next is user options
           break;
-        case 7: // Antigo Step 8, agora Step 7 (Áudio 2)
-          await displayBotMessage(
+        case 7:
+          addMessage(
+            'bot',
             '',
-            ['Gostei! Quero ver...'], // Adicionado o botão 'Gostei! Quero ver...'
+            ['Gostei! Quero ver...'],
             'audio',
             {
               audioSrc: AlessandraAudios.alessandraChatAudio2,
@@ -331,63 +340,62 @@ const FunnelPage = () => {
               durationSeconds: AlessandraAudios.alessandraChatAudio2Duration,
             }
           );
-          // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
           audioTimeout = window.setTimeout(() => {
-            setStep(8); // Antigo Step 9, agora Step 8
+            setStep(8);
           }, AlessandraAudios.alessandraChatAudio2Duration * 1000);
           break;
-        case 8: // Antigo Step 9, agora Step 8
-          await displayBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
+        case 8:
+          await processBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava'], 'texto', undefined, false); // Next is user options
           break;
-        case 9: // Antigo Step 10, agora Step 9
-          await displayBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
-          await displayBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
-          await displayBotMessage('Olha só:');
-          await displayBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component');
+        case 9:
+          await processBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`, undefined, 'texto', undefined, true); // Followed by bot message
+          await processBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.', undefined, 'texto', undefined, true); // Followed by bot message
+          await processBotMessage('Olha só:', undefined, 'texto', undefined, true); // Followed by bot message
+          await processBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component', undefined, false); // Next is user action (view group)
           break;
-        case 10: // Antigo Step 11, agora Step 10
-          await displayBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
+        case 10:
+          await processBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!'], 'texto', undefined, false); // Next is user options
           break;
-        case 11: // Antigo Step 12, agora Step 11
-          await displayBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
-          await displayBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
-          await displayBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
-          await displayBotMessage(<PocheteTeimosaEffect />, undefined, 'custom-component');
-          await displayBotMessage(<>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>);
-          await displayBotMessage(<>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
-          await displayBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
-          await displayBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
+        case 11:
+          await processBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`, undefined, 'texto', undefined, true);
+          await processBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.', undefined, 'texto', undefined, true);
+          await processBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>, undefined, 'texto', undefined, true);
+          await processBotMessage(<PocheteTeimosaEffect />, undefined, 'custom-component', undefined, true);
+          await processBotMessage(<>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>, undefined, 'texto', undefined, true);
+          await processBotMessage(<>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>, undefined, 'texto', undefined, true);
+          await processBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.', undefined, 'texto', undefined, true);
+          await processBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo'], 'texto', undefined, false); // Next is user options
           break;
-        case 12: // Antigo Step 13, agora Step 12
-          setStep(14); // Antigo Step 15, agora Step 14
+        case 12:
+          setStep(14);
           break;
-        case 14: // Antigo Step 15, agora Step 14
-          await displayBotMessage(`Boa, ${userData.name}! É exatamente isso que vou te mostrar agora. O que realmente faz o corpo sair do travamento...`);
-          await displayBotMessage(<>O nome disso é:<br/>💥 <strong>PROTOCOLO H.I.T.S.</strong> 💥</>);
-          await displayBotMessage(<HitsProtocolCard />, undefined, 'custom-component');
-          await displayBotMessage('É um tipo de treino que ativa seu metabolismo em poucos minutos, sem precisar de academia, peso ou experiência.');
-          await displayBotMessage(<>Ele é focado em 3 coisas:<br/><br/>✅ Destravar o corpo<br/>✅ Secar a pochete teimosa<br/>✅ E te dar resultado visível em até 21 dias</>);
-          await displayBotMessage('É como se fosse um botão RESET no seu corpo.');
-          await displayBotMessage('As mulheres que tão fazendo isso comigo já tão sentindo a diferença na disposição, no espelho, na roupa, em tudo.');
-          await displayBotMessage('E o melhor: você faz em casa, com o seu tempo, sem depender de nada.');
-          await displayBotMessage(<strong>Se você chegou até aqui, é porque seu corpo tá gritando por mudança.</strong>);
-          await displayBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.']);
+        case 14:
+          await processBotMessage(`Boa, ${userData.name}! É exatamente isso que vou te mostrar agora. O que realmente faz o corpo sair do travamento...`, undefined, 'texto', undefined, true);
+          await processBotMessage(<>O nome disso é:<br/>💥 <strong>PROTOCOLO H.I.T.S.</strong> 💥</>, undefined, 'texto', undefined, true);
+          await processBotMessage(<HitsProtocolCard />, undefined, 'custom-component', undefined, true);
+          await processBotMessage('É um tipo de treino que ativa seu metabolismo em poucos minutos, sem precisar de academia, peso ou experiência.', undefined, 'texto', undefined, true);
+          await processBotMessage(<>Ele é focado em 3 coisas:<br/><br/>✅ Destravar o corpo<br/>✅ Secar a pochete teimosa<br/>✅ E te dar resultado visível em até 21 dias</>, undefined, 'texto', undefined, true);
+          await processBotMessage('É como se fosse um botão RESET no seu corpo.', undefined, 'texto', undefined, true);
+          await processBotMessage('As mulheres que tão fazendo isso comigo já tão sentindo a diferença na disposição, no espelho, na roupa, em tudo.', undefined, 'texto', undefined, true);
+          await processBotMessage('E o melhor: você faz em casa, com o seu tempo, sem depender de nada.', undefined, 'texto', undefined, true);
+          await processBotMessage(<strong>Se você chegou até aqui, é porque seu corpo tá gritando por mudança.</strong>, undefined, 'texto', undefined, true);
+          await processBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.'], 'texto', undefined, false); // Next is user options
           break;
-        case 15: // Antigo Step 16, agora Step 15
+        case 15:
           setPlayBackgroundMusic(true);
-          await displayBotMessage(`${userData.name}, com base no que você me respondeu, eu preparei uma análise do seu caso…`);
-          await displayBotMessage(<ReportImage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
-          await displayBotMessage(<>Nesse relatório eu explico:<br/><br/>✅ O que tá travando seu corpo<br/>✅ Por que nada funcionou até agora<br/>✅ E como começar o H.I.T.S. HOJE pra mudar isso</>);
-          await displayBotMessage('MAS…');
-          await displayBotMessage('Eu só libero esse relatório e o protocolo completo pra quem tá decidida de verdade.');
-          await displayBotMessage(<>Porque não é mais um videozinho qualquer…<br/>É um método testado, com passo a passo, e resultado de verdade.</>);
-          await displayBotMessage('E pra você que chegou até aqui, eu consegui liberar um acesso promocional:');
-          await displayBotMessage(<OfferCard />, undefined, 'custom-component');
-          await displayBotMessage('Mas tem um detalhe:\nEu só consigo segurar esse valor pras PRIMEIRAS 30 alunas que finalizarem hoje.');
-          await displayBotMessage(<SlotsRemaining />, undefined, 'custom-component');
-          await displayBotMessage('Quer mudar de verdade?\nEntão clica aqui e garante agora:');
-          await displayBotMessage(<CtaButton />, undefined, 'custom-component');
-          await displayBotMessage(<WhatsIncluded />, undefined, 'custom-component');
+          await processBotMessage(`${userData.name}, com base no que você me respondeu, eu preparei uma análise do seu caso…`, undefined, 'texto', undefined, true);
+          await processBotMessage(<ReportImage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component', undefined, true);
+          await processBotMessage(<>Nesse relatório eu explico:<br/><br/>✅ O que tá travando seu corpo<br/>✅ Por que nada funcionou até agora<br/>✅ E como começar o H.I.T.S. HOJE pra mudar isso</>, undefined, 'texto', undefined, true);
+          await processBotMessage('MAS…', undefined, 'texto', undefined, true);
+          await processBotMessage('Eu só libero esse relatório e o protocolo completo pra quem tá decidida de verdade.', undefined, 'texto', undefined, true);
+          await processBotMessage(<>Porque não é mais um videozinho qualquer…<br/>É um método testado, com passo a passo, e resultado de verdade.</>, undefined, 'texto', undefined, true);
+          await processBotMessage('E pra você que chegou até aqui, eu consegui liberar um acesso promocional:', undefined, 'texto', undefined, true);
+          await processBotMessage(<OfferCard />, undefined, 'custom-component', undefined, true);
+          await processBotMessage('Mas tem um detalhe:\nEu só consigo segurar esse valor pras PRIMEIRAS 30 alunas que finalizarem hoje.', undefined, 'texto', undefined, true);
+          await processBotMessage(<SlotsRemaining />, undefined, 'custom-component', undefined, true);
+          await processBotMessage('Quer mudar de verdade?\nEntão clica aqui e garante agora:', undefined, 'texto', undefined, true);
+          await processBotMessage(<CtaButton />, undefined, 'custom-component', undefined, true);
+          await processBotMessage(<WhatsIncluded />, undefined, 'custom-component', undefined, false); // Last message in the entire sequence, no typing indicator
           break;
         default:
           break;
@@ -396,12 +404,12 @@ const FunnelPage = () => {
 
     runConversation();
 
-    return () => { // Função de limpeza para o useEffect
+    return () => {
       if (audioTimeout) {
         clearTimeout(audioTimeout);
       }
     };
-  }, [step, userData.name, displayBotMessage, addMessage, playedAudios]); 
+  }, [step, userData.name, addMessage, playedAudios]); 
 
   return (
     <>
@@ -421,8 +429,8 @@ const FunnelPage = () => {
           <div className="relative overflow-hidden h-full">
             <div 
               className="overflow-y-auto overscroll-y-contain p-4 space-y-4 h-full"
-              ref={chatContainerRef} // Adicionado ref ao contêiner do chat
-              onScroll={handleScroll} // Adicionado evento onScroll
+              ref={chatContainerRef}
+              onScroll={handleScroll}
             >
               {messages.map(msg => {
                 if (msg.tipo === 'audio' && msg.audioData) {
@@ -437,7 +445,7 @@ const FunnelPage = () => {
                           transcription={msg.audioData.transcription}
                           senderName={msg.remetente}
                           profileImageUrl={msg.remetente === 'Alessandra' ? '/alessandra.jpg' : undefined}
-                          onAudioEnded={msg.audioData.onAudioEnded} // Mantido para o player, mas não avança o step
+                          onAudioEnded={msg.audioData.onAudioEnded}
                           hasBeenPlayed={playedAudios.has(msg.audioData.audioSrc)}
                           onFirstPlay={() => {
                             setPlayedAudios(prev => new Set(prev).add(msg.audioData!.audioSrc));
