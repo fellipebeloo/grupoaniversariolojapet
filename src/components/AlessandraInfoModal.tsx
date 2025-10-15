@@ -4,7 +4,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Phone, Store, Share2, Search, Plus, Dumbbell } from 'lucide-react'; // Importando Dumbbell e removendo ShoppingCart
+import { ArrowLeft, Dumbbell, Instagram, Whatsapp } from 'lucide-react'; // Importando Instagram e Whatsapp, removendo os outros ícones
 
 interface AlessandraInfoModalProps {
   children: React.ReactNode;
@@ -38,28 +38,20 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
             </Avatar>
             <div className="flex items-center gap-2 mb-1">
               <h2 className="text-2xl font-bold">Alessandra Palma</h2>
-              <Dumbbell size={20} className="text-gray-400" /> {/* Ícone alterado para Dumbbell */}
+              <Dumbbell size={20} className="text-gray-400" />
             </div>
             <p className="text-gray-400 text-sm">~Alessandra Palma</p>
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-2"> {/* Alterado para grid-cols-2 */}
             <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
-              <Phone size={20} className="mb-1" />
-              <span className="text-xs">Ligar</span>
+              <Instagram size={20} className="mb-1" />
+              <span className="text-xs">Instagram</span>
             </Button>
             <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
-              <Store size={20} className="mb-1" />
-              <span className="text-xs">Catálogo</span>
-            </Button>
-            <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
-              <Share2 size={20} className="mb-1" />
-              <span className="text-xs">Compartilhar</span>
-            </Button>
-            <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
-              <Search size={20} className="mb-1" />
-              <span className="text-xs">Pesquisar</span>
+              <Whatsapp size={20} className="mb-1" />
+              <span className="text-xs">WhatsApp</span>
             </Button>
           </div>
 
