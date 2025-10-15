@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Dumbbell, Instagram, MessageCircle } from 'lucide-react';
 
 interface AlessandraInfoModalProps {
-  children: React.ReactElement; // Alterado de React.ReactNode para React.ReactElement
+  children: React.ReactNode;
 }
 
 export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
@@ -38,6 +38,7 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
             </DialogTrigger>
             <DialogTitle className="text-white text-lg font-semibold">Quem será sua instrutora?</DialogTitle>
           </div>
+          {/* O botão "Editar" foi removido daqui */}
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
