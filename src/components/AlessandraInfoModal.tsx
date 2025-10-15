@@ -94,7 +94,14 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
             <p className="text-gray-300 text-sm mb-2">
               Comece hoje o melhor projeto da sua vida. Além Treinos/ Os melhores treinos para emagrecer e definir 💪
               <br />
-              <span className="text-green-400">@alessandrappersonal</span>
+              <a 
+                href="https://www.instagram.com/alessandrappersonal" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-green-400 hover:underline"
+              >
+                @alessandrappersonal
+              </a>
             </p>
             <p className="text-gray-500 text-xs">8 de nov. de 2024</p>
           </div>
