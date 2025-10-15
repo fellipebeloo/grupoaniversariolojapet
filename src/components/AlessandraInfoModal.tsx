@@ -26,9 +26,7 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
             </DialogTrigger>
             <DialogTitle className="text-white text-lg font-semibold">Quem será sua instrutora?</DialogTitle>
           </div>
-          <Button variant="ghost" className="text-green-400 hover:bg-gray-700">
-            Editar
-          </Button>
+          {/* O botão "Editar" foi removido daqui */}
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
