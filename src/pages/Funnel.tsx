@@ -109,6 +109,8 @@ const FunnelPage = () => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState('Sua resposta...');
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null); // Ref para o contêiner do chat
+  const [isAtBottom, setIsAtBottom] = useState(true); // Estado para controlar se o usuário está no final
   const [activeView, setActiveView] = useState<'chat' | 'group'>('chat');
   const [playedAudios, setPlayedAudios] = new useState<Set<string>>(new Set());
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
@@ -117,7 +119,7 @@ const FunnelPage = () => {
   const processedSteps = useRef<Set<number>>(new Set());
 
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null); // Corrigido aqui
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
@@ -145,9 +147,21 @@ const FunnelPage = () => {
     };
   }, []);
 
+  // Efeito para rolagem condicional
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, typingIndicator]);
+    if (isAtBottom && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, typingIndicator, isAtBottom]); // Adicionado isAtBottom como dependência
+  
+  // Função para verificar a posição de rolagem
+  const handleScroll = useCallback(() => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const threshold = 100; // Distância do fundo para considerar "no final"
+      setIsAtBottom(scrollHeight - scrollTop - clientHeight < threshold);
+    }
+  }, []);
 
   useEffect(() => {
     messageSentAudioRef.current = new Audio(AlessandraAudios.messageSent);
@@ -389,6 +403,8 @@ const FunnelPage = () => {
           <div className="relative overflow-hidden h-full">
             <div 
               className="overflow-y-auto overscroll-y-contain p-4 space-y-4 h-full"
+              ref={chatContainerRef} // Adicionado ref ao contêiner do chat
+              onScroll={handleScroll} // Adicionado evento onScroll
             >
               {messages.map(msg => {
                 if (msg.tipo === 'audio' && msg.audioData) {
