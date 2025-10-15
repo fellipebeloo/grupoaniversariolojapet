@@ -120,7 +120,7 @@ const FunnelPage = () => {
   const processedSteps = useRef<Set<number>>(new Set());
 
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(messageReceivedAudioRef.current || new Audio(AlessandraAudios.messageReceived));
 
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
@@ -243,8 +243,8 @@ const FunnelPage = () => {
 
   const handleBackFromGroup = () => {
     setActiveView('chat');
-    if (step < 10) {
-      setStep(10);
+    if (step < 11) { // Ajustado para o novo número do passo
+      setStep(11); // Ajustado para o novo número do passo
     }
   };
 
@@ -305,22 +305,25 @@ const FunnelPage = () => {
           );
           // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
           audioTimeout = window.setTimeout(() => {
-            setStep(3);
+            setStep(3); // Avança para o novo passo com o botão "Bora!"
           }, AlessandraAudios.alessandraChatAudio1Duration * 1000);
           break;
-        case 3:
+        case 3: // NOVO PASSO: Botão "Bora!"
+          await displayBotMessage('Bora!', ['Bora!']);
+          break;
+        case 4: // Antigo Step 3, agora Step 4
           await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
           break;
-        case 4:
+        case 5: // Antigo Step 4, agora Step 5
           await displayBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
           break;
-        case 5:
+        case 6: // Antigo Step 5, agora Step 6
           await displayBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
           break;
-        case 6:
+        case 7: // Antigo Step 6, agora Step 7
           await displayBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta']);
           break;
-        case 7:
+        case 8: // Antigo Step 7, agora Step 8 (Áudio 2)
           await displayBotMessage(
             '',
             undefined,
@@ -333,22 +336,22 @@ const FunnelPage = () => {
           );
           // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
           audioTimeout = window.setTimeout(() => {
-            setStep(8);
+            setStep(9); // Antigo Step 8, agora Step 9
           }, AlessandraAudios.alessandraChatAudio2Duration * 1000);
           break;
-        case 8:
+        case 9: // Antigo Step 8, agora Step 9
           await displayBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
           break;
-        case 9:
+        case 10: // Antigo Step 9, agora Step 10
           await displayBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
           await displayBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
           await displayBotMessage('Olha só:');
           await displayBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component');
           break;
-        case 10:
+        case 11: // Antigo Step 10, agora Step 11
           await displayBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
           break;
-        case 11:
+        case 12: // Antigo Step 11, agora Step 12
           await displayBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
           await displayBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
           await displayBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
@@ -358,10 +361,10 @@ const FunnelPage = () => {
           await displayBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
           await displayBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
           break;
-        case 12:
-          setStep(14);
+        case 13: // Antigo Step 12, agora Step 13
+          setStep(15); // Antigo Step 14, agora Step 15
           break;
-        case 14:
+        case 15: // Antigo Step 14, agora Step 15
           await displayBotMessage(`Boa, ${userData.name}! É exatamente isso que vou te mostrar agora. O que realmente faz o corpo sair do travamento...`);
           await displayBotMessage(<>O nome disso é:<br/>💥 <strong>PROTOCOLO H.I.T.S.</strong> 💥</>);
           await displayBotMessage(<HitsProtocolCard />, undefined, 'custom-component');
@@ -373,7 +376,7 @@ const FunnelPage = () => {
           await displayBotMessage(<strong>Se você chegou até aqui, é porque seu corpo tá gritando por mudança.</strong>);
           await displayBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.']);
           break;
-        case 15:
+        case 16: // Antigo Step 15, agora Step 16
           setPlayBackgroundMusic(true);
           await displayBotMessage(`${userData.name}, com base no que você me respondeu, eu preparei uma análise do seu caso…`);
           await displayBotMessage(<ReportImage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
