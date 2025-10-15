@@ -19,6 +19,10 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
     window.open('https://wa.me/553897289879', '_blank');
   };
 
+  const handleCatalogClick = () => {
+    window.open('https://pay.kiwify.com.br/m9JXKJM', '_blank'); // Link direto para o checkout
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -71,9 +75,12 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
                 Mostrar tudo <ArrowLeft size={16} className="ml-1 rotate-180" />
               </Button>
             </div>
-            <div className="w-full h-48 bg-gray-800 rounded-md overflow-hidden flex items-center justify-center">
+            <button 
+              onClick={handleCatalogClick} 
+              className="w-full h-48 bg-gray-800 rounded-md overflow-hidden flex items-center justify-center cursor-pointer"
+            >
               <img src="/alessandra-catalog.png" alt="Catálogo" className="w-full h-full object-contain" />
-            </div>
+            </button>
           </div>
 
           {/* Fitness Instructor Section */}
