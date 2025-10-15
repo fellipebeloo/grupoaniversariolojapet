@@ -257,12 +257,16 @@ const FunnelPage = () => {
       content: React.ReactNode,
       options?: string[],
       type: Message['tipo'] = 'texto',
-      audioData?: AudioData
+      audioData?: AudioData,
+      fastInputRelease: boolean = false // New parameter
     ) => {
       messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
       addMessage('bot', content, options, type, audioData);
       const readingDelay = calculateDelay(content);
-      await new Promise(res => setTimeout(res, readingDelay));
+      
+      // Use a shorter delay if fastInputRelease is true
+      const actualDelay = fastInputRelease ? 500 : readingDelay; 
+      await new Promise(res => setTimeout(res, actualDelay));
 
       if (type === 'custom-component') {
         await new Promise(res => setTimeout(res, CUSTOM_COMPONENT_POST_DISPLAY_DELAY));
@@ -288,13 +292,13 @@ const FunnelPage = () => {
 
       switch (step) {
         case 0:
-          await processBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
+          await processBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>, undefined, 'texto', undefined, true); // Added true
           setCurrentPlaceholder('Digite seu nome...');
           setCurrentInputType('text');
           setShowInput(true);
           break;
         case 1:
-          await processBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
+          await processBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`, undefined, 'texto', undefined, true); // Added true
           setCurrentPlaceholder('Digite seu WhatsApp...');
           setCurrentInputType('tel');
           setShowInput(true);
