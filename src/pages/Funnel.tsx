@@ -117,7 +117,7 @@ const FunnelPage = () => {
   const processedSteps = useRef<Set<number>>(new Set());
 
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(messageReceivedAudioRef.current || null);
 
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
@@ -288,7 +288,7 @@ const FunnelPage = () => {
           );
           break;
         case 3:
-          await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
+          await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
           break;
         case 4:
           await displayBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
@@ -312,7 +312,7 @@ const FunnelPage = () => {
           );
           break;
         case 8:
-          await displayBotMessage(<>Arrasou, ${userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
+          await displayBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
           break;
         case 9:
           await displayBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
