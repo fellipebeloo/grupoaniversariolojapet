@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import FunnelPage from "./pages/Funnel";
-import FitnessGamePage from "./pages/FitnessGamePage";
 import GroupTestPage from "./pages/GroupTestPage";
 import PitchTestPage from "./pages/PitchTestPage";
 
@@ -21,7 +20,6 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/funil" element={<FunnelPage />} />
-          <Route path="/jogo" element={<FitnessGamePage />} />
           <Route path="/grupo-teste" element={<GroupTestPage />} />
           <Route path="/pitch-teste" element={<PitchTestPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

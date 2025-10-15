@@ -9,7 +9,6 @@ import { WhatsAppAudioPlayer } from '@/components/WhatsAppAudioPlayer';
 import { GroupChatView } from '@/components/GroupChatView';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { PocheteTeimosaEffect } from '@/components/PocheteTeimosaEffect';
-import { GameStartMessage } from '@/components/GameStartMessage';
 import { useSearchParams } from 'react-router-dom';
 import { AlessandraAudios } from '@/constants/audioPaths';
 import { HitsProtocolCard } from '@/components/HitsProtocolCard';
@@ -341,18 +340,10 @@ const FunnelPage = () => {
           await displayBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
           break;
         case 12:
-          await displayBotMessage(`${userData.name || 'Guerreira'}, bora ver o quanto suas escolhas diárias tão te ajudando… ou te sabotando?`);
-          await displayBotMessage('Esse é o Jogo da Vida Fitness. Você vai fazer 5 escolhas de situações do dia a dia. No final, eu te conto o que tá pegando.');
-          await displayBotMessage(<GameStartMessage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
-          await displayBotMessage('Clique no botão "Começar o Jogo 🔥" acima para iniciar o desafio e descobrir o que está travando seu corpo!');
-          break;
-        case 13:
-          await displayBotMessage(`Uau, ${userData.name || 'Guerreira'}! Viu como as pequenas coisas fazem a diferença?`);
-          await displayBotMessage('Agora que você sabe o que te trava, tá na hora de conhecer o que vai te destravar de vez.');
-          await displayBotMessage('Preparada para conhecer o método H.I.T.S.?', ['Sim, estou pronta!']);
+          setStep(14);
           break;
         case 14:
-          await displayBotMessage(`${userData.name}, agora eu vou te mostrar o que realmente faz o corpo sair do travamento...`);
+          await displayBotMessage(`Boa, ${userData.name}! É exatamente isso que vou te mostrar agora. O que realmente faz o corpo sair do travamento...`);
           await displayBotMessage(<>O nome disso é:<br/>💥 <strong>PROTOCOLO H.I.T.S.</strong> 💥</>);
           await displayBotMessage(<HitsProtocolCard />, undefined, 'custom-component');
           await displayBotMessage('É um tipo de treino que ativa seu metabolismo em poucos minutos, sem precisar de academia, peso ou experiência.');
