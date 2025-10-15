@@ -2,7 +2,7 @@ import { Tag, Zap } from 'lucide-react';
 
 export const OfferCard = () => {
   return (
-    <div className="flex flex-col max-w-[85%] w-full rounded-lg bg-gradient-to-br from-green-800 to-green-900 text-white shadow-2xl overflow-hidden p-4 border-2 border-green-500">
+    <div className="flex flex-col w-full rounded-lg bg-gradient-to-br from-green-800 to-green-900 text-white shadow-2xl overflow-hidden p-4 border-2 border-green-500"> {/* Removido max-w-[85%] */}
       <div className="flex items-center gap-2 mb-3">
         <Tag size={20} />
         <p className="font-bold text-lg">Acesso Promocional Liberado</p>

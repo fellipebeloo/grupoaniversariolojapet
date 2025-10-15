@@ -7,7 +7,7 @@ export const CtaButton = () => {
   };
 
   return (
-    <div className="flex flex-col max-w-[85%] w-full">
+    <div className="flex flex-col w-full"> {/* Removido max-w-[85%] */}
       <button
         onClick={handleClick}
         className="w-full text-center p-4 rounded-lg bg-green-600 text-white font-bold text-lg shadow-lg hover:bg-green-700 transition-all transform hover:scale-105 animate-shake"

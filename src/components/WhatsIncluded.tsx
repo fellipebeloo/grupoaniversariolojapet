@@ -9,7 +9,7 @@ const IncludedItem = ({ children }: { children: React.ReactNode }) => (
 
 export const WhatsIncluded = () => {
   return (
-    <div className="flex flex-col max-w-[85%] w-full rounded-lg bg-[#2a3942] text-gray-200 shadow-lg overflow-hidden p-4 border border-gray-600">
+    <div className="flex flex-col w-full rounded-lg bg-[#2a3942] text-gray-200 shadow-lg overflow-hidden p-4 border border-gray-600"> {/* Removido max-w-[85%] */}
       <h3 className="font-bold text-lg text-white mb-3 text-center">O que você vai receber:</h3>
       <ul className="space-y-2 text-sm">
         <IncludedItem>Acesso ao protocolo completo H.I.T.S.</IncludedItem>

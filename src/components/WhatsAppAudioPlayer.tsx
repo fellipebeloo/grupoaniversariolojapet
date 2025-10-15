@@ -143,7 +143,7 @@ export const WhatsAppAudioPlayer = ({
 
   return (
     <div className={cn(
-      "flex flex-col min-w-[240px] max-w-[70%] rounded-xl shadow-sm user-select-none font-sans",
+      "flex flex-col min-w-[240px] rounded-xl shadow-sm user-select-none font-sans", // Removido max-w-[70%]
       playerBgColor,
     )}>
       {!isMine && (

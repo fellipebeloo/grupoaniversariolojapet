@@ -62,7 +62,7 @@ export const AudioMessage = ({ audioSrc }: AudioMessageProps) => {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="flex items-center gap-3 py-1 bg-[#202c33] rounded-xl p-2 px-3 max-w-[80%] shadow-sm">
+    <div className="flex items-center gap-3 py-1 bg-[#202c33] rounded-xl p-2 px-3 w-full shadow-sm"> {/* Removido max-w-[80%] */}
       <button onClick={togglePlayback} className="text-white p-1 rounded-full bg-[#00a884] hover:bg-[#008f6f] transition-colors flex-shrink-0">
         {isPlaying ? <Pause size={20} /> : <Play size={20} />}
       </button>

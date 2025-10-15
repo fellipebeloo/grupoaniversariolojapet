@@ -11,7 +11,7 @@ const AnimatedLine = ({ delay, children }: { delay: string, children: React.Reac
 
 export const HitsProtocolCard = () => {
   return (
-    <div className="flex flex-col max-w-[85%] w-full rounded-lg bg-[#202c33] text-gray-100 shadow-sm overflow-hidden p-4">
+    <div className="flex flex-col w-full rounded-lg bg-[#202c33] text-gray-100 shadow-sm overflow-hidden p-4"> {/* Removido max-w-[85%] */}
       <AnimatedLine delay="0s">
         <div className="text-center font-bold text-2xl mb-4 text-yellow-300 flex items-center justify-center gap-2">
           <Zap size={24} className="text-yellow-400" />

@@ -11,7 +11,7 @@ const CycleStep = ({ icon, label }: { icon: React.ReactNode, label: string }) =>
 
 export const PocheteTeimosaEffect = () => {
   return (
-    <div className="flex flex-col max-w-[85%] rounded-lg bg-[#202c33] text-gray-100 shadow-sm overflow-hidden p-3">
+    <div className="flex flex-col w-full rounded-lg bg-[#202c33] text-gray-100 shadow-sm overflow-hidden p-3"> {/* Removido max-w-[85%] */}
       <div className="text-center font-bold text-lg mb-4 text-red-400">
         O Ciclo do "Efeito Pochete Teimosa"
       </div>
