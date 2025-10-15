@@ -14,8 +14,6 @@ interface WhatsAppAudioPlayerProps {
   onAudioEnded?: () => void;
   hasBeenPlayed?: boolean;
   onFirstPlay?: () => void;
-  options?: string[]; // Adicionado para opções de botão
-  onOptionClick?: (option: string) => void; // Adicionado para o handler das opções
 }
 
 export const WhatsAppAudioPlayer = ({
@@ -28,8 +26,6 @@ export const WhatsAppAudioPlayer = ({
   onAudioEnded,
   hasBeenPlayed = false,
   onFirstPlay,
-  options, // Adicionado
-  onOptionClick, // Adicionado
 }: WhatsAppAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sliderRef = useRef<HTMLInputElement | null>(null);
@@ -243,19 +239,6 @@ export const WhatsAppAudioPlayer = ({
         )}>
           {transcription}
         </p>
-      )}
-      {options && options.length > 0 && onOptionClick && (
-        <div className="border-t border-white/10 mt-2">
-          {options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => onOptionClick(option)}
-              className={`w-full text-center py-2.5 px-3 text-sky-400 hover:bg-black/10 transition-colors text-sm font-medium ${index > 0 ? 'border-t border-white/10' : ''}`}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
       )}
     </div>
   );

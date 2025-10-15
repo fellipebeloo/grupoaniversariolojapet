@@ -126,7 +126,7 @@ export function MensagemBalao({
               {renderContent()}
             </div>
 
-            {options && options.length > 0 && onOptionClick && (tipo === 'texto' || tipo === 'imagem') && (
+            {options && options.length > 0 && onOptionClick && (
               <div className="border-t border-white/10">
                 {options.map((option, index) => (
                   <button

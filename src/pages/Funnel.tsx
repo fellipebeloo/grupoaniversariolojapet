@@ -25,8 +25,6 @@ interface AudioData {
   transcription: string;
   durationSeconds: number; // Adicionado para controle do fluxo da conversa
   onAudioEnded?: () => void; // Mantido opcional, mas não será usado para avançar o step
-  options?: string[]; // Adicionado para opções de botão dentro do player
-  onOptionClick?: (option: string) => void; // Adicionado para o handler das opções
 }
 
 interface Message {
@@ -297,14 +295,12 @@ const FunnelPage = () => {
         case 2:
           await displayBotMessage(
             '',
-            undefined, // Removido options daqui, agora vai dentro de audioData
+            ['Bora!'], // Adicionado o botão 'Bora!' diretamente na mensagem de áudio
             'audio',
             {
               audioSrc: AlessandraAudios.alessandraChatAudio1,
               transcription: AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name),
               durationSeconds: AlessandraAudios.alessandraChatAudio1Duration,
-              options: ['Bora!'], // Adicionado o botão 'Bora!' diretamente na mensagem de áudio
-              onOptionClick: handleNextStep, // Passa o handler para o player
             }
           );
           // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
@@ -441,15 +437,14 @@ const FunnelPage = () => {
                           transcription={msg.audioData.transcription}
                           senderName={msg.remetente}
                           profileImageUrl={msg.remetente === 'Alessandra' ? '/alessandra.jpg' : undefined}
-                          onAudioEnded={msg.audioData.onAudioEnded}
+                          onAudioEnded={msg.audioData.onAudioEnded} // Mantido para o player, mas não avança o step
                           hasBeenPlayed={playedAudios.has(msg.audioData.audioSrc)}
                           onFirstPlay={() => {
                             setPlayedAudios(prev => new Set(prev).add(msg.audioData!.audioSrc));
                           }}
-                          options={msg.audioData.options} // Passa as opções do audioData para o player
-                          onOptionClick={msg.audioData.onOptionClick} // Passa o handler para o player
                         />
                       }
+                      onOptionClick={handleNextStep}
                     />
                   );
                 }
