@@ -11,13 +11,13 @@ export const GroupInviteMessage = ({ onViewClick }: GroupInviteMessageProps) => 
         <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
           <MessageSquare size={28} className="text-white" />
         </div>
-        <div>
+        <div className="text-left">
           <p className="font-semibold">#12 - Guerrilheiras do H.I.T.S. Fitness</p>
           <p className="text-sm text-gray-400">Convite de conversa em grupo</p>
         </div>
       </div>
       
-      <div className="p-2 px-3">
+      <div className="p-2 px-3 text-left">
         <p className="text-sm">
           Acesse este link para entrar no meu grupo do WhatsApp:
           <br />
