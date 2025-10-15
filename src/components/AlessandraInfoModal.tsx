@@ -4,7 +4,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Dumbbell, Instagram, Whatsapp } from 'lucide-react'; // Importando Instagram e Whatsapp, removendo os outros ícones
+import { ArrowLeft, Dumbbell, Instagram, MessageCircle } from 'lucide-react'; // Corrigido: Importando MessageCircle em vez de Whatsapp
 
 interface AlessandraInfoModalProps {
   children: React.ReactNode;
@@ -44,13 +44,13 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-2"> {/* Alterado para grid-cols-2 */}
+          <div className="grid grid-cols-2 gap-2">
             <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
               <Instagram size={20} className="mb-1" />
               <span className="text-xs">Instagram</span>
             </Button>
             <Button variant="ghost" className="flex flex-col h-auto py-3 text-gray-300 hover:bg-gray-700">
-              <Whatsapp size={20} className="mb-1" />
+              <MessageCircle size={20} className="mb-1" /> {/* Corrigido para MessageCircle */}
               <span className="text-xs">WhatsApp</span>
             </Button>
           </div>
