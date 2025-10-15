@@ -4,7 +4,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Phone, Store, Share2, Search, Plus, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Phone, Store, Share2, Search, Plus, Dumbbell } from 'lucide-react'; // Importando Dumbbell e removendo ShoppingCart
 
 interface AlessandraInfoModalProps {
   children: React.ReactNode;
@@ -38,7 +38,7 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
             </Avatar>
             <div className="flex items-center gap-2 mb-1">
               <h2 className="text-2xl font-bold">Alessandra Palma</h2>
-              <ShoppingCart size={20} className="text-gray-400" />
+              <Dumbbell size={20} className="text-gray-400" /> {/* Ícone alterado para Dumbbell */}
             </div>
             <p className="text-gray-400 text-sm">~Alessandra Palma</p>
           </div>
