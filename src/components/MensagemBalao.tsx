@@ -61,23 +61,29 @@ export function MensagemBalao({
     };
   }, [isUser, texto]);
 
-  // Se o tipo for 'audio' ou 'custom-component', renderiza o conteúdo diretamente com o avatar
-  if (tipo === 'audio' || tipo === 'custom-component') {
+  const renderContent = () => {
+    if (tipo === 'audio' || tipo === 'custom-component') {
+      return texto; // texto já é um ReactNode (ex: WhatsAppAudioPlayer ou GroupInviteMessage)
+    }
+    // Para 'texto' ou 'imagem', texto é uma string ou ReactNode a ser envolvido
     return (
-      <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
-        {!isUser && (
-          <img
-            src="/alessandra.jpg"
-            alt={remetente}
-            className="w-8 h-8 rounded-full object-cover"
-          />
-        )}
-        {texto} {/* Renderiza o WhatsAppAudioPlayer ou o componente customizado diretamente */}
+      <div className="flex flex-wrap items-baseline">
+        <div className="text-base mr-2">{texto}</div> {/* Alterado de text-sm para text-base */}
+
+        <div className="flex-shrink-0 ml-auto pl-2 self-end">
+          <span className="flex items-center whitespace-rap">
+            <p className={`text-xs ${isUser ? 'text-gray-300/80' : 'text-gray-400'}`}>
+              {horario}
+            </p>
+            {isUser && (
+              <CheckCheck size={16} className="ml-1 text-blue-400" />
+            )}
+          </span>
+        </div>
       </div>
     );
-  }
+  };
 
-  // Para outros tipos de mensagem (texto, imagem), renderiza a bolha padrão
   return (
     <div className="relative">
       <div
@@ -110,25 +116,14 @@ export function MensagemBalao({
                 : 'bg-[#202c33] text-gray-100'
             }`}
           >
-            <div className="p-2 px-3">
-              {!isUser && (
-                <p className="text-sm font-semibold text-green-400 mb-1">{remetente}</p>
-              )}
+            {/* Nome do remetente para mensagens do bot, apenas para tipo 'texto' */}
+            {!isUser && tipo === 'texto' && (
+              <p className="text-sm font-semibold text-green-400 pt-2 px-3 mb-1">{remetente}</p>
+            )}
 
-              <div className="flex flex-wrap items-baseline">
-                <div className="text-base mr-2">{texto}</div> {/* Alterado de text-sm para text-base */}
-
-                <div className="flex-shrink-0 ml-auto pl-2 self-end">
-                  <span className="flex items-center whitespace-rap">
-                    <p className={`text-xs ${isUser ? 'text-gray-300/80' : 'text-gray-400'}`}>
-                      {horario}
-                    </p>
-                    {isUser && (
-                      <CheckCheck size={16} className="ml-1 text-blue-400" />
-                    )}
-                  </span>
-                </div>
-              </div>
+            {/* Renderiza o conteúdo principal da mensagem */}
+            <div className={tipo === 'audio' || tipo === 'custom-component' ? '' : 'p-2 px-3'}>
+              {renderContent()}
             </div>
 
             {options && options.length > 0 && onOptionClick && (
