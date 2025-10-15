@@ -15,7 +15,7 @@ const groupMessages = [
 const galleryItems = groupMessages.filter(msg => msg.image);
 
 const GroupMessage = ({ sender, text, color, image, time, onImageClick }: { sender: string, text: string, color: string, image?: string, time: string, onImageClick: (src: string) => void }) => (
-  <div className="bg-[#202c33] rounded-xl max-w-[85%] self-start shadow-md overflow-hidden">
+  <div className="bg-[#202c33] rounded-xl max-w-[70%] self-start shadow-md overflow-hidden">
     <div className="p-2 px-3">
       <p className={`text-sm font-semibold ${color} mb-2`}>{sender}</p>
       {image && (

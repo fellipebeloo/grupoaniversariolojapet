@@ -110,7 +110,7 @@ export function MensagemBalao({
           )}
 
           <div
-            className={`max-w-[85%] rounded-xl shadow-sm flex flex-col ${
+            className={`max-w-[70%] rounded-xl shadow-sm flex flex-col ${
               isUser
                 ? 'bg-[#005c4b] text-white'
                 : 'bg-[#202c33] text-gray-100'
