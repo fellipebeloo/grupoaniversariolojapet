@@ -305,7 +305,7 @@ const FunnelPage = () => {
           );
           // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
           audioTimeout = window.setTimeout(() => {
-            setStep(3); // Avança para o próximo passo após o áudio
+            setStep(3); // Avança para o novo passo com o botão "Bora!"
           }, AlessandraAudios.alessandraChatAudio1Duration * 1000);
           break;
         case 3: // Antigo Step 4, agora Step 3
@@ -323,7 +323,7 @@ const FunnelPage = () => {
         case 7: // Antigo Step 8, agora Step 7 (Áudio 2)
           await displayBotMessage(
             '',
-            undefined,
+            ['Gostei! Quero ver...'], // Adicionado o botão 'Gostei! Quero ver...'
             'audio',
             {
               audioSrc: AlessandraAudios.alessandraChatAudio2,
