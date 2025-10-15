@@ -23,7 +23,8 @@ import { MusicControlIsland } from '@/components/MusicControlIsland';
 interface AudioData {
   audioSrc: string;
   transcription: string;
-  onAudioEnded?: () => void;
+  durationSeconds: number; // Adicionado para controle do fluxo da conversa
+  onAudioEnded?: () => void; // Mantido opcional, mas não será usado para avançar o step
 }
 
 interface Message {
@@ -252,10 +253,10 @@ const FunnelPage = () => {
 
     if (type === 'audio' && audioData) {
       setTypingIndicator('audio');
-      await new Promise(res => setTimeout(res, 1000));
+      await new Promise(res => setTimeout(res, 1000)); // Indicador de digitação por 1 segundo
       setTypingIndicator(null);
       addMessage('bot', '', options, type, audioData);
-      return;
+      return; // Retorna aqui, o avanço do step será gerenciado pelo useEffect
     }
 
     addMessage('bot', messageContent, options, type);
@@ -266,6 +267,8 @@ const FunnelPage = () => {
   }, [addMessage]);
 
   useEffect(() => {
+    let audioTimeout: number | undefined; // Para armazenar o ID do timeout
+
     const runConversation = async () => {
       if (processedSteps.current.has(step)) {
         return;
@@ -297,9 +300,13 @@ const FunnelPage = () => {
             {
               audioSrc: AlessandraAudios.alessandraChatAudio1,
               transcription: AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name),
-              onAudioEnded: () => setStep(3), // Avança para o próximo passo quando o áudio terminar
+              durationSeconds: AlessandraAudios.alessandraChatAudio1Duration,
             }
           );
+          // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
+          audioTimeout = window.setTimeout(() => {
+            setStep(3);
+          }, AlessandraAudios.alessandraChatAudio1Duration * 1000);
           break;
         case 3:
           await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
@@ -321,9 +328,13 @@ const FunnelPage = () => {
             {
               audioSrc: AlessandraAudios.alessandraChatAudio2,
               transcription: AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name),
-              onAudioEnded: () => setStep(8), // Avança para o próximo passo quando o áudio terminar
+              durationSeconds: AlessandraAudios.alessandraChatAudio2Duration,
             }
           );
+          // Avança para o próximo passo após a duração do áudio, independentemente de ser reproduzido
+          audioTimeout = window.setTimeout(() => {
+            setStep(8);
+          }, AlessandraAudios.alessandraChatAudio2Duration * 1000);
           break;
         case 8:
           await displayBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
@@ -382,7 +393,14 @@ const FunnelPage = () => {
           break;
       }
     };
+
     runConversation();
+
+    return () => { // Função de limpeza para o useEffect
+      if (audioTimeout) {
+        clearTimeout(audioTimeout);
+      }
+    };
   }, [step, userData.name, displayBotMessage, addMessage, playedAudios]); 
 
   return (
@@ -419,7 +437,7 @@ const FunnelPage = () => {
                           transcription={msg.audioData.transcription}
                           senderName={msg.remetente}
                           profileImageUrl={msg.remetente === 'Alessandra' ? '/alessandra.jpg' : undefined}
-                          onAudioEnded={msg.audioData.onAudioEnded}
+                          onAudioEnded={msg.audioData.onAudioEnded} // Mantido para o player, mas não avança o step
                           hasBeenPlayed={playedAudios.has(msg.audioData.audioSrc)}
                           onFirstPlay={() => {
                             setPlayedAudios(prev => new Set(prev).add(msg.audioData!.audioSrc));
