@@ -63,12 +63,6 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
             </Button>
           </div>
 
-          {/* Add Notes */}
-          <div className="bg-[#202c33] rounded-lg p-3 flex items-center gap-3">
-            <Plus size={20} className="text-green-400" />
-            <span className="text-green-400 font-medium">Adicionar notas</span>
-          </div>
-
           {/* Catalog Section */}
           <div className="bg-[#202c33] rounded-lg p-4">
             <div className="flex justify-between items-center mb-3">
