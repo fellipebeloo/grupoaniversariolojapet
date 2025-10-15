@@ -85,7 +85,7 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
 
           {/* Fitness Instructor Section */}
           <div className="bg-[#202c33] rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-2">Instrutor de fitness</h3>
+            <h3 className="text-lg font-semibold mb-2">Personal</h3>
             <p className="text-gray-300 text-sm mb-2">
               Comece hoje o melhor projeto da sua vida. Além Treinos/ Os melhores treinos para emagrecer e definir 💪
               <br />
