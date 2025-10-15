@@ -81,6 +81,10 @@ export const AlessandraInfoModal = ({ children }: AlessandraInfoModalProps) => {
             >
               <img src="/alessandra-catalog.png" alt="Catálogo" className="w-full h-full object-contain" />
             </button>
+            <div className="mt-4 text-center">
+              <p className="text-gray-300 text-sm">A partir de</p>
+              <p className="text-green-400 text-2xl font-bold">R$ 97,00</p>
+            </div>
           </div>
 
           {/* Fitness Instructor Section */}
