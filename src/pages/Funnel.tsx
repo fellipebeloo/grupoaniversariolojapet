@@ -23,7 +23,7 @@ import { MusicControlIsland } from '@/components/MusicControlIsland';
 interface AudioData {
   audioSrc: string;
   transcription: string;
-  onAudioEnded: () => void;
+  onAudioEnded?: () => void;
 }
 
 interface Message {
@@ -113,8 +113,6 @@ const FunnelPage = () => {
   const [playedAudios, setPlayedAudios] = new useState<Set<string>>(new Set());
   const [playBackgroundMusic, setPlayBackgroundMusic] = useState(false);
   const [showMusicControlIsland, setShowMusicControlIsland] = useState(false);
-  // Removido: const [showFullScreenPrompt, setShowFullScreenPrompt] = useState(true);
-  // Removido: const [userInteractedWithPage, setUserInteractedWithPage] = useState(false);
 
   const processedSteps = useRef<Set<number>>(new Set());
 
@@ -163,19 +161,15 @@ const FunnelPage = () => {
     };
   }, []);
 
-  // Efeito para mostrar o MusicControlIsland após 5 segundos e mantê-lo visível
   useEffect(() => {
     let timer: number;
-    if (playBackgroundMusic && !showMusicControlIsland) { // Removido userInteractedWithPage
+    if (playBackgroundMusic && !showMusicControlIsland) {
       timer = window.setTimeout(() => {
         setShowMusicControlIsland(true);
       }, 5000);
     }
     return () => clearTimeout(timer);
-  }, [playBackgroundMusic, showMusicControlIsland]); // Removido userInteractedWithPage
-
-  // Removido: Efeito para verificar o estado de tela cheia
-  // Removido: const handleEnterFullScreen = () => { ... };
+  }, [playBackgroundMusic, showMusicControlIsland]);
 
   const addMessage = useCallback((
     sender: 'bot' | 'user',
@@ -289,9 +283,9 @@ const FunnelPage = () => {
             {
               audioSrc: AlessandraAudios.alessandraChatAudio1,
               transcription: AlessandraAudios.alessandraChatAudio1Transcription.replace('[Nome do Usuário]', userData.name),
-              onAudioEnded: () => setStep(3),
             }
           );
+          await displayBotMessage('Clique abaixo quando estiver pronta para continuar.', ['Continuar']);
           break;
         case 3:
           await displayBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, ${userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
@@ -313,9 +307,9 @@ const FunnelPage = () => {
             {
               audioSrc: AlessandraAudios.alessandraChatAudio2,
               transcription: AlessandraAudios.alessandraChatAudio2Transcription.replace('[Nome do Usuário]', userData.name),
-              onAudioEnded: () => setStep(8),
             }
           );
+          await displayBotMessage('Pronta para o próximo passo?', ['Estou pronta!']);
           break;
         case 8:
           await displayBotMessage(<>Arrasou, ${userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
@@ -379,11 +373,9 @@ const FunnelPage = () => {
 
   return (
     <>
-      {/* Removido: {showFullScreenPrompt && <FullScreenPrompt onEnterFullScreen={handleEnterFullScreen} />} */}
       <BackgroundMusicPlayer 
         isPlaying={playBackgroundMusic} 
         audioSrc="/background-music.mp3" 
-        // Removido: userInteracted={userInteractedWithPage}
       />
       <MusicControlIsland 
         isPlaying={playBackgroundMusic} 
