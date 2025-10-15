@@ -19,6 +19,7 @@ import { CtaButton } from '@/components/CtaButton';
 import { WhatsIncluded } from '@/components/WhatsIncluded';
 import { BackgroundMusicPlayer } from '@/components/BackgroundMusicPlayer';
 import { MusicControlIsland } from '@/components/MusicControlIsland';
+import { trackWhatsAppLead } from '@/utils/facebookPixel'; // Importar a função de rastreamento
 
 interface AudioData {
   audioSrc: string;
@@ -235,6 +236,8 @@ const FunnelPage = () => {
     }
     if (step === 1) {
       setUserData(prev => ({ ...prev, whatsapp: inputValue }));
+      // Disparar evento do Facebook Pixel aqui
+      trackWhatsAppLead(userData.name, inputValue);
     }
     handleNextStep(inputValue);
   };
@@ -406,7 +409,7 @@ const FunnelPage = () => {
           await showTypingAndDelay(); // Typing before next message
           await processBotMessage('É como se fosse um botão RESET no seu corpo.');
           await showTypingAndDelay(); // Typing before next message
-          await processBotMessage('As mulheres que tão fazendo isso comigo já tão sentindo a diferença na disposição, no espelho, na roupa, em tudo.');
+          await processBotMessage('As mulheres que tão fazendo isso comigo já tá sentindo a diferença na disposição, no espelho, na roupa, em tudo.');
           await showTypingAndDelay(); // Typing before next message
           await processBotMessage('E o melhor: você faz em casa, com o seu tempo, sem depender de nada.');
           await showTypingAndDelay(); // Typing before next message
