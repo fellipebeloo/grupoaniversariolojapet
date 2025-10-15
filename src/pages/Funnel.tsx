@@ -120,7 +120,7 @@ const FunnelPage = () => {
   const processedSteps = useRef<Set<number>>(new Set());
 
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(messageReceivedAudioRef.current || new Audio(AlessandraAudios.messageReceived));
 
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
@@ -252,13 +252,12 @@ const FunnelPage = () => {
     const TYPING_INDICATOR_DELAY = 1000; // 1 second for typing indicator
     const CUSTOM_COMPONENT_POST_DISPLAY_DELAY = 2000; // Delay after custom components
 
-    // Helper to add a bot message, wait for reading, and optionally show typing indicator
+    // Helper to add a bot message and wait for reading
     const processBotMessage = async (
       content: React.ReactNode,
       options?: string[],
       type: Message['tipo'] = 'texto',
-      audioData?: AudioData,
-      isFollowedByBotMessage: boolean = false // Indicates if the *next* message is also from the bot
+      audioData?: AudioData
     ) => {
       messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
       addMessage('bot', content, options, type, audioData);
@@ -268,13 +267,13 @@ const FunnelPage = () => {
       if (type === 'custom-component') {
         await new Promise(res => setTimeout(res, CUSTOM_COMPONENT_POST_DISPLAY_DELAY));
       }
+    };
 
-      // Show typing indicator ONLY if followed by another bot message (and not options/input)
-      if (isFollowedByBotMessage && !options && type !== 'audio') {
-        setTypingIndicator('text');
-        await new Promise(res => setTimeout(res, TYPING_INDICATOR_DELAY));
-        setTypingIndicator(null);
-      }
+    // Helper to show typing indicator and wait
+    const showTypingAndDelay = async () => {
+      setTypingIndicator('text');
+      await new Promise(res => setTimeout(res, TYPING_INDICATOR_DELAY));
+      setTypingIndicator(null);
     };
 
     const runConversation = async () => {
@@ -289,18 +288,19 @@ const FunnelPage = () => {
 
       switch (step) {
         case 0:
-          await processBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>, undefined, 'texto', undefined, false); // Next is user input
+          await processBotMessage(<>Oi! Eu sou a Alessandra do Time H.I.T.S. 👋<br/>Posso montar um plano personalizado pra você, mas antes…<br/>Como posso te chamar? 😊</>);
           setCurrentPlaceholder('Digite seu nome...');
           setCurrentInputType('text');
           setShowInput(true);
           break;
         case 1:
-          await processBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`, undefined, 'texto', undefined, false); // Next is user input
+          await processBotMessage(`Perfeito, ${userData.name}! E me passa seu WhatsApp pra eu te enviar o mini-relatório?`);
           setCurrentPlaceholder('Digite seu WhatsApp...');
           setCurrentInputType('tel');
           setShowInput(true);
           break;
         case 2:
+          // Audio message, special handling for duration
           addMessage(
             'bot',
             '',
@@ -317,18 +317,23 @@ const FunnelPage = () => {
           }, AlessandraAudios.alessandraChatAudio1Duration * 1000);
           break;
         case 3:
-          await processBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage(<>Fechado! Agora me responde rapidinho: Quando você se olha no espelho… o que mais te incomoda hoje, {userData.name}?</>, ['A barriga / pochete que não some', 'Corpo sem firmeza', 'Inchaço e peso', 'Falta de energia']);
           break;
         case 4:
-          await processBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage('Entendi, isso é mais comum do que parece... E me diz: o que você já tentou pra resolver isso?', ['Dietas malucas', 'Vídeos de treino do YouTube', 'Caminhada quando dá', 'Já tentei de tudo, sério']);
           break;
         case 5:
-          await processBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage(`Agora seja sincera comigo, ${userData.name}... Quanto tempo você consegue tirar só pra você no dia?`, ['15 minutos', '20 a 30 minutos', 'Mais de 30, se for mágica', 'Quase nenhum tempo 😅']);
           break;
         case 6:
-          await processBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage('E pra fechar: Se daqui 21 dias você se olhar no espelho, o que você quer ver?', ['Roupa servindo melhor', 'Barriga mais sequinha', 'Corpo mais firme', 'Meu sorriso de volta'], 'texto'); // Next is user options
           break;
         case 7:
+          // Audio message, special handling for duration
           addMessage(
             'bot',
             '',
@@ -345,57 +350,94 @@ const FunnelPage = () => {
           }, AlessandraAudios.alessandraChatAudio2Duration * 1000);
           break;
         case 8:
-          await processBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage(<>Arrasou, {userData.name}!<br/>Com base nas suas respostas, eu já consigo ver o que tá travando seu corpo.<br/><br/>Posso te mostrar o que é esse tal de Efeito Pochete Teimosa?</>, ['👉 Quero entender por que meu corpo trava']);
           break;
         case 9:
-          await processBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`, undefined, 'texto', undefined, true); // Followed by bot message
-          await processBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.', undefined, 'texto', undefined, true); // Followed by bot message
-          await processBotMessage('Olha só:', undefined, 'texto', undefined, true); // Followed by bot message
-          await processBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component', undefined, false); // Next is user action (view group)
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage(`${userData.name}, antes de te explicar por que seu corpo tá travando, quero te mostrar algo...`);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('Tem um grupo onde várias mulheres como você compartilham o que aconteceu depois que começaram a treinar comigo.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('Olha só:');
+          await showTypingAndDelay(); // Typing before next message (custom component)
+          await processBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component');
           break;
         case 10:
-          await processBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage('Viu só? Isso é o que acontece quando você destrava a queima de gordura do jeito certo. Pronta pra eu te mostrar como fazer isso?', ['Sim, me mostra!']);
           break;
         case 11:
-          await processBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`, undefined, 'texto', undefined, true);
-          await processBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.', undefined, 'texto', undefined, true);
-          await processBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>, undefined, 'texto', undefined, true);
-          await processBotMessage(<PocheteTeimosaEffect />, undefined, 'custom-component', undefined, true);
-          await processBotMessage(<>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>, undefined, 'texto', undefined, true);
-          await processBotMessage(<>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>, undefined, 'texto', undefined, true);
-          await processBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.', undefined, 'texto', undefined, true);
-          await processBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage(`${userData.name}, deixa eu te contar uma coisa que eu só descobri depois de MUITO erro e tentativa…`);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('Tem um motivo real pra sua barriga não ir embora, mesmo quando você se esforça.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<>É o que eu chamo de:<br/>💥 <strong>EFEITO POCHETE TEIMOSA</strong> 💥</>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<PocheteTeimosaEffect />, undefined, 'custom-component');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<>Esse efeito acontece quando o seu corpo entra num estado de auto-proteção:<br/><br/>Ele sente que tá sendo “atacado”<br/>Começa a segurar gordura (principalmente na barriga)<br/>E PARECE que nada funciona, mesmo com esforço</>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<>Sabe quando você treina, sua, se mata… e NADA muda?<br/><br/>É isso.<br/>Mas a culpa não é sua.</>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('O problema tá no tipo de estímulo que seu corpo tá recebendo. Ele não foi ativado da forma certa.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('Agora que você entendeu o vilão… Quer saber como eu quebro esse efeito nas minhas alunas?', ['SIM! Me mostra como destravar meu corpo']);
           break;
         case 12:
           setStep(14);
           break;
         case 14:
-          await processBotMessage(`Boa, ${userData.name}! É exatamente isso que vou te mostrar agora. O que realmente faz o corpo sair do travamento...`, undefined, 'texto', undefined, true);
-          await processBotMessage(<>O nome disso é:<br/>💥 <strong>PROTOCOLO H.I.T.S.</strong> 💥</>, undefined, 'texto', undefined, true);
-          await processBotMessage(<HitsProtocolCard />, undefined, 'custom-component', undefined, true);
-          await processBotMessage('É um tipo de treino que ativa seu metabolismo em poucos minutos, sem precisar de academia, peso ou experiência.', undefined, 'texto', undefined, true);
-          await processBotMessage(<>Ele é focado em 3 coisas:<br/><br/>✅ Destravar o corpo<br/>✅ Secar a pochete teimosa<br/>✅ E te dar resultado visível em até 21 dias</>, undefined, 'texto', undefined, true);
-          await processBotMessage('É como se fosse um botão RESET no seu corpo.', undefined, 'texto', undefined, true);
-          await processBotMessage('As mulheres que tão fazendo isso comigo já tão sentindo a diferença na disposição, no espelho, na roupa, em tudo.', undefined, 'texto', undefined, true);
-          await processBotMessage('E o melhor: você faz em casa, com o seu tempo, sem depender de nada.', undefined, 'texto', undefined, true);
-          await processBotMessage(<strong>Se você chegou até aqui, é porque seu corpo tá gritando por mudança.</strong>, undefined, 'texto', undefined, true);
-          await processBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.'], 'texto', undefined, false); // Next is user options
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage(`Boa, ${userData.name}! É exatamente isso que vou te mostrar agora. O que realmente faz o corpo sair do travamento...`);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<>O nome disso é:<br/>💥 <strong>PROTOCOLO H.I.T.S.</strong> 💥</>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<HitsProtocolCard />, undefined, 'custom-component');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('É um tipo de treino que ativa seu metabolismo em poucos minutos, sem precisar de academia, peso ou experiência.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<>Ele é focado em 3 coisas:<br/><br/>✅ Destravar o corpo<br/>✅ Secar a pochete teimosa<br/>✅ E te dar resultado visível em até 21 dias</>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('É como se fosse um botão RESET no seu corpo.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('As mulheres que tão fazendo isso comigo já tão sentindo a diferença na disposição, no espelho, na roupa, em tudo.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('E o melhor: você faz em casa, com o seu tempo, sem depender de nada.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<strong>Se você chegou até aqui, é porque seu corpo tá gritando por mudança.</strong>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('E o Protocolo H.I.T.S. pode ser o seu ponto de virada.', ['Me mostra como eu começo o H.I.T.S.']);
           break;
         case 15:
           setPlayBackgroundMusic(true);
-          await processBotMessage(`${userData.name}, com base no que você me respondeu, eu preparei uma análise do seu caso…`, undefined, 'texto', undefined, true);
-          await processBotMessage(<ReportImage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component', undefined, true);
-          await processBotMessage(<>Nesse relatório eu explico:<br/><br/>✅ O que tá travando seu corpo<br/>✅ Por que nada funcionou até agora<br/>✅ E como começar o H.I.T.S. HOJE pra mudar isso</>, undefined, 'texto', undefined, true);
-          await processBotMessage('MAS…', undefined, 'texto', undefined, true);
-          await processBotMessage('Eu só libero esse relatório e o protocolo completo pra quem tá decidida de verdade.', undefined, 'texto', undefined, true);
-          await processBotMessage(<>Porque não é mais um videozinho qualquer…<br/>É um método testado, com passo a passo, e resultado de verdade.</>, undefined, 'texto', undefined, true);
-          await processBotMessage('E pra você que chegou até aqui, eu consegui liberar um acesso promocional:', undefined, 'texto', undefined, true);
-          await processBotMessage(<OfferCard />, undefined, 'custom-component', undefined, true);
-          await processBotMessage('Mas tem um detalhe:\nEu só consigo segurar esse valor pras PRIMEIRAS 30 alunas que finalizarem hoje.', undefined, 'texto', undefined, true);
-          await processBotMessage(<SlotsRemaining />, undefined, 'custom-component', undefined, true);
-          await processBotMessage('Quer mudar de verdade?\nEntão clica aqui e garante agora:', undefined, 'texto', undefined, true);
-          await processBotMessage(<CtaButton />, undefined, 'custom-component', undefined, true);
-          await processBotMessage(<WhatsIncluded />, undefined, 'custom-component', undefined, false); // Last message in the entire sequence, no typing indicator
+          await showTypingAndDelay(); // Typing before this message
+          await processBotMessage(`${userData.name}, com base no que você me respondeu, eu preparei uma análise do seu caso…`);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<ReportImage userName={userData.name || 'Guerreira'} />, undefined, 'custom-component');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<>Nesse relatório eu explico:<br/><br/>✅ O que tá travando seu corpo<br/>✅ Por que nada funcionou até agora<br/>✅ E como começar o H.I.T.S. HOJE pra mudar isso</>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('MAS…');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('Eu só libero esse relatório e o protocolo completo pra quem tá decidida de verdade.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<>Porque não é mais um videozinho qualquer…<br/>É um método testado, com passo a passo, e resultado de verdade.</>);
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('E pra você que chegou até aqui, eu consegui liberar um acesso promocional:');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<OfferCard />, undefined, 'custom-component');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('Mas tem um detalhe:\nEu só consigo segurar esse valor pras PRIMEIRAS 30 alunas que finalizarem hoje.');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<SlotsRemaining />, undefined, 'custom-component');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage('Quer mudar de verdade?\nEntão clica aqui e garante agora:');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<CtaButton />, undefined, 'custom-component');
+          await showTypingAndDelay(); // Typing before next message
+          await processBotMessage(<WhatsIncluded />, undefined, 'custom-component'); // Last message in the entire sequence, no typing indicator after this one
           break;
         default:
           break;
