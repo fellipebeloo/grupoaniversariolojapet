@@ -25,35 +25,6 @@ const TypingIndicator = () => (
   </div>
 );
 
-const calculateDelay = (content: string | React.ReactNode): number => {
-  let textContent = '';
-
-  if (typeof content === 'string') {
-    textContent = content;
-  } else if (React.isValidElement(content)) {
-    const children = (content as any).props?.children;
-    if (Array.isArray(children)) {
-      textContent = children.map(child => {
-        if (typeof child === 'string') return child;
-        if (React.isValidElement(child) && typeof child.props?.children === 'string') return child.props.children;
-        return '';
-      }).join(' ');
-    } else if (typeof children === 'string') {
-      textContent = children;
-    }
-  }
-
-  textContent = textContent.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
-
-  const baseDelay = 500;
-  const charsPerMs = 50;
-  const minDelay = 1000;
-  const maxDelay = 6000;
-
-  const calculatedDelay = baseDelay + (textContent.length * charsPerMs);
-  return Math.max(minDelay, Math.min(maxDelay, calculatedDelay));
-};
-
 const AffiliateLeadPage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userData, setUserData] = useState({ name: '', whatsapp: '' });
@@ -116,8 +87,6 @@ const AffiliateLeadPage = () => {
   const processBotMessage = async (content: React.ReactNode, type: Message['tipo'] = 'texto') => {
     messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
     addMessage('bot', content, type);
-    const readingDelay = calculateDelay(content);
-    await new Promise(res => setTimeout(res, readingDelay));
   };
 
   const handleNextStep = async (userResponse: string) => {
@@ -137,8 +106,6 @@ const AffiliateLeadPage = () => {
     setInputValue('');
     setShowInput(false);
 
-    const processingDelay = calculateDelay(userResponse);
-    await new Promise(res => setTimeout(res, processingDelay));
     setStep(prev => prev + 1);
   };
 
