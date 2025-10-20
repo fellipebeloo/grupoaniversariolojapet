@@ -30,7 +30,7 @@ export const AudioMessage = ({ audioSrc }: AudioMessageProps) => {
     audio.addEventListener('ended', () => setIsPlaying(false));
 
     // Auto-play the audio when the component mounts
-    audio.play().catch(error => console.log("Audio auto-play blocked:", error));
+    // audio.play().catch(error => console.log("Audio auto-play blocked:", error)); // Removido
 
     return () => {
       audio.pause();
