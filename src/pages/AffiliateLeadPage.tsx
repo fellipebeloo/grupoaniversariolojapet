@@ -165,17 +165,20 @@ const AffiliateLeadPage = () => {
 
       switch (step) {
         case 0:
-          await showTypingAndDelay();
-          await processBotMessage(
-            <>
-              Olá! Que bom que você decidiu dar o próximo passo para faturar <strong>R$5k a R$10k a mais por mês</strong>, usando apenas a sua carteira de clientes atual! 🚀
-              <br/><br/>
-              As vagas para o nosso grupo de instrução são super limitadas. Para garantir a sua, me diga: Qual é o seu nome?
-            </>
-          );
-          setCurrentPlaceholder('Digite seu nome...');
-          setCurrentInputType('text');
-          setShowInput(true);
+          // Garante que a mensagem inicial só seja enviada se a conversa não tiver começado
+          if (messages.length === 0) {
+            await showTypingAndDelay();
+            await processBotMessage(
+              <>
+                Olá! Que bom que você decidiu dar o próximo passo para faturar <strong>R$5k a R$10k a mais por mês</strong>, usando apenas a sua carteira de clientes atual! 🚀
+                <br/><br/>
+                As vagas para o nosso grupo de instrução são super limitadas. Para garantir a sua, me diga: Qual é o seu nome?
+              </>
+            );
+            setCurrentPlaceholder('Digite seu nome...');
+            setCurrentInputType('text');
+            setShowInput(true);
+          }
           break;
         case 1:
           await showTypingAndDelay();
@@ -215,7 +218,7 @@ const AffiliateLeadPage = () => {
     };
 
     runConversation();
-  }, [step, userData.name, addMessage]);
+  }, [step, userData.name, addMessage, messages.length]); // Adicionado messages.length como dependência
 
   return (
     <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
