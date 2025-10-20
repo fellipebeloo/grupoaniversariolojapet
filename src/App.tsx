@@ -7,7 +7,7 @@ import NotFound from "./pages/NotFound";
 import FunnelPage from "./pages/Funnel";
 import GroupTestPage from "./pages/GroupTestPage";
 import PitchTestPage from "./pages/PitchTestPage";
-import AffiliateLeadPage from "./pages/AffiliateLeadPage"; // Importar a nova página
+import AffiliateLeadPage from "./pages/AffiliateLeadPage";
 
 const queryClient = new QueryClient();
 
@@ -18,11 +18,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<FunnelPage />} /> {/* FunnelPage agora é a rota padrão */}
+          <Route path="/" element={<AffiliateLeadPage />} /> {/* AffiliateLeadPage agora é a rota padrão */}
           <Route path="/funil" element={<FunnelPage />} />
           <Route path="/grupo-teste" element={<GroupTestPage />} />
           <Route path="/pitch-teste" element={<PitchTestPage />} />
-          <Route path="/afiliados" element={<AffiliateLeadPage />} /> {/* Nova rota para captação de afiliados */}
+          <Route path="/afiliados" element={<AffiliateLeadPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
