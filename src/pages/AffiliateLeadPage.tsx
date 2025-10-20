@@ -42,10 +42,10 @@ const AffiliateLeadPage = () => {
 
   // Configurações do Grupo de Afiliados
   const AFFILIATE_GROUP = {
-    name: 'Afiliados H.I.T.S. - Fature R$5k+',
-    link: 'https://chat.whatsapp.com/SEU_LINK_DE_CONVITE_AQUI', // SUBSTITUA PELO LINK REAL
-    description: 'Instruções para Afiliados e Comissões Generosas',
-    buttonText: 'Entrar no Grupo de Afiliados',
+    name: 'AFILIADOS REPRESENTANTES',
+    link: 'https://chat.whatsapp.com/JIOv2ec9Nuz4z198zuS7XO?mode=wwc',
+    description: 'Grupo para Afiliados Representantes',
+    buttonText: 'Entrar no Grupo',
   };
 
   useEffect(() => {
