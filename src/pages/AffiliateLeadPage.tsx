@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { AffiliateChatHeader } from '@/components/AffiliateChatHeader'; // Usar o novo header
+import { AffiliateChatHeader } from '@/components/AffiliateChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
