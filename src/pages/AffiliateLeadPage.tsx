@@ -99,7 +99,7 @@ const AffiliateLeadPage = () => {
   ) => {
     const newMessage: Message = {
       id: `${Date.now()}-${Math.random()}`,
-      remetente: sender === 'bot' ? 'Felipe' : 'user', // Remetente agora é Felipe
+      remetente: sender === 'bot' ? 'Diêgo Braga' : 'user', // Remetente agora é Diêgo Braga
       texto: content,
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       tipo: type,
@@ -232,7 +232,7 @@ const AffiliateLeadPage = () => {
             <div className="flex items-end gap-2 justify-start">
               <img
                 src="/felipe.jpg"
-                alt="Felipe"
+                alt="Diêgo Braga"
                 className="w-8 h-8 rounded-full object-cover"
               />
               <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
