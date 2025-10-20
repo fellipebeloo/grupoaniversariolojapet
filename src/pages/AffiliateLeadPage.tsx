@@ -7,7 +7,7 @@ import { ChatInput } from '@/components/ChatInput';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { trackWhatsAppLead } from '@/utils/facebookPixel';
 import { AudioPaths } from '@/constants/audioPaths';
-import { AudioMessage } from '@/components/AudioMessage';
+// import { AudioMessage } from '@/components/AudioMessage'; // Removido
 
 interface Message {
   id: string;
@@ -165,15 +165,8 @@ const AffiliateLeadPage = () => {
           await showTypingAndDelay();
           await processBotMessage(
             <>
-              Parabéns, {userData.name}! Sua vaga está garantida. Ouça o áudio abaixo com as primeiras instruções e, em seguida, entre no grupo.
+              Parabéns, {userData.name}! Sua vaga está garantida. Acesse o link abaixo para entrar no grupo.
             </>
-          );
-          await showTypingAndDelay(500);
-          await processBotMessage(
-            <AudioMessage 
-              audioSrc={AudioPaths.introAffiliate}
-            />,
-            'custom-component'
           );
           await showTypingAndDelay(500);
           await processBotMessage(
