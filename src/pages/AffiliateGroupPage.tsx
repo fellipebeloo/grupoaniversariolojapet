@@ -76,6 +76,10 @@ const AffiliateGroupPage = () => {
     addMessage('bot', content, type);
   };
 
+  const handleJoinGroupClick = () => {
+    window.open(AFFILIATE_GROUP.link, '_blank');
+  };
+
   useEffect(() => {
     const runConversation = async () => {
       // Mensagem de boas-vindas
@@ -134,9 +138,14 @@ const AffiliateGroupPage = () => {
         </div>
       </div>
 
-      {/* O input de chat é removido nesta versão */}
-      <div className="p-4 bg-[#202c33] border-t border-gray-700 text-center text-sm text-gray-500">
-        Acesso direto ao grupo.
+      {/* Rodapé com o botão de entrar no grupo */}
+      <div className="p-4 bg-[#202c33] border-t border-gray-700">
+        <button
+          onClick={handleJoinGroupClick}
+          className="w-full py-3 bg-[#00a884] text-white font-bold rounded-lg shadow-lg hover:bg-[#008f6f] transition-colors"
+        >
+          Entrar no Grupo
+        </button>
       </div>
     </div>
   );
