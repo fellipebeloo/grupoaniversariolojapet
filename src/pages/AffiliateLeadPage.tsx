@@ -218,7 +218,7 @@ const AffiliateLeadPage = () => {
     };
 
     runConversation();
-  }, [step, userData.name, addMessage, messages.length]); // Adicionado messages.length como dependência
+  }, [step, userData.name, addMessage]);
 
   return (
     <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
