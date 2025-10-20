@@ -103,7 +103,7 @@ export function MensagemBalao({
         <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
           {!isUser && (
             <img
-              src="/alessandra.jpg"
+              src="/felipe.jpg" // Imagem atualizada para /felipe.jpg
               alt={remetente}
               className="w-8 h-8 rounded-full object-cover"
             />
