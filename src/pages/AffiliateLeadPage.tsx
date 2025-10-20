@@ -6,7 +6,7 @@ import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { trackWhatsAppLead } from '@/utils/facebookPixel';
-import { AlessandraAudios } from '@/constants/audioPaths';
+import { AudioPaths } from '@/constants/audioPaths';
 import { WhatsAppAudioPlayer } from '@/components/WhatsAppAudioPlayer';
 
 interface Message {
@@ -53,8 +53,8 @@ const AffiliateLeadPage = () => {
   }, [messages, typingIndicator]);
 
   useEffect(() => {
-    messageSentAudioRef.current = new Audio(AlessandraAudios.messageSent);
-    messageReceivedAudioRef.current = new Audio(AlessandraAudios.messageReceived);
+    messageSentAudioRef.current = new Audio(AudioPaths.messageSent);
+    messageReceivedAudioRef.current = new Audio(AudioPaths.messageReceived);
 
     return () => {
       messageSentAudioRef.current?.pause();
@@ -171,7 +171,7 @@ const AffiliateLeadPage = () => {
           await showTypingAndDelay(500);
           await processBotMessage(
             <WhatsAppAudioPlayer 
-              src={AlessandraAudios.introAffiliate}
+              src={AudioPaths.introAffiliate}
               duration="0:08"
             />,
             'custom-component'
