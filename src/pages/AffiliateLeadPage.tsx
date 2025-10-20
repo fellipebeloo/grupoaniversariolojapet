@@ -7,7 +7,7 @@ import { ChatInput } from '@/components/ChatInput';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { trackWhatsAppLead } from '@/utils/facebookPixel';
 import { AudioPaths } from '@/constants/audioPaths';
-import { WhatsAppAudioPlayer } from '@/components/WhatsAppAudioPlayer';
+import { AudioMessage } from '@/components/AudioMessage';
 
 interface Message {
   id: string;
@@ -170,9 +170,8 @@ const AffiliateLeadPage = () => {
           );
           await showTypingAndDelay(500);
           await processBotMessage(
-            <WhatsAppAudioPlayer 
-              src={AudioPaths.introAffiliate}
-              duration="0:08"
+            <AudioMessage 
+              audioSrc={AudioPaths.introAffiliate}
             />,
             'custom-component'
           );
