@@ -8,7 +8,6 @@ import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { trackWhatsAppLead } from '@/utils/facebookPixel';
 import { AudioPaths } from '@/constants/audioPaths';
 import { WhatsAppAudioPlayer } from '@/components/WhatsAppAudioPlayer';
-import { playTone } from '@/utils/audioEffects';
 
 interface Message {
   id: string;
@@ -37,6 +36,9 @@ const AffiliateLeadPage = () => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState('Sua resposta...');
   const [currentInputType, setCurrentInputType] = useState<'text' | 'tel'>('text');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  
+  const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Configurações do Grupo de Afiliados
   const AFFILIATE_GROUP = {
@@ -50,6 +52,18 @@ const AffiliateLeadPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingIndicator]);
 
+  useEffect(() => {
+    messageSentAudioRef.current = new Audio(AudioPaths.messageSent);
+    messageReceivedAudioRef.current = new Audio(AudioPaths.messageReceived);
+
+    return () => {
+      messageSentAudioRef.current?.pause();
+      messageSentAudioRef.current = null;
+      messageReceivedAudioRef.current?.pause();
+      messageReceivedAudioRef.current = null;
+    };
+  }, []);
+
   const addMessage = useCallback((
     sender: 'bot' | 'user',
     content: React.ReactNode,
@@ -57,7 +71,7 @@ const AffiliateLeadPage = () => {
   ) => {
     const newMessage: Message = {
       id: `${Date.now()}-${Math.random()}`,
-      remetente: sender === 'bot' ? 'Diêgo Braga' : 'user',
+      remetente: sender === 'bot' ? 'Diêgo Braga' : 'user', // Remetente agora é Diêgo Braga
       texto: content,
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       tipo: type,
@@ -72,12 +86,12 @@ const AffiliateLeadPage = () => {
   };
 
   const processBotMessage = async (content: React.ReactNode, type: Message['tipo'] = 'texto') => {
-    playTone('received');
+    messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
     addMessage('bot', content, type);
   };
 
   const handleNextStep = async (userResponse: string) => {
-    playTone('sent');
+    messageSentAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem enviada:", e));
 
     setMessages(prevMessages => {
       const userMessage: Message = {
@@ -105,6 +119,7 @@ const AffiliateLeadPage = () => {
       handleNextStep(inputValue);
     } else if (step === 1) {
       setUserData(prev => ({ ...prev, whatsapp: inputValue }));
+      // Disparar evento do Facebook Pixel aqui
       trackWhatsAppLead(userData.name, inputValue);
       handleNextStep(inputValue);
     }
@@ -118,6 +133,7 @@ const AffiliateLeadPage = () => {
 
       switch (step) {
         case 0:
+          // Garante que a mensagem inicial só seja enviada se a conversa não tiver começado
           if (messages.length === 0) {
             await showTypingAndDelay();
             await processBotMessage(
@@ -170,6 +186,7 @@ const AffiliateLeadPage = () => {
             />,
             'custom-component'
           );
+          // Fim da conversa, input permanece desativado
           break;
         default:
           break;
