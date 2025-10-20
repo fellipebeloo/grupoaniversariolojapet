@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChatHeader } from '@/components/ChatHeader';
+import { AffiliateChatHeader } from '@/components/AffiliateChatHeader'; // Usar o novo header
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
@@ -99,7 +99,7 @@ const AffiliateLeadPage = () => {
   ) => {
     const newMessage: Message = {
       id: `${Date.now()}-${Math.random()}`,
-      remetente: sender === 'bot' ? 'Alessandra' : 'user',
+      remetente: sender === 'bot' ? 'Felipe' : 'user', // Remetente agora é Felipe
       texto: content,
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       tipo: type,
@@ -219,7 +219,7 @@ const AffiliateLeadPage = () => {
 
   return (
     <div className="h-dvh grid grid-rows-[auto_1fr_auto] bg-[#0f1418] w-full">
-      <ChatHeader />
+      <AffiliateChatHeader />
       
       <div className="relative overflow-hidden h-full">
         <div 
@@ -231,8 +231,8 @@ const AffiliateLeadPage = () => {
           {typingIndicator && (
             <div className="flex items-end gap-2 justify-start">
               <img
-                src="/alessandra.jpg"
-                alt="Alessandra"
+                src="/felipe.jpg"
+                alt="Felipe"
                 className="w-8 h-8 rounded-full object-cover"
               />
               <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
