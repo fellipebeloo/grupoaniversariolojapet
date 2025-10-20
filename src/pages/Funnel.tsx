@@ -121,7 +121,7 @@ const FunnelPage = () => {
   const processedSteps = useRef<Set<number>>(new Set());
 
   const messageSentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null); // Inicializado corretamente com null
+  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     localStorage.setItem('funnelUserData', JSON.stringify(userData));
@@ -165,7 +165,7 @@ const FunnelPage = () => {
 
   useEffect(() => {
     messageSentAudioRef.current = new Audio(AlessandraAudios.messageSent);
-    messageReceivedAudioRef.current = new Audio(AlessandraAudios.messageReceived); // Atribuição dentro do useEffect
+    messageReceivedAudioRef.current = new Audio(AlessandraAudios.messageReceived);
 
     return () => {
       messageSentAudioRef.current?.pause();
@@ -368,7 +368,17 @@ const FunnelPage = () => {
           await showTypingAndDelay(); // Typing before next message
           await processBotMessage('Olha só:');
           await showTypingAndDelay(); // Typing before next message (custom component)
-          await processBotMessage(<GroupInviteMessage onViewClick={() => setActiveView('group')} />, undefined, 'custom-component');
+          await processBotMessage(
+            <GroupInviteMessage 
+              onViewClick={() => setActiveView('group')} 
+              groupName="#12 - Guerrilheiras do H.I.T.S. Fitness"
+              inviteLink="https://chat.whatsapp.com/HjJCFypdUGd6qiRsilvIV4"
+              description="Convite de conversa em grupo"
+              buttonText="Ver grupo"
+            />, 
+            undefined, 
+            'custom-component'
+          );
           break;
         case 10:
           await showTypingAndDelay(); // Typing before this message
