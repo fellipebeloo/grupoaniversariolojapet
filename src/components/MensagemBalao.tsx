@@ -103,8 +103,8 @@ export function MensagemBalao({
         <div className={`flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
           {!isUser && (
             <img
-              src="/felipe.jpg" // Imagem atualizada para /felipe.jpg
-              alt={remetente}
+              src="/lojapet.png" // Imagem atualizada para /lojapet.png
+              alt="Loja Pet"
               className="w-8 h-8 rounded-full object-cover"
             />
           )}

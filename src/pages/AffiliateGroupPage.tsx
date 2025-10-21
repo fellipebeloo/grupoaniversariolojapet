@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AffiliateChatHeader } from '@/components/AffiliateChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
-import { AudioPaths } from '@/constants/audioPaths';
 
 interface Message {
   id: string;
@@ -27,28 +26,17 @@ const AffiliateGroupPage = () => {
   const [typingIndicator, setTypingIndicator] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   
-  const messageReceivedAudioRef = useRef<HTMLAudioElement | null>(null);
-
   // Configurações do Grupo de Afiliados
-  const AFFILIATE_GROUP = {
-    name: 'AFILIADOS REPRESENTANTES',
-    link: 'https://chat.whatsapp.com/JIOv2ec9Nuz4z198zuS7XO?mode=wwc',
-    description: 'Grupo para Afiliados Representantes',
+  const BLACKFRIDAY_GROUP = {
+    name: 'BLACK FRIDAY LOJA PET 🐾',
+    link: 'https://chat.whatsapp.com/GKwPpq9VXKiJhaMEIYzfPM?mode=wwc',
+    description: 'Grupo Exclusivo Black Friday',
     buttonText: 'Entrar no Grupo',
   };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingIndicator]);
-
-  useEffect(() => {
-    messageReceivedAudioRef.current = new Audio(AudioPaths.messageReceived);
-
-    return () => {
-      messageReceivedAudioRef.current?.pause();
-      messageReceivedAudioRef.current = null;
-    };
-  }, []);
 
   const addMessage = useCallback((
     sender: 'bot' | 'user',
@@ -57,7 +45,7 @@ const AffiliateGroupPage = () => {
   ) => {
     const newMessage: Message = {
       id: `${Date.now()}-${Math.random()}`,
-      remetente: sender === 'bot' ? 'Diêgo Braga' : 'user',
+      remetente: sender === 'bot' ? 'Loja Pet' : 'user',
       texto: content,
       horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       tipo: type,
@@ -72,12 +60,11 @@ const AffiliateGroupPage = () => {
   };
 
   const processBotMessage = async (content: React.ReactNode, type: Message['tipo'] = 'texto') => {
-    messageReceivedAudioRef.current?.play().catch(e => console.log("Erro ao reproduzir som de mensagem recebida:", e));
     addMessage('bot', content, type);
   };
 
   const handleJoinGroupClick = () => {
-    window.open(AFFILIATE_GROUP.link, '_blank');
+    window.open(BLACKFRIDAY_GROUP.link, '_blank');
   };
 
   useEffect(() => {
@@ -86,9 +73,15 @@ const AffiliateGroupPage = () => {
       await showTypingAndDelay();
       await processBotMessage(
         <>
-          Olá! Que bom que você decidiu dar o próximo passo para faturar <strong>R$5k a R$10k a mais por mês</strong>, usando apenas a sua carteira de clientes atual! 🚀
+          🚨 <strong>Atenção, pessoal!</strong> 🚨
           <br/><br/>
-          Sua vaga está garantida. Acesse o link abaixo para entrar no grupo.
+          Dia <strong>7/11</strong> vai rolar a Black Friday da Loja Pet — a maior da nossa história! 🖤🐾
+          <br/><br/>
+          Mas antes disso, a gente quer ouvir <strong>VOCÊ!</strong> 👂💬
+          <br/><br/>
+          👉 Entra agora no grupo da Black Friday porque hoje vai rolar uma enquete exclusiva pra decidir quais produtos e brindes vocês mais querem ver com desconto! 😱🔥
+          <br/><br/>
+          💥 Quem estiver no grupo vai ter poder de escolha e ainda vai receber as promoções primeiro!
         </>
       );
 
@@ -96,10 +89,10 @@ const AffiliateGroupPage = () => {
       await showTypingAndDelay(500);
       await processBotMessage(
         <GroupInviteMessage 
-          groupName={AFFILIATE_GROUP.name}
-          inviteLink={AFFILIATE_GROUP.link}
-          description={AFFILIATE_GROUP.description}
-          buttonText={AFFILIATE_GROUP.buttonText}
+          groupName={BLACKFRIDAY_GROUP.name}
+          inviteLink={BLACKFRIDAY_GROUP.link}
+          description={BLACKFRIDAY_GROUP.description}
+          buttonText={BLACKFRIDAY_GROUP.buttonText}
         />,
         'custom-component'
       );
@@ -125,8 +118,8 @@ const AffiliateGroupPage = () => {
           {typingIndicator && (
             <div className="flex items-end gap-2 justify-start">
               <img
-                src="/felipe.jpg"
-                alt="Diêgo Braga"
+                src="/lojapet.png"
+                alt="Loja Pet"
                 className="w-8 h-8 rounded-full object-cover"
               />
               <div className="max-w-[80%] rounded-xl px-4 py-2 bg-[#202c33] rounded-bl-none shadow-sm">
