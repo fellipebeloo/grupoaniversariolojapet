@@ -5,9 +5,7 @@ import { AffiliateChatHeader } from '@/components/AffiliateChatHeader';
 import { MensagemBalao } from '@/components/MensagemBalao';
 import { ChatInput } from '@/components/ChatInput';
 import { GroupInviteMessage } from '@/components/GroupInviteMessage';
-import { trackWhatsAppLead } from '@/utils/facebookPixel';
 import { AudioPaths } from '@/constants/audioPaths';
-// import { AudioMessage } from '@/components/AudioMessage'; // Removido
 
 interface Message {
   id: string;
@@ -119,8 +117,6 @@ const AffiliateLeadPage = () => {
       handleNextStep(inputValue);
     } else if (step === 1) {
       setUserData(prev => ({ ...prev, whatsapp: inputValue }));
-      // Disparar evento do Facebook Pixel aqui
-      trackWhatsAppLead(userData.name, inputValue);
       handleNextStep(inputValue);
     }
   };
