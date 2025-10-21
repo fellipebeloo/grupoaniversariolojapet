@@ -73,7 +73,7 @@ const AffiliateGroupPage = () => {
       await showTypingAndDelay();
       await processBotMessage(
         <>
-          🚨 <strong>Atenção, pessoal!</strong> 🚨
+          🚨 <strong>Atenção!</strong> 🚨
           <br/><br/>
           Dia <strong>7/11</strong> vai rolar a Black Friday da Loja Pet — a maior da nossa história! 🖤🐾
           <br/><br/>
