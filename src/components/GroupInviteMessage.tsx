@@ -34,7 +34,7 @@ export const GroupInviteMessage = ({ onViewClick, groupName, inviteLink, descrip
           Acesse este link para entrar no grupo:
           <br />
           <span className="text-[#1a55a1] break-all font-medium">{inviteLink}</span>
-        p>
+        </p>
       </div>
 
       <div className="border-t border-gray-200">
