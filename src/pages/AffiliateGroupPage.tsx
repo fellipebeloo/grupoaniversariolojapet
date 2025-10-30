@@ -47,7 +47,7 @@ const AffiliateGroupPage = () => {
         <div className="mt-8 w-full max-w-md">
           <button
             onClick={handleJoinGroupClick}
-            className="w-full py-4 bg-[#dc395a] text-white font-bold rounded-lg shadow-lg hover:opacity-90 transition-transform transform hover:scale-105 text-lg animate-pulse-attention"
+            className="w-full py-4 bg-[#dc395a] text-white font-bold rounded-lg shadow-lg hover:opacity-90 transition-transform transform hover:scale-105 text-lg animate-shake"
           >
             Entrar no Grupo Agora
           </button>
