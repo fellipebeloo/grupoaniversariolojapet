@@ -18,10 +18,10 @@ export const GroupInviteMessage = ({ onViewClick, groupName, inviteLink, descrip
   };
 
   return (
-    <div className="flex flex-col rounded-lg bg-[#4F4C7A] text-gray-100 shadow-sm overflow-hidden">
+    <div className="flex flex-col rounded-lg bg-white/10 text-white shadow-sm overflow-hidden">
       <div className="p-2 px-3 flex items-center gap-3 bg-black/10">
-        <div className="w-12 h-12 bg-[#FFC72C] rounded-lg flex items-center justify-center flex-shrink-0">
-          <MessageSquare size={28} className="text-[#2C2A4A]" />
+        <div className="w-12 h-12 bg-[#dc395a] rounded-lg flex items-center justify-center flex-shrink-0">
+          <MessageSquare size={28} className="text-white" />
         </div>
         <div className="text-left flex-grow">
           <p className="font-semibold">{groupName}</p>
@@ -33,14 +33,14 @@ export const GroupInviteMessage = ({ onViewClick, groupName, inviteLink, descrip
         <p className="text-sm">
           Acesse este link para entrar no grupo:
           <br />
-          <span className="text-[#FFC72C] break-all">{inviteLink}</span>
+          <span className="text-[#dc395a] break-all font-medium">{inviteLink}</span>
         </p>
       </div>
 
       <div className="border-t border-white/10">
         <button
           onClick={handleLinkClick}
-          className="w-full text-center py-2.5 px-3 text-[#FFC72C] hover:bg-black/10 transition-colors text-sm font-medium"
+          className="w-full text-center py-2.5 px-3 text-[#dc395a] hover:bg-black/10 transition-colors text-sm font-medium"
         >
           {buttonText}
         </button>

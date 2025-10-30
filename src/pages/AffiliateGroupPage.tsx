@@ -19,10 +19,10 @@ const AffiliateGroupPage = () => {
   };
 
   return (
-    <div className="h-dvh w-full bg-[#2C2A4A] flex flex-col items-center justify-center p-4">
+    <div className="h-dvh w-full bg-[#1a55a1] flex flex-col items-center justify-center p-4">
       
       <header className="text-center mb-8">
-        <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-[#FFC72C]">
+        <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-[#dc395a]">
           <AvatarImage src="/lojapet.png" alt="Loja Pet" />
           <AvatarFallback>LP</AvatarFallback>
         </Avatar>
@@ -43,7 +43,7 @@ const AffiliateGroupPage = () => {
       <div className="mt-8 w-full max-w-md">
         <button
           onClick={handleJoinGroupClick}
-          className="w-full py-4 bg-[#FFC72C] text-[#2C2A4A] font-bold rounded-lg shadow-lg hover:bg-yellow-500 transition-transform transform hover:scale-105 text-lg"
+          className="w-full py-4 bg-[#dc395a] text-white font-bold rounded-lg shadow-lg hover:opacity-90 transition-transform transform hover:scale-105 text-lg"
         >
           Entrar no Grupo Agora
         </button>
