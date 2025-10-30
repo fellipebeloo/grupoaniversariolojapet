@@ -109,6 +109,10 @@ export default {
           "25%": { height: "1.25rem" },    // h-5
           "75%": { height: "0.75rem" },    // h-3
         },
+        "pulse-attention": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.02)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -117,6 +121,7 @@ export default {
         "shake": "shake 0.3s ease-in-out infinite",
         "pulse-slow": "pulse-slow 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "wave-pulse": "wave-pulse 1s ease-in-out infinite alternate",
+        "pulse-attention": "pulse-attention 1.5s ease-in-out infinite",
       },
     },
   },
