@@ -15,6 +15,10 @@ const AffiliateGroupPage = () => {
   };
 
   const handleJoinGroupClick = () => {
+    // Dispara o evento de Lead do Facebook Pixel
+    if (typeof window.fbq === 'function') {
+      window.fbq('track', 'Lead');
+    }
     window.open(BLACKFRIDAY_GROUP.link, '_blank');
   };
 
