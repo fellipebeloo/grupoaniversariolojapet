@@ -5,12 +5,12 @@ import { GroupInviteMessage } from '@/components/GroupInviteMessage';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const AffiliateGroupPage = () => {
-  
+
   // Configurações do Grupo de Afiliados
   const BLACKFRIDAY_GROUP = {
     name: 'BLACK FRIDAY LOJA PET 🐾',
-    link: 'https://chat.whatsapp.com/GKwPpq9VXKiJhaMEIYzfPM?mode=wwc',
-    description: 'Grupo Exclusivo Black Friday',
+    link: 'https://chat.whatsapp.com/CPIetUj2LqTIEsXfodIVFz?mode=gi_t',
+    description: 'Grupo Exclusivo',
     buttonText: 'Ver Grupo',
   };
 
@@ -23,12 +23,12 @@ const AffiliateGroupPage = () => {
   };
 
   return (
-    <div 
+    <div
       className="h-dvh w-full bg-cover bg-center"
       style={{ backgroundImage: "url('/background.jpg')" }}
     >
       <div className="h-full w-full bg-black/75 flex flex-col items-center justify-center p-4">
-        
+
         <header className="text-center mb-8">
           <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-[#dc395a]">
             <AvatarImage src="/lojapet.png" alt="Loja Pet" />
@@ -39,7 +39,7 @@ const AffiliateGroupPage = () => {
         </header>
 
         <div className="w-full max-w-md">
-          <GroupInviteMessage 
+          <GroupInviteMessage
             groupName={BLACKFRIDAY_GROUP.name}
             inviteLink={BLACKFRIDAY_GROUP.link}
             description={BLACKFRIDAY_GROUP.description}
