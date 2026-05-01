@@ -8,7 +8,7 @@ const AffiliateGroupPage = () => {
 
   // Configurações do Grupo de Afiliados
   const BLACKFRIDAY_GROUP = {
-    name: 'BLACK FRIDAY LOJA PET 🐾',
+    name: '#04 LOJA PET - MÃE DE PET TAMBEM E MÃE',
     link: 'https://chat.whatsapp.com/CPIetUj2LqTIEsXfodIVFz?mode=gi_t',
     description: 'Grupo Exclusivo',
     buttonText: 'Ver Grupo',
@@ -35,7 +35,7 @@ const AffiliateGroupPage = () => {
             <AvatarFallback>LP</AvatarFallback>
           </Avatar>
           <h1 className="text-2xl font-bold text-white">Você foi convidado!</h1>
-          <p className="text-gray-300">Participe do nosso grupo exclusivo da Black Friday.</p>
+          <p className="text-gray-300">Participe do nosso grupo VIP e receba ofertas exclusivas.</p>
         </header>
 
         <div className="w-full max-w-md">
