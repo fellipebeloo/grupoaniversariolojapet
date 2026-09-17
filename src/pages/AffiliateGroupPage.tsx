@@ -10,7 +10,7 @@ const AffiliateGroupPage = () => {
   const BLACKFRIDAY_GROUP = {
     name: 'GRUPO VIP DE OFERTAS – Loja Pet 🐾',
     link: 'https://chat.whatsapp.com/DrQimo4vbmFCkJOiUeLHGK',
-    description: 'Ofertas Exclusivas - Copa do Mundo ⚽',
+    description: 'Ofertas Exclusivas',
     buttonText: 'Ver Grupo',
   };
 
