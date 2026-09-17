@@ -30,7 +30,7 @@ const AffiliateGroupPage = () => {
       <div className="h-full w-full bg-black/75 flex flex-col items-center justify-center p-4">
 
         <header className="text-center mb-8">
-          <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-[#009739]">
+          <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-[#1A55A1]">
             <AvatarImage src="/lojapet-vip-icon.png" alt="Loja Pet" />
             <AvatarFallback>LP</AvatarFallback>
           </Avatar>
@@ -51,7 +51,7 @@ const AffiliateGroupPage = () => {
         <div className="mt-8 w-full max-w-md">
           <button
             onClick={handleJoinGroupClick}
-            className="w-full py-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-green-950 font-extrabold rounded-lg shadow-[0_0_15px_rgba(234,179,8,0.5)] hover:opacity-90 transition-transform transform hover:scale-105 text-lg animate-shake border-b-4 border-yellow-600 uppercase tracking-wide"
+            className="w-full py-4 bg-gradient-to-r from-[#1A55A1] to-[#DA3A5B] text-white font-extrabold rounded-lg shadow-[0_0_15px_rgba(26,85,161,0.5)] hover:opacity-90 transition-transform transform hover:scale-105 text-lg animate-shake border-b-4 border-[#B8304A] uppercase tracking-wide"
           >
             🏆 Entrar no Grupo VIP
           </button>
