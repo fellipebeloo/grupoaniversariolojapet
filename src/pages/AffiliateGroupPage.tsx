@@ -9,7 +9,7 @@ const AffiliateGroupPage = () => {
   // Configurações do Grupo de Afiliados
   const BLACKFRIDAY_GROUP = {
     name: 'GRUPO VIP LOJA PET COPA DO MUNDO',
-    link: 'https://chat.whatsapp.com/L3wNROkDOCIEzETkmXa1I5',
+    link: 'https://chat.whatsapp.com/DrQimo4vbmFCkJOiUeLHGK',
     description: 'Ofertas Exclusivas - Copa do Mundo ⚽',
     buttonText: 'Ver Grupo',
   };
